@@ -1,0 +1,12 @@
+{
+  "APP_TITLE": "Starter Auth Phase-1",
+  "HOME": "Accueil",
+  "LOGIN": "Se connecter",
+  "LOGOUT": "Se d\u00e9connecter",
+  "CALL_SECURED": "Appeler l'API s\u00e9curis\u00e9e",
+  "CALL_ADMIN": "Appeler l'API admin",
+  "LANGUAGE": "Langue",
+  "NOT_LOGGED": "Vous n'\u00eates pas connect\u00e9. Cliquez sur Se connecter.",
+  "SECURED_RESULT": "R\u00e9sultat s\u00e9curis\u00e9",
+  "ADMIN_RESULT": "R\u00e9sultat admin"
+}

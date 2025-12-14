@@ -1,0 +1,86 @@
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-logo">
+            <a routerLink="/">E-Store</a>
+        </div>
+
+        <div class="nav-menu" [class.active]="isMenuOpen">
+            <a routerLink="/" routerLinkActive="active" class="nav-link">Home</a>
+            <a routerLink="/products" routerLinkActive="active" class="nav-link">Shop</a>
+            <a routerLink="/deals" routerLinkActive="active" class="nav-link">Deals</a>
+            <a routerLink="/about" routerLinkActive="active" class="nav-link">About</a>
+            <a routerLink="/contact" routerLinkActive="active" class="nav-link">Contact</a>
+        </div>
+
+        <div class="nav-right">
+            <div class="nav-icons">
+                <div class="nav-search">
+                    <input
+                            type="text"
+                            [(ngModel)]="searchTerm"
+                            (keyup.enter)="onSearch()"
+                            placeholder="Search products..." />
+                    <button class="icon-btn" type="button" (click)="onSearch()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+
+                <button class="icon-btn cart-btn" type="button" (click)="openCart()">
+                    <span class="material-icons">shopping_cart</span>
+                    <span class="cart-count" *ngIf="cartCount$ | async as count">{{ count }}</span>
+                </button>
+            </div>
+<!--            <div class="nav-icons">-->
+<!--                <button class="icon-btn">-->
+<!--                    <i class="fas fa-search"></i>-->
+<!--                </button>-->
+<!--                <button class="icon-btn" type="button" (click)="openCart()" >-->
+<!--                    <i class="fas fa-shopping-cart"></i>-->
+<!--                    @if(cartCount$ | async; as count){-->
+<!--                        <span class="cart-count">{{ count }}</span>-->
+<!--                    }-->
+
+<!--                 </button>-->
+<!--            </div>-->
+
+            <div class="nav-auth">
+                @if (!authService.isAuthenticated) {
+                    <button
+                            type="button"
+                            class="nav-auth-link"
+                            (click)="openLoginDialog()">
+                        Sign in
+                    </button>
+
+                    <span class="nav-auth-separator">·</span>
+
+                    <button
+                            type="button"
+                            class="nav-auth-link nav-auth-link--primary"
+                            (click)="openRegisterDialog()">
+                        Create account
+                    </button>
+                } @else {
+                    <span class="nav-username">
+            Welcome {{ authService.username }} 👋
+          </span>
+
+                    <button
+                            type="button"
+                            class="nav-icon-btn"
+                            (click)="authService.logout()"
+                            title="Logout"
+                            aria-label="Logout">
+                        <span class="material-icons">logout</span>
+                    </button>
+                }
+            </div>
+
+            <div class="hamburger" (click)="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+</nav>

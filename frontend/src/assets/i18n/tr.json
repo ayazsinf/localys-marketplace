@@ -1,0 +1,12 @@
+{
+  "APP_TITLE": "Faz-1 Kimlik Do\u011frulama Ba\u015flang\u0131c\u0131",
+  "HOME": "Anasayfa",
+  "LOGIN": "Giri\u015f",
+  "LOGOUT": "\u00c7\u0131k\u0131\u015f",
+  "CALL_SECURED": "Korumal\u0131 API'yi \u00e7a\u011f\u0131r",
+  "CALL_ADMIN": "Admin API'yi \u00e7a\u011f\u0131r",
+  "LANGUAGE": "Dil",
+  "NOT_LOGGED": "Giri\u015f yapmad\u0131n. Giri\u015f'e t\u0131kla.",
+  "SECURED_RESULT": "Korumal\u0131 sonu\u00e7",
+  "ADMIN_RESULT": "Admin sonucu"
+}

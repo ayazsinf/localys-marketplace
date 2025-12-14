@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>{{ product.name }}</h2>
+
+<mat-dialog-content class="quick-view-content">
+  <img [src]="product.image" [alt]="product.name">
+
+  <div class="quick-view-info">
+    <p class="price">{{ product.price | currency:'USD' }}</p>
+    <p class="desc">{{ product.description }}</p>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-flat-button color="primary" (click)="addToCart()">
+    Add to Cart
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,50 @@
+{
+  "name": "phase1-frontend",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "packageManager": "npm@11.6.4",
+  "dependencies": {
+    "@angular/cdk": "^21.0.3",
+    "@angular/common": "^21.0.3",
+    "@angular/compiler": "^21.0.0",
+    "@angular/core": "^21.0.3",
+    "@angular/forms": "^21.0.0",
+    "@angular/material": "^21.0.3",
+    "@angular/platform-browser": "^21.0.0",
+    "@angular/platform-browser-dynamic": "^21.0.3",
+    "@angular/router": "^21.0.0",
+    "@angular/ssr": "^21.0.2",
+    "@ngx-translate/core": "^15.0.0",
+    "@ngx-translate/http-loader": "^8.0.0",
+    "express": "^5.1.0",
+    "keycloak-js": "^23.0.7",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "^0.16.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^21.0.2",
+    "@angular/build": "^21.0.2",
+    "@angular/cli": "^21.0.2",
+    "@angular/compiler-cli": "^21.0.0",
+    "@types/express": "^5.0.1",
+    "@types/jasmine": "^5.1.13",
+    "@types/node": "^20.17.19",
+    "jasmine-core": "^5.13.0",
+    "jsdom": "^27.1.0",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.1",
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
+    "typescript": "~5.9.2",
+    "vitest": "^4.0.8"
+  }
+}

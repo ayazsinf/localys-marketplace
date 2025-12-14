@@ -1,0 +1,199 @@
+.navbar {
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+}
+
+.nav-logo a {
+  font-size: 24px;
+  font-weight: bold;
+  color: #4A90E2;
+  text-decoration: none;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 30px;
+
+  .nav-link {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #4A90E2;
+    }
+
+    &.active {
+      color: #4A90E2;
+      font-weight: 600;
+    }
+  }
+}
+
+.nav-icons {
+  display: flex;
+  gap: 15px;
+  margin-right: 2rem;
+  .icon-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+    position: relative;
+    padding: 8px;
+
+    .cart-count {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #e74c3c;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+
+  span {
+    width: 25px;
+    height: 3px;
+    background: #333;
+    margin: 3px 0;
+    transition: 0.3s;
+  }
+}
+
+/* MOBILE STYLES - BUNLAR ÇOK ÖNEMLİ */
+@media (max-width: 768px) {
+  .nav-menu {
+    position: fixed;
+    left: -100%;  // BAŞLANGIÇTA EKRAN DIŞINDA
+    top: 70px;
+    flex-direction: column;
+    background-color: white;
+    width: 100%;
+    text-align: center;
+    transition: left 0.3s ease;  // TRANSITION EKLENDİ
+    box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+    padding: 20px 0;
+
+    // .active CLASS'I EKLENDİĞİNDE
+    &.active {
+      left: 0;  // EKRANDA GÖSTER
+    }
+
+    .nav-link {
+      padding: 15px;
+      display: block;
+    }
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-icons {
+    gap: 10px;
+
+  }
+}
+/* navbar.component.scss */
+.nav-right{
+  display: inline-flex;
+}
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+/* Login / Register link butonları */
+.nav-auth-link {
+  border: none;
+  padding: 0;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  color: #4b5563; // gri
+  transition: color 0.15s ease, transform 0.1s ease;
+}
+
+.nav-auth-link:hover {
+  color: #2563eb; // mavi accent
+  transform: translateY(-1px);
+}
+
+.nav-auth-link--primary {
+  font-weight: 600;
+  color: #2563eb;
+}
+
+/* aradaki küçük nokta */
+.nav-auth-separator {
+  color: #9ca3af;
+}
+
+/* username yazısı */
+.nav-username {
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+/* Logout ikon butonu */
+.nav-icon-btn {
+  border: none;
+  background: #eff3ff;
+  color: #2563eb;
+  border-radius: 999px;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.nav-icon-btn i,
+.nav-icon-btn .material-icons {
+  font-size: 16px;
+}
+
+.nav-icon-btn:hover {
+  background: #dbeafe;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+}
+
+.nav-icon-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}

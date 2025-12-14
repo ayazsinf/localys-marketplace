@@ -1,0 +1,12 @@
+{
+  "APP_TITLE": "Phase-1 Auth Starter",
+  "HOME": "Home",
+  "LOGIN": "Login",
+  "LOGOUT": "Logout",
+  "CALL_SECURED": "Call secured API",
+  "CALL_ADMIN": "Call admin API",
+  "LANGUAGE": "Language",
+  "NOT_LOGGED": "You're not logged in. Click Login.",
+  "SECURED_RESULT": "Secured result",
+  "ADMIN_RESULT": "Admin result"
+}

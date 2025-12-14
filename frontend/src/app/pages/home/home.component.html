@@ -1,0 +1,46 @@
+<div class="home-container">
+
+  <main class="main-content">
+    <div class="container">
+      <div class="content-wrapper">
+        <aside class="sidebar-container">
+          <app-sidebar (categorySelected)="onCategorySelected($event)"
+                       (ratingSelected)="onRatingSelected($event)"
+                       (maxPriceSelected)="onPriceChange($event)"></app-sidebar>
+        </aside>
+
+        <section class="products-section">
+          <div class="section-header">
+            <h1>Our Products</h1>
+            <div class="sort-options">
+                <select
+                        id="sortSelect"
+                        class="sort-select"
+                        [ngModel]="sortOption"
+                        (ngModelChange)="onSortChange($event)">
+                    <option value="priceLowHigh">Low to High</option>
+                    <option value="priceHighLow">High to Low</option>
+                    <option value="ratingHighLow">Rating (High to Low)</option>
+                    <option value="nameAZ">Name (A → Z)</option>
+                </select>
+            </div>
+          </div>
+
+          <div class="products-grid">
+            @for (product of filteredProducts; track product){
+              <app-product-card
+                      [product]="product"
+                     >
+              </app-product-card>
+            }
+
+          </div>
+
+          <div class="load-more">
+            <button class="load-more-btn">Load More Products</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>

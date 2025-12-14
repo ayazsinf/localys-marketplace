@@ -1,0 +1,19 @@
+.register-content {
+  min-width: 340px;
+  padding-top: 8px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.error-text {
+  color: #d32f2f;
+  font-size: 13px;
+}

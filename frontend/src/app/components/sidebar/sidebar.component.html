@@ -1,0 +1,61 @@
+<div class="sidebar">
+  <h3>Categories</h3>
+  <ul class="category-list">
+    <li>
+      <a href="#" (click)="selectAll(); $event.preventDefault()" class="category-link">
+        All Products
+      </a>
+    </li>
+    @for (category of categories; track category){
+      <li>
+        <a href="#" (click)="selectCategory(category); $event.preventDefault()" class="category-link">
+          {{ category }}
+        </a>
+      </li>
+    }
+
+  </ul>
+
+
+    <!-- PRICE RANGE -->
+    <div class="filter-section">
+        <h3>Price Range</h3>
+        <div class="price-filter">
+            <input
+                    type="range"
+                    min="0"
+                    [max]="maxPrice"
+                    [(ngModel)]="selectedMaxPrice"
+                    (ngModelChange)="onPriceChange($event)"
+                    class="price-slider">
+
+            <div class="price-values">
+                <span>$0</span>
+                <span>Up to ${{ selectedMaxPrice }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- RATING -->
+    <div class="filter-section">
+        <h3>Rating</h3>
+        <div class="rating-filter">
+            @for (rating of [5, 4, 3, 2, 1]; track rating) {
+                <label>
+                    <input
+                            type="radio"
+                            name="ratingFilter"
+                            [value]="rating"
+                            [checked]="selectedRating === rating"
+                            (change)="onRatingChange(rating)">
+
+                    <span class="stars">
+          {{ generateStars(rating) }}
+        </span>
+                    <span class="rating-text">& up</span>
+                </label>
+            }
+        </div>
+    </div>
+
+</div>
