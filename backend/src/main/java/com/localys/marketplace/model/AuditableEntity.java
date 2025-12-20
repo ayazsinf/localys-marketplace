@@ -2,9 +2,11 @@ package com.localys.marketplace.model;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.OffsetDateTime;
 
+@Getter
 @MappedSuperclass
 public abstract class AuditableEntity {
 
@@ -30,15 +32,4 @@ public abstract class AuditableEntity {
         this.updatedAt = OffsetDateTime.now();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public OffsetDateTime getUpdatedAt() {
-        return updatedAt;
-    }
 }
