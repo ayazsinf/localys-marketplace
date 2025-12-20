@@ -17,7 +17,7 @@ RUN ng build
 # Stage 2 — Serve with Nginx
 FROM nginx:1.25-alpine
 
-COPY --from=build /app/dist/phase1-frontend/browser /usr/share/nginx/html
+COPY --from=build /app/dist/localys-frontend/browser /usr/share/nginx/html
 
 EXPOSE 80
 

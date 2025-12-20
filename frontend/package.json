@@ -1,10 +1,10 @@
 {
-  "name": "phase1-frontend",
+  "name": "localys-frontend",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --project localys-frontend --port 4200",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

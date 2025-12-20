@@ -16,6 +16,25 @@
   height: 70px;
 }
 
+.nav-logo-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.nav-logo-icon {
+  font-size: 1.8rem;
+  color: #1976d2;
+}
+
+.nav-logo-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1976d2;
+}
+
+
 .nav-logo a {
   font-size: 24px;
   font-weight: bold;

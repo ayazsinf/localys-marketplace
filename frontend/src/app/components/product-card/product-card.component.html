@@ -1,6 +1,6 @@
 <div class="product-card">
   <div class="product-image">
-      <img [src]="product.image" [alt]="product.name">
+      <img [alt]="product.name" [src]="product.imageUrls">
       <div class="product-overlay">
           <button class="quick-view-btn" (click)="openQuickView(product)">Quick View</button>
     </div>
@@ -14,7 +14,7 @@
     <p class="product-description">{{ product.description }}</p>
 
       <div class="product-rating">
-          <span class="stars">{{ generateStars(product.rating) }}</span>
+          <span class="stars">{{ generateStars(product?.rating) }}</span>
           <span class="rating-value">({{ product.rating }})</span>
       </div>
 

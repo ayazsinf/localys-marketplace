@@ -29,7 +29,8 @@ export class HomeComponent implements OnInit {
               private searchService: SearchService) {}
 
   ngOnInit() {
-    this.allProducts = this.productService.getProducts();
+    this.productService.getProductsAll().subscribe();
+    this.allProducts = this.productService.products();
     if (this.allProducts.length > 0) {
       const max = Math.ceil(Math.max(...this.allProducts.map(p => p.price)));
       this.selectedMaxPrice = max;
@@ -87,7 +88,7 @@ export class HomeComponent implements OnInit {
 
     if (this.selectedRating !== null) {
       // TODO: rate filter should be redo with signal and computed
-      result = result.filter(p => Math.floor(p.rating) >= this.selectedRating!);
+      // result = result.filter(p => Math.floor(p.rating) >= this.selectedRating!);
     }
 
     const maxPrice = this.selectedMaxPrice;
@@ -106,9 +107,10 @@ export class HomeComponent implements OnInit {
         result.sort((a, b) => b.price - a.price);
         break;
 
-      case 'ratingHighLow':
-        result.sort((a, b) => b.rating - a.rating);
-        break;
+        // case 'ratingHighLow':
+        //   if(result)
+        //   result.sort((a, b) => b?.rating - a.rating);
+        //   break;
 
       case 'nameAZ':
         result.sort((a, b) => a.name.localeCompare(b.name));

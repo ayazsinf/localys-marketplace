@@ -2,17 +2,16 @@ version: "3.9"
 
 services:
   db:
-    image: postgres:16
+    image: postgres:15
     restart: unless-stopped
     environment:
       POSTGRES_DB: appdb
-      POSTGRES_USER: postgres
+      POSTGRES_USER: appuser
       POSTGRES_PASSWORD: apppass
     ports:
       - "5432:5432"
     volumes:
       - dbdata:/var/lib/postgresql/data
-
 
   pgadmin:
     image: dpage/pgadmin4
@@ -39,11 +38,13 @@ services:
     ports:
       - "8081:8080"
 
-
-
   backend:
-    build:
-      context: ./backend
+    image: maven:3.9.9-eclipse-temurin-21
+    working_dir: /workspace
+    volumes:
+      - ./backend:/workspace
+      - m2-cache:/root/.m2
+    command: mvn -q spring-boot:run -Dspring-boot.run.profiles=docker
     depends_on:
       - db
       - keycloak
@@ -52,19 +53,25 @@ services:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/appdb"
       SPRING_DATASOURCE_USERNAME: "appuser"
       SPRING_DATASOURCE_PASSWORD: "apppass"
-      OIDC_ISSUER_URI: "http://keycloak:8080/realms/phase1-realm"
+      OIDC_ISSUER_URI: "http://keycloak:8080/realms/localys-realm"
     ports:
       - "8080:8080"
 
   frontend:
-    build:
-      context: ./frontend
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - node_modules:/app/node_modules
+    command: sh -c "npm ci && npm run start"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     depends_on:
       - backend
     ports:
-      - "4200:80"
+      - "4200:4200"
 
 volumes:
   dbdata:
-
-
+  m2-cache:
+  node_modules:

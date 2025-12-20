@@ -2,8 +2,8 @@ import Keycloak from 'keycloak-js';
 
 export const keycloak = new Keycloak({
   url: 'http://localhost:8081/',
-  realm: 'phase1-realm',
-  clientId: 'phase1-frontend'
+  realm: 'localys-realm',
+  clientId: 'localys-frontend'
 });
 
 export async function initKeycloak(): Promise<void> {

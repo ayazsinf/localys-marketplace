@@ -1,7 +1,12 @@
 <nav class="navbar">
     <div class="nav-container">
         <div class="nav-logo">
-            <a routerLink="/">E-Store</a>
+            <a class="nav-logo-link" routerLink="/">
+                <span class="material-icons nav-logo-icon">
+                  storefront
+                </span>
+                <span class="nav-logo-text">Localys</span>
+            </a>
         </div>
 
         <div class="nav-menu" [class.active]="isMenuOpen">
@@ -30,18 +35,6 @@
                     <span class="cart-count" *ngIf="cartCount$ | async as count">{{ count }}</span>
                 </button>
             </div>
-<!--            <div class="nav-icons">-->
-<!--                <button class="icon-btn">-->
-<!--                    <i class="fas fa-search"></i>-->
-<!--                </button>-->
-<!--                <button class="icon-btn" type="button" (click)="openCart()" >-->
-<!--                    <i class="fas fa-shopping-cart"></i>-->
-<!--                    @if(cartCount$ | async; as count){-->
-<!--                        <span class="cart-count">{{ count }}</span>-->
-<!--                    }-->
-
-<!--                 </button>-->
-<!--            </div>-->
 
             <div class="nav-auth">
                 @if (!authService.isAuthenticated) {

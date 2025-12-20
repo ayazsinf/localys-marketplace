@@ -2,7 +2,7 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "projects": {
-    "phase1-frontend": {
+    "localys-frontend": {
       "projectType": "application",
       "root": "",
       "sourceRoot": "src",
@@ -28,7 +28,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/phase1-frontend",
+            "outputPath": "dist/localys-frontend",
             "browser": "src/main.ts",
             "index": "src/index.html",
             "tsConfig": "tsconfig.json",
@@ -58,7 +58,7 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "phase1-frontend:build",
+            "buildTarget": "localys-frontend:build",
             "port": 4300
           }
         }
@@ -68,6 +68,6 @@
 
   "cli": {
     "analytics": false
-  },
+  }
 
 }

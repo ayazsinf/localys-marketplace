@@ -1,10 +1,13 @@
 export interface Product {
   id: number;
   name: string;
-  price: number;
   description: string;
-  image: string;
-  category: string;
-  rating: number;
+  price: number;
+  currency: string;
+  imageUrls: string[];
+  categoryName: string;
   inStock: boolean;
+
+  // UI-only opsiyonel:
+  rating?: number;
 }

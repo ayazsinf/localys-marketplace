@@ -12,6 +12,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: false
+    locations: classpath:db/migration
+  application:
+    name: localys-marketplace
 
 
 server:

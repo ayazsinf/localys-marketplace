@@ -16,7 +16,7 @@
   },
   "clients": [
     {
-      "clientId": "phase1-frontend",
+      "clientId": "localys-frontend",
       "name": "Phase1 Frontend SPA",
       "enabled": true,
       "publicClient": true,

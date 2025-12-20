@@ -4,8 +4,17 @@ spring:
     username: appuser
     password: apppass
 
+  application:
+    name: localys-marketplace
+  jpa:
+    hibernate:
+      ddl-auto: update
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/phase1-realm
+          issuer-uri: http://keycloak:8080/realms/localys-realm

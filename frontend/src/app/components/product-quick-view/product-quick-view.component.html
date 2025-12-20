@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>{{ product.name }}</h2>
 
 <mat-dialog-content class="quick-view-content">
-  <img [src]="product.image" [alt]="product.name">
+    <img [alt]="product.name" [src]="product.imageUrls">
 
   <div class="quick-view-info">
     <p class="price">{{ product.price | currency:'USD' }}</p>
