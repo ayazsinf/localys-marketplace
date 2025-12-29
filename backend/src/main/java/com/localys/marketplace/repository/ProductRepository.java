@@ -2,16 +2,17 @@ package com.localys.marketplace.repository;
 
 import com.localys.marketplace.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    @Query("""
-              select distinct p from Product p
-              left join fetch p.images
-            """)
-    List<Product> findAllWithImages();
+    List<Product> findByVendorId(Long vendorId);
 
+    Optional<Product> findById(Long id);
+
+    Optional<Product> findByIdAndVendorId(Long id, Long vendorId);
+
+    // Ürünleri ada göre artan sırayla listele
     List<Product> findAllByOrderByNameAsc();
 }

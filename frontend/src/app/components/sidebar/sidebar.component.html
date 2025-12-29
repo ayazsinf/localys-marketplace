@@ -1,9 +1,9 @@
 <div class="sidebar">
-  <h3>Categories</h3>
+  <h3>{{ 'FILTERS.CATEGORIES' | translate }}</h3>
   <ul class="category-list">
     <li>
       <a href="#" (click)="selectAll(); $event.preventDefault()" class="category-link">
-        All Products
+        {{ 'FILTERS.ALL_PRODUCTS' | translate }}
       </a>
     </li>
     @for (category of categories; track category){
@@ -19,7 +19,7 @@
 
     <!-- PRICE RANGE -->
     <div class="filter-section">
-        <h3>Price Range</h3>
+        <h3>{{ 'FILTERS.PRICE_RANGE' | translate }}</h3>
         <div class="price-filter">
             <input
                     type="range"
@@ -30,15 +30,15 @@
                     class="price-slider">
 
             <div class="price-values">
-                <span>$0</span>
-                <span>Up to ${{ selectedMaxPrice }}</span>
+                <span>{{ 'FILTERS.PRICE_MIN' | translate }}</span>
+                <span>{{ 'FILTERS.UP_TO' | translate }} ${{ selectedMaxPrice }}</span>
             </div>
         </div>
     </div>
 
     <!-- RATING -->
     <div class="filter-section">
-        <h3>Rating</h3>
+        <h3>{{ 'FILTERS.RATING' | translate }}</h3>
         <div class="rating-filter">
             @for (rating of [5, 4, 3, 2, 1]; track rating) {
                 <label>
@@ -52,7 +52,7 @@
                     <span class="stars">
           {{ generateStars(rating) }}
         </span>
-                    <span class="rating-text">& up</span>
+                    <span class="rating-text">{{ 'FILTERS.AND_UP' | translate }}</span>
                 </label>
             }
         </div>

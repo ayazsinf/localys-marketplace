@@ -1,5 +1,5 @@
 {
-  "realm": "phase1-realm",
+  "realm": "localys-realm",
   "enabled": true,
   "registrationAllowed": false,
   "loginWithEmailAllowed": true,
@@ -17,13 +17,12 @@
   "clients": [
     {
       "clientId": "localys-frontend",
-      "name": "Phase1 Frontend SPA",
+      "name": "Localys Frontend SPA",
       "enabled": true,
       "publicClient": true,
       "protocol": "openid-connect",
       "redirectUris": [
-        "http://localhost:4200/*",
-        "http://localhost:4300/*"
+        "http://localhost:4200/*"
       ],
       "webOrigins": [
         "*"
@@ -34,7 +33,7 @@
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
-      "rootUrl": "http://localhost:4300"
+      "rootUrl": "http://localhost:4200"
     }
   ],
   "users": [

@@ -1,45 +1,10 @@
-<h2 mat-dialog-title>Create Account</h2>
+<h2 mat-dialog-title>{{ 'AUTH.CREATE_ACCOUNT_TITLE' | translate }}</h2>
 
 <mat-dialog-content class="register-content">
-    <form [formGroup]="form" (ngSubmit)="submit()">
-
-        <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Username</mat-label>
-            <input matInput formControlName="username">
-            @if (form.get('username')?.touched && form.get('username')?.invalid) {
-                <mat-error>Username is required</mat-error>
-            }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" formControlName="email">
-            @if (form.get('email')?.touched && form.get('email')?.invalid) {
-                <mat-error>Valid email is required</mat-error>
-            }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Password</mat-label>
-            <input matInput type="password" formControlName="password">
-            @if (form.get('password')?.touched && form.get('password')?.invalid) {
-                <mat-error>Min length is 6 characters</mat-error>
-            }
-        </mat-form-field>
-
-        @if (error) {
-            <div class="error-text">{{ error }}</div>
-        }
-
-        <div mat-dialog-actions align="end">
-            <button mat-button type="button" (click)="close()">Cancel</button>
-            <button
-                    mat-flat-button
-                    color="primary"
-                    type="submit"
-                    [disabled]="form.invalid || loading">
-                @if (!loading) { Register } @else { Registering... }
-            </button>
-        </div>
-    </form>
+    <div mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="close()">{{ 'COMMON.CANCEL' | translate }}</button>
+        <button mat-flat-button color="primary" type="button" (click)="submit()">
+            {{ 'AUTH.REGISTER' | translate }}
+        </button>
+    </div>
 </mat-dialog-content>

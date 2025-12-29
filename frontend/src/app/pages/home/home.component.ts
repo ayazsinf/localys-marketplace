@@ -1,122 +1,146 @@
-import {Component, OnInit} from '@angular/core';
-import {Product} from '../../modules/product.model';
-import {ProductService} from "../../service/product.service";
-import {Subscription} from "rxjs";
-import {SearchService} from "../../service/search.service";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { Product } from '../../modules/product.model';
+import { ProductService } from '../../service/product.service';
+import { SearchService } from '../../service/search.service';
 
-type SortOption =
-    | 'priceLowHigh'
-    | 'priceHighLow'
-    | 'ratingHighLow'
-    | 'nameAZ';
+type SortOption = 'priceLowHigh' | 'priceHighLow' | 'ratingHighLow' | 'nameAZ';
 
 @Component({
   selector: 'app-home',
   standalone: false,
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent implements OnInit {
-  filteredProducts: Product[] = [];
-  allProducts: Product[] = [];
-  sortOption: SortOption = 'priceLowHigh';
-  selectedRating: number | null = null;
-  selectedMaxPrice: number | null = null;
-  searchTerm: string = '';
-  private searchSub?: Subscription;
+export class HomeComponent {
+  private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private productService: ProductService,
-              private searchService: SearchService) {}
-
-  ngOnInit() {
-    this.productService.getProductsAll().subscribe();
-    this.allProducts = this.productService.products();
-    if (this.allProducts.length > 0) {
-      const max = Math.ceil(Math.max(...this.allProducts.map(p => p.price)));
-      this.selectedMaxPrice = max;
-    }
-
-    // 🔍 Navbar’dan arama kelimesini dinle
-    this.searchSub = this.searchService.searchTerm$.subscribe(term => {
-      this.searchTerm = term.toLowerCase();
-      this.applyFiltersAndSort();
+  constructor(
+      private readonly productService: ProductService,
+      private readonly searchService: SearchService
+  ) {
+    // When products arrive first time, initialize max price slider once
+    effect(() => {
+      const list = this.products();
+      if (list.length > 0 && this.selectedMaxPrice() == null) {
+        const max = Math.ceil(Math.max(...list.map(p => p.price ?? 0)));
+        this.selectedMaxPrice.set(max);
+      }
     });
-
-    this.filteredProducts = this.allProducts;
-    this.applyFiltersAndSort();
   }
 
-  onCategorySelected(category: string) {
-    if (category === 'all') {
-      this.filteredProducts = this.allProducts;
-    } else {
-      this.filteredProducts = this.productService.getProductsByCategory(category);
+  // Source of truth: signal from service
+  readonly products = this.productService.products;
+
+  // UI state as signals
+  readonly sortOption = signal<SortOption>('priceLowHigh');
+  readonly selectedRating = signal<number | null>(null);
+  readonly selectedMaxPrice = signal<number | null>(null);
+  readonly selectedCategory = signal<string>('all');
+
+  // Search term from navbar (observable -> signal)
+  private readonly searchTerm = toSignal(
+      this.searchService.searchTerm$,
+      { initialValue: '' }
+  );
+
+  // Derived state: categories list
+  readonly categories = computed(() => {
+    const list = this.products();
+    const names = list
+        .map(p => p.categoryName)
+        .filter((x): x is string => !!x && x.trim().length > 0);
+
+    return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
+  });
+
+  // Derived state: filtered + sorted list
+  readonly filteredProducts = computed(() => {
+    let result = [...this.products()];
+
+    // 1) category
+    const cat = this.selectedCategory();
+    if (cat && cat !== 'all') {
+      result = result.filter(p => p.categoryName === cat);
     }
+
+    // 2) search
+    const term = (this.searchTerm() ?? '').trim().toLowerCase();
+    if (term) {
+      result = result.filter(p =>
+          (p.name ?? '').toLowerCase().includes(term) ||
+          (p.description ?? '').toLowerCase().includes(term)
+      );
+    }
+
+    // 3) rating (optional)
+    const rating = this.selectedRating();
+    if (rating != null) {
+      result = result.filter(p => (p.rating ?? 0) >= rating);
+    }
+
+    // 4) price cap
+    const maxPrice = this.selectedMaxPrice();
+    if (maxPrice != null) {
+      result = result.filter(p => (p.price ?? 0) <= maxPrice);
+    }
+
+    // 5) sort
+    switch (this.sortOption()) {
+      case 'priceLowHigh':
+        result.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
+        break;
+      case 'priceHighLow':
+        result.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+        break;
+      case 'ratingHighLow':
+        result.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+        break;
+      case 'nameAZ':
+        result.sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
+        break;
+    }
+
+    return result;
+  });
+
+  // Load products once
+  ngOnInit() {
+    this.productService
+        .loadProducts()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          error: err => console.error('loadProducts error', err),
+        });
+  }
+
+  // UI event handlers
+  onCategorySelected(category: string) {
+    this.selectedCategory.set(category ?? 'all');
   }
 
   onRatingSelected(rating: number) {
-    if (rating === 5) {
-      this.filteredProducts = this.allProducts;
-    } else {
-      this.filteredProducts = this.productService.getProductsByRating(rating);
-    }
+    // your old behavior: 5 means "all"
+    this.selectedRating.set(rating === 5 ? null : rating);
   }
 
-  onPriceChange(maxPrice: number): void {
-    this.selectedMaxPrice = maxPrice;
-    this.applyFiltersAndSort();
+  onPriceChange(maxPrice: number) {
+    this.selectedMaxPrice.set(maxPrice);
   }
 
-
-
-  onSortChange(option: SortOption): void {
-    this.sortOption = option;
-    this.applyFiltersAndSort();
+  onSortChange(option: SortOption) {
+    this.sortOption.set(option);
   }
 
-  private applyFiltersAndSort(): void {
-    let result = [...this.allProducts];
-
-    if (this.searchTerm) {
-      const term = this.searchTerm;
-      result = result.filter(p =>
-          p.name.toLowerCase().includes(term) ||
-          p.description?.toLowerCase().includes(term)
-      );
-      console.log("arama sonucu ",result)
-    }
-
-    if (this.selectedRating !== null) {
-      // TODO: rate filter should be redo with signal and computed
-      // result = result.filter(p => Math.floor(p.rating) >= this.selectedRating!);
-    }
-
-    const maxPrice = this.selectedMaxPrice;
-
-    if (maxPrice != null) {
-      result = result.filter(p => p.price <= maxPrice);
-    }
-
-    // 2) sort
-    switch (this.sortOption) {
-      case 'priceLowHigh':
-        result.sort((a, b) => a.price - b.price);
-        break;
-
-      case 'priceHighLow':
-        result.sort((a, b) => b.price - a.price);
-        break;
-
-        // case 'ratingHighLow':
-        //   if(result)
-        //   result.sort((a, b) => b?.rating - a.rating);
-        //   break;
-
-      case 'nameAZ':
-        result.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-    }
-
-    this.filteredProducts = result;
-  }
+  // Useful for *ngFor trackBy
+  trackById = (_: number, p: Product) => p.id;
 }

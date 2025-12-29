@@ -1,0 +1,77 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-init
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V1__init.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 001a-cleanup-active-carts
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V1a__cleanup_active_carts.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 001b-create-unique-active-cart-index
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V1b__create_unique_active_cart_index.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 002-add-user-auth-columns
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V2__add_user_auth_columns.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 003-seed-vendor-users
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V3__seed_vendor_users.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 004-seed-demo-users
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V4__seed_demo_users.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 005-backfill-user-audit-columns
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V5__backfill_user_audit_columns.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

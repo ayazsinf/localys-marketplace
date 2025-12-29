@@ -1,11 +1,11 @@
 <div class="product-card">
   <div class="product-image">
-      <img [alt]="product.name" [src]="product.imageUrls">
+      <img [alt]="product.name" [src]="product.imageUrls[0]">
       <div class="product-overlay">
-          <button class="quick-view-btn" (click)="openQuickView(product)">Quick View</button>
+          <button class="quick-view-btn" (click)="openQuickView(product)">{{ 'PRODUCT.QUICK_VIEW' | translate }}</button>
     </div>
     <div class="stock-badge" [class.out-of-stock]="!product.inStock">
-      {{ product.inStock ? 'In Stock' : 'Out of Stock' }}
+      {{ product.inStock ? ('PRODUCT.IN_STOCK' | translate) : ('PRODUCT.OUT_OF_STOCK' | translate) }}
     </div>
   </div>
 
@@ -15,7 +15,7 @@
 
       <div class="product-rating">
           <span class="stars">{{ generateStars(product?.rating) }}</span>
-          <span class="rating-value">({{ product.rating }})</span>
+          <span class="rating-value">({{ product?.rating }})</span>
       </div>
 
     <div class="product-footer">
@@ -24,7 +24,7 @@
         class="add-to-cart-btn"
         (click)="addToCart()"
         [disabled]="!product.inStock">
-        {{ product.inStock ? 'Add to Cart' : 'Out of Stock' }}
+        {{ product.inStock ? ('PRODUCT.ADD_TO_CART' | translate) : ('PRODUCT.OUT_OF_STOCK' | translate) }}
       </button>
     </div>
   </div>

@@ -1,26 +1,10 @@
-<h2 mat-dialog-title>Login</h2>
+<h2 mat-dialog-title>{{ 'AUTH.LOGIN_TITLE' | translate }}</h2>
 
 <div mat-dialog-content>
-    <form [formGroup]="form" (ngSubmit)="submit()">
-        <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Username</mat-label>
-            <input matInput formControlName="username">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Password</mat-label>
-            <input matInput type="password" formControlName="password">
-        </mat-form-field>
-
-        @if (error) {
-            <div class="error">{{ error }}</div>
-        }
-
-        <div mat-dialog-actions align="end">
-            <button mat-button type="button" (click)="close()">Cancel</button>
-            <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
-                Login
-            </button>
-        </div>
-    </form>
+    <div mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="close()">{{ 'COMMON.CANCEL' | translate }}</button>
+        <button mat-flat-button color="primary" type="button" (click)="submit()">
+            {{ 'AUTH.LOGIN' | translate }}
+        </button>
+    </div>
 </div>

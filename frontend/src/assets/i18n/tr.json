@@ -1,12 +1,137 @@
 {
-  "APP_TITLE": "Faz-1 Kimlik Do\u011frulama Ba\u015flang\u0131c\u0131",
-  "HOME": "Anasayfa",
-  "LOGIN": "Giri\u015f",
-  "LOGOUT": "\u00c7\u0131k\u0131\u015f",
-  "CALL_SECURED": "Korumal\u0131 API'yi \u00e7a\u011f\u0131r",
-  "CALL_ADMIN": "Admin API'yi \u00e7a\u011f\u0131r",
+  "APP_TITLE": "Localys Pazar Yeri",
+  "LOGIN": "Giris",
+  "LOGOUT": "Çikis",
+  "CALL_SECURED": "Korumali API'yi çagir",
+  "CALL_ADMIN": "Admin API'yi çagir",
   "LANGUAGE": "Dil",
-  "NOT_LOGGED": "Giri\u015f yapmad\u0131n. Giri\u015f'e t\u0131kla.",
-  "SECURED_RESULT": "Korumal\u0131 sonu\u00e7",
-  "ADMIN_RESULT": "Admin sonucu"
+  "NOT_LOGGED": "Giris yapmadin. Giris'e tikla.",
+  "SECURED_RESULT": "Korumali sonuç",
+  "ADMIN_RESULT": "Admin sonucu",
+  "NAV": {
+    "HOME": "Anasayfa",
+    "SHOP": "Ilanlar",
+    "DEALS": "Firsatlar",
+    "ABOUT": "Hakkimizda",
+    "CONTACT": "Iletisim",
+    "SEARCH_PLACEHOLDER": "Ürün, marka veya kategori ara"
+  },
+  "AUTH": {
+    "SIGN_IN": "Giris yap",
+    "CREATE_ACCOUNT": "Hesap olustur",
+    "LOGOUT": "Çikis yap",
+    "LOGIN_TITLE": "Localys'e giris yap",
+    "USERNAME": "Kullanici adi",
+    "PASSWORD": "Sifre",
+    "LOGIN": "Giris yap",
+    "CREATE_ACCOUNT_TITLE": "Hesap olustur",
+    "EMAIL": "E-posta",
+    "USERNAME_REQUIRED": "Kullanici adi gerekli.",
+    "EMAIL_REQUIRED": "E-posta gerekli.",
+    "PASSWORD_MIN": "Sifre en az 6 karakter olmali.",
+    "REGISTER": "Hesap olustur",
+    "REGISTERING": "Olusturuluyor..."
+  },
+  "MENU": {
+    "MY_PROFILE": "Profilim",
+    "MY_LISTINGS": "Ilanlarim",
+    "FAVORITES": "Favoriler",
+    "MESSAGES": "Mesajlar"
+  },
+  "COMMON": {
+    "CANCEL": "Iptal",
+    "CLOSE": "Kapat"
+  },
+  "HOME": {
+    "PRODUCTS_TITLE": "Ilanlar",
+    "SORT_LOW_HIGH": "Fiyat: Düsükten Yüksege",
+    "SORT_HIGH_LOW": "Fiyat: Yüksekten Düsüge",
+    "SORT_RATING": "Puan: Yüksekten Düsüge",
+    "SORT_NAME": "Isim: A-Z",
+    "LOAD_MORE": "Daha Fazla Ilan Yükle"
+  },
+  "FILTERS": {
+    "CATEGORIES": "Kategoriler",
+    "ALL_PRODUCTS": "Tüm Ilanlar",
+    "PRICE_RANGE": "Fiyat Araligi",
+    "PRICE_MIN": "$0",
+    "UP_TO": "En fazla",
+    "RATING": "Puan",
+    "AND_UP": "ve üzeri"
+  },
+  "PRODUCT": {
+    "QUICK_VIEW": "Hizli Görünüm",
+    "IN_STOCK": "Stokta",
+    "OUT_OF_STOCK": "Stokta Yok",
+    "ADD_TO_CART": "Sepete Ekle"
+  },
+  "ABOUT": {
+    "TITLE": "Localys Hakkinda",
+    "SUBTITLE": "2023'ten beri güvenilir pazar yeriniz",
+    "OUR_STORY_ALT": "Hikayemiz",
+    "OUR_STORY_TITLE": "Hikayemiz",
+    "OUR_STORY_P1": "2023'te kurulan Localys, çevrimiçi alisverisi herkes için kolay, güvenilir ve keyifli hale getirme misyonuyla yola çikti. Küçük bir girisim olarak baslayan bu yolculuk, bölgede en çok tercih edilen platformlardan birine dönüstü.",
+    "OUR_STORY_P2": "Alisverisin sorunsuz bir deneyim olmasi gerektigine inaniyor, kaliteli ilanlar ve güçlü müsteri destegi sunmaya odaklaniyoruz.",
+    "OUR_MISSION_TITLE": "Misyonumuz",
+    "OUR_MISSION_P1": "Insanlari ihtiyaç duyduklari ve sevdikleri ürünlerle bulustururken, kesiften teslimata kadar kusursuz bir alisveris deneyimi sunmak.",
+    "MISSION_ITEM_1": "Özenle seçilmis kaliteli ilanlar",
+    "MISSION_ITEM_2": "Hizli ve güvenilir teslimat",
+    "MISSION_ITEM_3": "Mükemmel müsteri destegi",
+    "MISSION_ITEM_4": "Rekabetçi fiyatlar",
+    "MISSION_ITEM_5": "Güvenli alisveris deneyimi",
+    "OUR_MISSION_ALT": "Misyonumuz",
+    "BY_THE_NUMBERS": "Rakamlarla",
+    "STAT_CUSTOMERS": "Mutlu Kullanici",
+    "STAT_PRODUCTS": "Ilan",
+    "STAT_BRANDS": "Kategori",
+    "STAT_SUPPORT": "Destek"
+  },
+  "CONTACT": {
+    "TITLE": "Iletisim",
+    "SUBTITLE": "Sizden haber almak isteriz. Bizimle iletisime geçin!",
+    "ADDRESS_TITLE": "Adresimiz",
+    "ADDRESS_LINE_1": "Localys Sokak 123",
+    "ADDRESS_LINE_2": "Is Merkezi",
+    "ADDRESS_LINE_3": "Istanbul, Türkiye 34000",
+    "PHONE_TITLE": "Telefon",
+    "PHONE_NUMBER": "+90 (212) 123 4567",
+    "PHONE_HOURS": "Pzt-Cum: 09:00 - 18:00",
+    "EMAIL_TITLE": "E-posta",
+    "EMAIL_PRIMARY": "info@localys.com",
+    "EMAIL_SUPPORT": "support@localys.com",
+    "MESSAGE_TITLE": "Bize Mesaj Gönderin",
+    "NAME_PLACEHOLDER": "Adiniz",
+    "EMAIL_PLACEHOLDER": "E-postaniz",
+    "SUBJECT_PLACEHOLDER": "Konu",
+    "MESSAGE_PLACEHOLDER": "Mesajiniz",
+    "SEND_BUTTON": "Mesaj Gönder",
+    "FIND_US_TITLE": "Bizi Burada Bulun",
+    "MAP_PLACEHOLDER": "Etkilesimli Harita Konumu"
+  },
+  "PROFILE": {
+    "TITLE": "Profilim",
+    "SUBTITLE": "Kisisel bilgilerinizi ve güvenlik ayarlarinizi yönetin.",
+    "DETAILS_TITLE": "Profil Bilgileri",
+    "DETAILS_PLACEHOLDER": "Profil formu burada yer alacak.",
+    "SECURITY_TITLE": "Güvenlik",
+    "SECURITY_PLACEHOLDER": "Sifre ve güvenlik ayarlari burada yer alacak."
+  },
+  "LISTINGS": {
+    "TITLE": "Ilanlarim",
+    "SUBTITLE": "Ilanlarinizi takip edin ve yönetin.",
+    "PLACEHOLDER": "Ilan tablosu burada görünecek."
+  },
+  "FAVORITES": {
+    "TITLE": "Favoriler",
+    "SUBTITLE": "Daha sonra bakmak için kaydettiginiz ilanlar.",
+    "PLACEHOLDER": "Favori listesi burada görünecek."
+  },
+  "MESSAGES": {
+    "TITLE": "Mesajlar",
+    "SUBTITLE": "Alicilar ve saticilarla iletisimde kalin.",
+    "PLACEHOLDER": "Mesaj listesi burada görünecek."
+  },
+  "CATEGORIES": {
+    "PLACEHOLDER": "Kategoriler sayfasi yakinda."
+  }
 }

@@ -1,4 +1,4 @@
-import {Component, Input, output, Output} from '@angular/core';
+import {Component, Input, OnInit, output, Output} from '@angular/core';
 import {Product} from "../../modules/product.model";
 import {MatDialog} from "@angular/material/dialog";
 import {ProductQuickViewComponent} from "../product-quick-view/product-quick-view.component";
@@ -10,14 +10,20 @@ import {CartService} from "../../service/cart.service";
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.scss',
 })
-export class ProductCardComponent {
+export class ProductCardComponent implements OnInit {
   @Input() product!: Product;
+
+
+
   add = output<Product>();
 
     constructor(private dialog: MatDialog,
                 private cartService: CartService) {
     }
-  generateStars(rating: number): string {
+  ngOnInit() {
+    this.product.rating=Math.floor(Math.random() * 5) + 1;
+  }
+  generateStars(rating: number ): string {
     const maxStars = 5;
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;

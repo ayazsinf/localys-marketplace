@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
-import { tap } from 'rxjs';
+import { from, Observable } from 'rxjs';
+import { keycloak } from '../keycloak.service';
 
 export interface LoginRequest {
   username: string;
@@ -24,61 +23,35 @@ export interface RegisterRequest {
 })
 export class AuthService {
 
-  private readonly apiUrl = environment.apiUrl;
-  private readonly TOKEN_KEY = 'token';
-  private readonly USERNAME_KEY = 'username';
+  constructor() {}
 
-  constructor(private http: HttpClient) {}
-
-  /** Giriş */
-  login(username: string, password: string) {
-    const body: LoginRequest = { username, password };
-
-    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, body)
-      .pipe(
-        tap(res => {
-          // backend sadece token döndürüyorsa username'i body'den set edebiliriz
-          this.setSession(res.token, res.username ?? username);
-        })
-      );
+  /** GiriY */
+  login(): Observable<void> {
+    return from(keycloak.login());
   }
 
-  /** Kayıt */
-  register(request: RegisterRequest) {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, request)
-      .pipe(
-        tap(res => {
-          // İstersen register sonrası direkt login yapma,
-          // şimdilik user'ı otomatik login edelim:
-          this.setSession(res.token, res.username ?? request.username);
-        })
-      );
+  /** KayŽñt */
+  register(): Observable<void> {
+    return from(keycloak.register());
   }
 
-  /** Çıkış */
+  /** AØŽñkŽñY */
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USERNAME_KEY);
+    keycloak.logout({ redirectUri: window.location.origin });
   }
 
   /** Token getter */
   get token(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return keycloak.token ?? null;
   }
 
-  /** Kullanıcı adı getter */
+  /** KullanŽñcŽñ adŽñ getter */
   get username(): string | null {
-    return localStorage.getItem(this.USERNAME_KEY);
+    return keycloak.tokenParsed?.['preferred_username'] ?? null;
   }
 
   /** Auth durumu */
   get isAuthenticated(): boolean {
-    return !!this.token;
-  }
-
-  /** Ortak session set metodu */
-  private setSession(token: string, username: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
-    localStorage.setItem(this.USERNAME_KEY, username);
+    return !!keycloak.authenticated;
   }
 }

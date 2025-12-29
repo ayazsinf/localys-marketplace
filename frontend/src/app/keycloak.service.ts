@@ -7,12 +7,17 @@ export const keycloak = new Keycloak({
 });
 
 export async function initKeycloak(): Promise<void> {
-  await keycloak.init({
-    onLoad: 'check-sso',   // **Burada login-required YASAK!**
-    redirectUri: window.location.origin,
-    silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
-    pkceMethod: 'S256'
-  });
+  try {
+    await keycloak.init({
+      onLoad: 'check-sso',   // **Burada login-required YASAK!**
+      redirectUri: window.location.origin,
+      silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
+      pkceMethod: 'S256',
+      checkLoginIframe: false
+    });
+  } catch (error) {
+    console.error('Keycloak init failed, continuing without auth.', error);
+  }
 }
 
 export function hasRole(role: string): boolean {

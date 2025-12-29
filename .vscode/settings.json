@@ -1,0 +1,7 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "files.exclude": {
+        "**/.vscode": false
+    },
+    "debug.showInStatusBar": true
+}

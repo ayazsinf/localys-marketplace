@@ -11,23 +11,23 @@
 
         <section class="products-section">
           <div class="section-header">
-            <h1>Our Products</h1>
+            <h1>{{ 'HOME.PRODUCTS_TITLE' | translate }}</h1>
             <div class="sort-options">
                 <select
                         id="sortSelect"
                         class="sort-select"
-                        [ngModel]="sortOption"
+                        [ngModel]="sortOption()"
                         (ngModelChange)="onSortChange($event)">
-                    <option value="priceLowHigh">Low to High</option>
-                    <option value="priceHighLow">High to Low</option>
-                    <option value="ratingHighLow">Rating (High to Low)</option>
-                    <option value="nameAZ">Name (A → Z)</option>
+                    <option value="priceLowHigh">{{ 'HOME.SORT_LOW_HIGH' | translate }}</option>
+                    <option value="priceHighLow">{{ 'HOME.SORT_HIGH_LOW' | translate }}</option>
+                    <option value="ratingHighLow">{{ 'HOME.SORT_RATING' | translate }}</option>
+                    <option value="nameAZ">{{ 'HOME.SORT_NAME' | translate }}</option>
                 </select>
             </div>
           </div>
 
           <div class="products-grid">
-            @for (product of filteredProducts; track product){
+            @for (product of filteredProducts(); track product){
               <app-product-card
                       [product]="product"
                      >
@@ -37,10 +37,11 @@
           </div>
 
           <div class="load-more">
-            <button class="load-more-btn">Load More Products</button>
+            <button class="load-more-btn">{{ 'HOME.LOAD_MORE' | translate }}</button>
           </div>
         </section>
       </div>
     </div>
   </main>
 </div>
+

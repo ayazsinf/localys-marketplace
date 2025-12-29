@@ -23,8 +23,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
-        String token = authService.login(req.username(), req.password());
-        return ResponseEntity.ok(Map.of("token", token));
+        // JWT devre disi (Keycloak'a gecis icin)
+        authService.login(req.username(), req.password());
+        return ResponseEntity.ok(Map.of("token", ""));
     }
 
     @GetMapping("/test-db")
@@ -36,8 +37,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterUserRequest request) {
-        String token = authService.register(request);
-        return ResponseEntity.ok(new AuthResponse(token));
+        // JWT devre disi (Keycloak'a gecis icin)
+        authService.register(request);
+        return ResponseEntity.ok(new AuthResponse(""));
     }
 
     // Basit response DTO

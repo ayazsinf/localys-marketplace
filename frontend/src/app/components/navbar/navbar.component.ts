@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
-import {MatDialog} from "@angular/material/dialog";
-import {LoginComponent} from "../../login/login.component";
-import {RegisterComponent} from "../../register-user/register";
-import {AuthService} from "../../service/auth.service";
-import {CartService} from "../../service/cart.service";
-import {SearchService} from "../../service/search.service";
+import { Component, HostListener, OnInit } from '@angular/core';
+import { MatDialog } from "@angular/material/dialog";
+import { LoginComponent } from "../../login/login.component";
+import { RegisterComponent } from "../../register-user/register";
+import { AuthService } from "../../service/auth.service";
+import { CartService } from "../../service/cart.service";
+import { SearchService } from "../../service/search.service";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: 'app-navbar',
@@ -12,17 +13,29 @@ import {SearchService} from "../../service/search.service";
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent   {
+export class NavbarComponent implements OnInit {
   isMenuOpen = false;
+  isProfileMenuOpen = false;
+  isLangMenuOpen = false;
   searchTerm = '';
   cartCount$ = this.cartService.count$;
+  supportedLangs = ['en', 'tr', 'fr'];
+  currentLang = 'en';
 
   constructor(
-      public authService: AuthService,
-      private cartService: CartService,
-      private dialog: MatDialog,
-      private searchService: SearchService
+    public authService: AuthService,
+    private cartService: CartService,
+    private dialog: MatDialog,
+    private searchService: SearchService,
+    private translateService: TranslateService
   ) {}
+
+  ngOnInit() {
+    const storedLang = localStorage.getItem('lang');
+    const initialLang = storedLang || this.translateService.currentLang || this.translateService.getDefaultLang() || 'en';
+    this.currentLang = initialLang;
+    this.translateService.use(initialLang);
+  }
 
   openLoginDialog() {
     this.dialog.open(LoginComponent, {
@@ -38,19 +51,69 @@ export class NavbarComponent   {
     });
   }
 
-
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
-    console.log('Menu toggled:', this.isMenuOpen); // Debug için
+  }
+
+  toggleProfileMenu() {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  }
+
+  closeProfileMenu() {
+    this.isProfileMenuOpen = false;
+  }
+
+  toggleLangMenu() {
+    this.isLangMenuOpen = !this.isLangMenuOpen;
+  }
+
+  closeLangMenu() {
+    this.isLangMenuOpen = false;
+  }
+
+  setLanguage(lang: string) {
+    if (!this.supportedLangs.includes(lang)) {
+      return;
+    }
+    this.currentLang = lang;
+    this.translateService.use(lang);
+    localStorage.setItem('lang', lang);
+    this.closeLangMenu();
+  }
+
+  logout() {
+    this.authService.logout();
+    this.closeProfileMenu();
   }
 
   openCart(): void {
-    console.log('Cart tıklandı – burada sepet dialogu veya sayfası açılacak.');
-    // İleride: this.router.navigate(['/cart']); veya MatDialog ile cart açarsın
+    // Placeholder for cart panel
   }
+
   onSearch(): void {
     const term = this.searchTerm.trim();
     this.searchService.setSearchTerm(term);
-    // istersen boşsa filtreyi resetlemiş olursun
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+    if (target.closest('.profile-menu')) {
+      return;
+    }
+    if (target.closest('.profile-trigger')) {
+      return;
+    }
+    if (target.closest('.lang-menu')) {
+      return;
+    }
+    if (target.closest('.lang-trigger')) {
+      return;
+    }
+    this.closeProfileMenu();
+    this.closeLangMenu();
   }
 }

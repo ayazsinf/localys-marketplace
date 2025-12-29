@@ -79,7 +79,7 @@ docker compose up --build
 
 - Frontend: http://localhost:4200
 - Keycloak Admin: http://localhost:8081 (admin/admin)
-- Realm: `phase1-realm` otomatik import
+- Realm: `localys-realm` otomatik import
 - Kullanıcılar:
   - testuser / test123 (ROLE_USER)
   - admin / admin123 (ROLE_ADMIN)

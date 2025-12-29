@@ -17,4 +17,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/localys-realm
+          issuer-uri: http://keycloak:8081/realms/localys-realm

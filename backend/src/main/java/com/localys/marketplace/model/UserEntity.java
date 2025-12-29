@@ -1,5 +1,6 @@
 package com.localys.marketplace.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.localys.marketplace.model.enums.USER_ROLE;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "users")
 public class UserEntity extends AuditableEntity {
 

@@ -14,10 +14,21 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   flyway:
     enabled: false
-    locations: classpath:db/migration
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
   application:
     name: localys-marketplace
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081/realms/localys-realm
 
 server:
   port: 8085
+logging:
+  level:
+    org.springframework: DEBUG

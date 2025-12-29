@@ -21,7 +21,8 @@
               "zone.js/testing"
             ],
             "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js"
+            "karmaConfig": "karma.conf.js",
+            "sourceMap": true
           }
         },
 
@@ -40,6 +41,7 @@
               "src/custom-theme.scss",
               "src/styles.css"
             ],
+            "sourceMap": true,
             "scripts": []
           },
 

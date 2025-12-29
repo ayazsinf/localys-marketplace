@@ -10,11 +10,11 @@
         </div>
 
         <div class="nav-menu" [class.active]="isMenuOpen">
-            <a routerLink="/" routerLinkActive="active" class="nav-link">Home</a>
-            <a routerLink="/products" routerLinkActive="active" class="nav-link">Shop</a>
-            <a routerLink="/deals" routerLinkActive="active" class="nav-link">Deals</a>
-            <a routerLink="/about" routerLinkActive="active" class="nav-link">About</a>
-            <a routerLink="/contact" routerLinkActive="active" class="nav-link">Contact</a>
+            <a routerLink="/" routerLinkActive="active" class="nav-link">{{ 'NAV.HOME' | translate }}</a>
+            <a routerLink="/products" routerLinkActive="active" class="nav-link">{{ 'NAV.SHOP' | translate }}</a>
+            <a routerLink="/deals" routerLinkActive="active" class="nav-link">{{ 'NAV.DEALS' | translate }}</a>
+            <a routerLink="/about" routerLinkActive="active" class="nav-link">{{ 'NAV.ABOUT' | translate }}</a>
+            <a routerLink="/contact" routerLinkActive="active" class="nav-link">{{ 'NAV.CONTACT' | translate }}</a>
         </div>
 
         <div class="nav-right">
@@ -24,7 +24,7 @@
                             type="text"
                             [(ngModel)]="searchTerm"
                             (keyup.enter)="onSearch()"
-                            placeholder="Search products..." />
+                            [placeholder]="'NAV.SEARCH_PLACEHOLDER' | translate" />
                     <button class="icon-btn" type="button" (click)="onSearch()">
                         <i class="fas fa-search"></i>
                     </button>
@@ -36,13 +36,36 @@
                 </button>
             </div>
 
+            <div class="lang-menu">
+                <button
+                        type="button"
+                        class="lang-trigger"
+                        [attr.aria-label]="'LANGUAGE' | translate"
+                        [attr.aria-expanded]="isLangMenuOpen"
+                        (click)="toggleLangMenu()">
+                    <span class="lang-code">{{ currentLang | uppercase }}</span>
+                    <span class="material-icons">language</span>
+                </button>
+                <div class="lang-dropdown" [class.open]="isLangMenuOpen">
+                    @for (lang of supportedLangs; track lang) {
+                        <button
+                                type="button"
+                                class="lang-option"
+                                [class.active]="lang === currentLang"
+                                (click)="setLanguage(lang)">
+                            <span class="lang-label">{{ lang | uppercase }}</span>
+                        </button>
+                    }
+                </div>
+            </div>
+
             <div class="nav-auth">
                 @if (!authService.isAuthenticated) {
                     <button
                             type="button"
                             class="nav-auth-link"
                             (click)="openLoginDialog()">
-                        Sign in
+                        {{ 'AUTH.SIGN_IN' | translate }}
                     </button>
 
                     <span class="nav-auth-separator">·</span>
@@ -51,21 +74,26 @@
                             type="button"
                             class="nav-auth-link nav-auth-link--primary"
                             (click)="openRegisterDialog()">
-                        Create account
+                        {{ 'AUTH.CREATE_ACCOUNT' | translate }}
                     </button>
                 } @else {
-                    <span class="nav-username">
-            Welcome {{ authService.username }} 👋
-          </span>
-
-                    <button
-                            type="button"
-                            class="nav-icon-btn"
-                            (click)="authService.logout()"
-                            title="Logout"
-                            aria-label="Logout">
-                        <span class="material-icons">logout</span>
-                    </button>
+                    <div class="profile-menu">
+                        <button
+                                type="button"
+                                class="profile-trigger"
+                                [attr.aria-expanded]="isProfileMenuOpen"
+                                (click)="toggleProfileMenu()">
+                            <span class="profile-name">{{ authService.username }}</span>
+                            <span class="material-icons">expand_more</span>
+                        </button>
+                        <div class="profile-dropdown" [class.open]="isProfileMenuOpen">
+                            <a routerLink="/profile" (click)="closeProfileMenu()">{{ 'MENU.MY_PROFILE' | translate }}</a>
+                            <a routerLink="/listings" (click)="closeProfileMenu()">{{ 'MENU.MY_LISTINGS' | translate }}</a>
+                            <a routerLink="/favorites" (click)="closeProfileMenu()">{{ 'MENU.FAVORITES' | translate }}</a>
+                            <a routerLink="/messages" (click)="closeProfileMenu()">{{ 'MENU.MESSAGES' | translate }}</a>
+                            <button type="button" class="logout" (click)="logout()">{{ 'AUTH.LOGOUT' | translate }}</button>
+                        </div>
+                    </div>
                 }
             </div>
 
@@ -77,3 +105,4 @@
         </div>
     </div>
 </nav>
+

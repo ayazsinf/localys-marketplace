@@ -1,6 +1,7 @@
 package com.localys.marketplace.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.localys.marketplace.model.enums.VendorStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "vendors")
 public class Vendor extends AuditableEntity {
 

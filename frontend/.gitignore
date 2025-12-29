@@ -3,6 +3,7 @@
 # IDE
 .idea/
 *.iml
+.vscode/
 
 # Env / secrets
 .env

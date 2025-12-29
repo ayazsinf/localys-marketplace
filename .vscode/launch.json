@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "compounds": [
+    {
+      "name": "Launch Full Stack",
+      "configurations": ["LocalysApplication", "Launch Frontend (Chrome)"]
+    }
+  ],
+  "configurations": [
+
+    {
+      "name": "LocalysApplication",
+        "type": "java",
+        "request": "launch",
+        "mainClass": "com.localys.marketplace.LocalysApplication",
+        "cwd": "${workspaceFolder}/backend",
+        "args": "--spring.profiles.active=local"
+    },
+    {
+        "name": "Launch Frontend (Chrome)",
+        "type": "node",
+        "request": "launch",
+        "cwd": "${workspaceFolder}/frontend/src",
+        "runtimeExecutable": "npm",
+        "runtimeArgs": ["start"],
+        "console": "integratedTerminal"
+    }
+]
+}

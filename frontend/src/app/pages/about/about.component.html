@@ -3,57 +3,57 @@
   <div class="page-content">
     <div class="container">
       <div class="about-header">
-        <h1>About E-Store</h1>
-        <p class="subtitle">Your trusted online shopping destination since 2023</p>
+        <h1>{{ 'ABOUT.TITLE' | translate }}</h1>
+        <p class="subtitle">{{ 'ABOUT.SUBTITLE' | translate }}</p>
       </div>
 
       <div class="about-sections">
         <section class="about-section">
           <div class="section-image">
-            <img src="https://images.pexels.com/photos/7915404/pexels-photo-7915404.jpeg" alt="Our Story">
+            <img src="https://images.pexels.com/photos/7915404/pexels-photo-7915404.jpeg" [alt]="'ABOUT.OUR_STORY_ALT' | translate">
           </div>
           <div class="section-content">
-            <h2>Our Story</h2>
-            <p>Founded in 2023, E-Store started with a simple mission: to make online shopping easy, reliable, and enjoyable for everyone. What began as a small startup has grown into one of the most trusted e-commerce platforms in the region.</p>
-            <p>We believe that shopping should be a seamless experience, and we're committed to providing the best products with exceptional customer service.</p>
+            <h2>{{ 'ABOUT.OUR_STORY_TITLE' | translate }}</h2>
+            <p>{{ 'ABOUT.OUR_STORY_P1' | translate }}</p>
+            <p>{{ 'ABOUT.OUR_STORY_P2' | translate }}</p>
           </div>
         </section>
 
         <section class="about-section reverse">
           <div class="section-content">
-            <h2>Our Mission</h2>
-            <p>To connect people with the products they need and love, while providing an exceptional shopping experience from discovery to delivery.</p>
+            <h2>{{ 'ABOUT.OUR_MISSION_TITLE' | translate }}</h2>
+            <p>{{ 'ABOUT.OUR_MISSION_P1' | translate }}</p>
             <ul class="mission-list">
-              <li><i class="fas fa-check"></i> Curated quality products</li>
-              <li><i class="fas fa-check"></i> Fast and reliable delivery</li>
-              <li><i class="fas fa-check"></i> Excellent customer support</li>
-              <li><i class="fas fa-check"></i> Competitive pricing</li>
-              <li><i class="fas fa-check"></i> Secure shopping experience</li>
+              <li><i class="fas fa-check"></i> {{ 'ABOUT.MISSION_ITEM_1' | translate }}</li>
+              <li><i class="fas fa-check"></i> {{ 'ABOUT.MISSION_ITEM_2' | translate }}</li>
+              <li><i class="fas fa-check"></i> {{ 'ABOUT.MISSION_ITEM_3' | translate }}</li>
+              <li><i class="fas fa-check"></i> {{ 'ABOUT.MISSION_ITEM_4' | translate }}</li>
+              <li><i class="fas fa-check"></i> {{ 'ABOUT.MISSION_ITEM_5' | translate }}</li>
             </ul>
           </div>
           <div class="section-image">
-            <img src="https://images.pexels.com/photos/18966484/pexels-photo-18966484.jpeg" alt="Our Mission">
+            <img src="https://images.pexels.com/photos/18966484/pexels-photo-18966484.jpeg" [alt]="'ABOUT.OUR_MISSION_ALT' | translate">
           </div>
         </section>
 
         <section class="stats-section">
-          <h2>By The Numbers</h2>
+          <h2>{{ 'ABOUT.BY_THE_NUMBERS' | translate }}</h2>
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-number">10,000+</div>
-              <div class="stat-label">Happy Customers</div>
+              <div class="stat-label">{{ 'ABOUT.STAT_CUSTOMERS' | translate }}</div>
             </div>
             <div class="stat-card">
               <div class="stat-number">500+</div>
-              <div class="stat-label">Products</div>
+              <div class="stat-label">{{ 'ABOUT.STAT_PRODUCTS' | translate }}</div>
             </div>
             <div class="stat-card">
               <div class="stat-number">50+</div>
-              <div class="stat-label">Brands</div>
+              <div class="stat-label">{{ 'ABOUT.STAT_BRANDS' | translate }}</div>
             </div>
             <div class="stat-card">
               <div class="stat-number">24/7</div>
-              <div class="stat-label">Support</div>
+              <div class="stat-label">{{ 'ABOUT.STAT_SUPPORT' | translate }}</div>
             </div>
           </div>
         </section>

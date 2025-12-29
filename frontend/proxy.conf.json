@@ -1,12 +1,12 @@
 {
   "/api": {
-    "target": "http://backend:8080",
+     "target": "http://localhost:8085",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
   },
   "/actuator": {
-    "target": "http://backend:8080",
+     "target": "http://localhost:8085",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"

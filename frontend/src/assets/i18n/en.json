@@ -1,6 +1,5 @@
 {
-  "APP_TITLE": "Localys Auth Starter",
-  "HOME": "Home",
+  "APP_TITLE": "Localys Marketplace",
   "LOGIN": "Login",
   "LOGOUT": "Logout",
   "CALL_SECURED": "Call secured API",
@@ -8,5 +7,131 @@
   "LANGUAGE": "Language",
   "NOT_LOGGED": "You're not logged in. Click Login.",
   "SECURED_RESULT": "Secured result",
-  "ADMIN_RESULT": "Admin result"
+  "ADMIN_RESULT": "Admin result",
+  "NAV": {
+    "HOME": "Home",
+    "SHOP": "Shop",
+    "DEALS": "Deals",
+    "ABOUT": "About",
+    "CONTACT": "Contact",
+    "SEARCH_PLACEHOLDER": "Search products, brands, or categories"
+  },
+  "AUTH": {
+    "SIGN_IN": "Sign in",
+    "CREATE_ACCOUNT": "Create account",
+    "LOGOUT": "Log out",
+    "LOGIN_TITLE": "Sign in to Localys",
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "LOGIN": "Sign in",
+    "CREATE_ACCOUNT_TITLE": "Create your account",
+    "EMAIL": "Email",
+    "USERNAME_REQUIRED": "Username is required.",
+    "EMAIL_REQUIRED": "Email is required.",
+    "PASSWORD_MIN": "Password must be at least 6 characters.",
+    "REGISTER": "Create account",
+    "REGISTERING": "Creating..."
+  },
+  "MENU": {
+    "MY_PROFILE": "My Profile",
+    "MY_LISTINGS": "My Listings",
+    "FAVORITES": "Favorites",
+    "MESSAGES": "Messages"
+  },
+  "COMMON": {
+    "CANCEL": "Cancel",
+    "CLOSE": "Close"
+  },
+  "HOME": {
+    "PRODUCTS_TITLE": "Our Products",
+    "SORT_LOW_HIGH": "Price: Low to High",
+    "SORT_HIGH_LOW": "Price: High to Low",
+    "SORT_RATING": "Rating: High to Low",
+    "SORT_NAME": "Name: A-Z",
+    "LOAD_MORE": "Load More Products"
+  },
+  "FILTERS": {
+    "CATEGORIES": "Categories",
+    "ALL_PRODUCTS": "All Products",
+    "PRICE_RANGE": "Price Range",
+    "PRICE_MIN": "$0",
+    "UP_TO": "Up to",
+    "RATING": "Rating",
+    "AND_UP": "& up"
+  },
+  "PRODUCT": {
+    "QUICK_VIEW": "Quick View",
+    "IN_STOCK": "In Stock",
+    "OUT_OF_STOCK": "Out of Stock",
+    "ADD_TO_CART": "Add to Cart"
+  },
+  "ABOUT": {
+    "TITLE": "About Localys",
+    "SUBTITLE": "Your trusted marketplace since 2023",
+    "OUR_STORY_ALT": "Our Story",
+    "OUR_STORY_TITLE": "Our Story",
+    "OUR_STORY_P1": "Founded in 2023, Localys started with a simple mission: to make online shopping easy, reliable, and enjoyable for everyone. What began as a small startup has grown into one of the most trusted marketplaces in the region.",
+    "OUR_STORY_P2": "We believe that shopping should be a seamless experience, and we're committed to providing the best listings with exceptional customer service.",
+    "OUR_MISSION_TITLE": "Our Mission",
+    "OUR_MISSION_P1": "To connect people with the products they need and love, while providing an exceptional shopping experience from discovery to delivery.",
+    "MISSION_ITEM_1": "Curated quality listings",
+    "MISSION_ITEM_2": "Fast and reliable delivery",
+    "MISSION_ITEM_3": "Excellent customer support",
+    "MISSION_ITEM_4": "Competitive pricing",
+    "MISSION_ITEM_5": "Secure shopping experience",
+    "OUR_MISSION_ALT": "Our Mission",
+    "BY_THE_NUMBERS": "By The Numbers",
+    "STAT_CUSTOMERS": "Happy Users",
+    "STAT_PRODUCTS": "Listings",
+    "STAT_BRANDS": "Categories",
+    "STAT_SUPPORT": "Support"
+  },
+  "CONTACT": {
+    "TITLE": "Contact Us",
+    "SUBTITLE": "We'd love to hear from you. Get in touch with us!",
+    "ADDRESS_TITLE": "Our Address",
+    "ADDRESS_LINE_1": "123 Localys Street",
+    "ADDRESS_LINE_2": "Business District",
+    "ADDRESS_LINE_3": "Istanbul, Turkey 34000",
+    "PHONE_TITLE": "Phone Number",
+    "PHONE_NUMBER": "+90 (212) 123 4567",
+    "PHONE_HOURS": "Mon-Fri: 9:00 AM - 6:00 PM",
+    "EMAIL_TITLE": "Email Address",
+    "EMAIL_PRIMARY": "info@localys.com",
+    "EMAIL_SUPPORT": "support@localys.com",
+    "MESSAGE_TITLE": "Send us a Message",
+    "NAME_PLACEHOLDER": "Your Name",
+    "EMAIL_PLACEHOLDER": "Your Email",
+    "SUBJECT_PLACEHOLDER": "Subject",
+    "MESSAGE_PLACEHOLDER": "Your Message",
+    "SEND_BUTTON": "Send Message",
+    "FIND_US_TITLE": "Find Us Here",
+    "MAP_PLACEHOLDER": "Interactive Map Location"
+  },
+  "PROFILE": {
+    "TITLE": "My Profile",
+    "SUBTITLE": "Manage your personal information and security settings.",
+    "DETAILS_TITLE": "Profile Details",
+    "DETAILS_PLACEHOLDER": "Profile form will live here.",
+    "SECURITY_TITLE": "Security",
+    "SECURITY_PLACEHOLDER": "Password and security settings will live here."
+  },
+  "LISTINGS": {
+    "TITLE": "My Listings",
+    "SUBTITLE": "Track and manage your listings.",
+    "PLACEHOLDER": "Listing table will appear here."
+  },
+  "FAVORITES": {
+    "TITLE": "Favorites",
+    "SUBTITLE": "Items you saved for later.",
+    "PLACEHOLDER": "Favorites list will appear here."
+  },
+  "MESSAGES": {
+    "TITLE": "Messages",
+    "SUBTITLE": "Stay in touch with buyers and sellers.",
+    "PLACEHOLDER": "Message threads will appear here."
+  },
+  "CATEGORIES": {
+    "PLACEHOLDER": "Categories page is coming soon."
+  }
 }

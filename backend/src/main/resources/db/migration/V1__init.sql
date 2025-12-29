@@ -1,4 +1,4 @@
--- =========================
+﻿-- =========================
 -- Marketplace V1 schema
 -- PostgreSQL 16
 -- =========================
@@ -46,7 +46,7 @@ CREATE TYPE payment_status AS ENUM ('REQUIRES_PAYMENT', 'PROCESSING', 'SUCCEEDED
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
--- 2) Kullanıcı (Keycloak ile bağ)
+-- 2) KullanÄ±cÄ± (Keycloak ile baÄŸ)
 CREATE TABLE IF NOT EXISTS users
 (
     id
@@ -81,6 +81,19 @@ CREATE TABLE IF NOT EXISTS users
 (
 )
     );
+
+-- Backfill missing keycloak_id for existing databases
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS keycloak_id VARCHAR(64);
+
+UPDATE users
+SET keycloak_id = 'legacy_' || id
+WHERE keycloak_id IS NULL;
+
+ALTER TABLE users
+    ALTER COLUMN keycloak_id SET NOT NULL;
+
+CREATE UNIQUE INDEX IF NOT EXISTS ux_users_keycloak_id ON users(keycloak_id);
 
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
@@ -146,7 +159,7 @@ CREATE TABLE IF NOT EXISTS addresses
 
 CREATE INDEX IF NOT EXISTS idx_addresses_user ON addresses(user_id);
 
--- 4) Vendor profili (satıcı)
+-- 4) Vendor profili (satÄ±cÄ±)
 CREATE TABLE IF NOT EXISTS vendors
 (
     id
@@ -214,7 +227,7 @@ CREATE TABLE IF NOT EXISTS categories
 CREATE UNIQUE INDEX IF NOT EXISTS ux_categories_name_parent
     ON categories(name, COALESCE (parent_id, 0));
 
--- 6) Ürünler
+-- 6) ÃœrÃ¼nler
 CREATE TABLE IF NOT EXISTS products
 (
     id
@@ -320,10 +333,7 @@ CREATE TABLE IF NOT EXISTS carts
 CREATE INDEX IF NOT EXISTS idx_carts_user ON carts(user_id);
 CREATE INDEX IF NOT EXISTS idx_carts_status ON carts(status);
 
--- Kullanıcının aynı anda 1 aktif sepeti olsun (partial unique index)
-CREATE UNIQUE INDEX IF NOT EXISTS ux_one_active_cart_per_user
-    ON carts(user_id)
-    WHERE status = 'ACTIVE';
+-- KullanÄ±cÄ±nÄ±n aynÄ± anda 1 aktif sepeti olsun (partial unique index)
 
 CREATE TABLE IF NOT EXISTS cart_items
 (
@@ -371,7 +381,7 @@ CREATE INDEX IF NOT EXISTS idx_cart_items_cart ON cart_items(cart_id);
 CREATE UNIQUE INDEX IF NOT EXISTS ux_cart_item_unique_product
     ON cart_items(cart_id, product_id);
 
--- 8) Sipariş
+-- 8) SipariÅŸ
 CREATE TABLE IF NOT EXISTS orders
 (
     id
@@ -471,7 +481,7 @@ CREATE TABLE IF NOT EXISTS order_items
 CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_vendor ON order_items(vendor_id);
 
--- 9) Ödeme
+-- 9) Ã–deme
 CREATE TABLE IF NOT EXISTS payments
 (
     id
@@ -518,7 +528,7 @@ CREATE TABLE IF NOT EXISTS payments
 )
     );
 
--- 1 order için birden fazla deneme istersen UNIQUE kaldırılır (şimdilik V1 sade: 1 ödeme kaydı)
+-- 1 order iÃ§in birden fazla deneme istersen UNIQUE kaldÄ±rÄ±lÄ±r (ÅŸimdilik V1 sade: 1 Ã¶deme kaydÄ±)
 CREATE UNIQUE INDEX IF NOT EXISTS ux_payments_order ON payments(order_id);
 CREATE UNIQUE INDEX IF NOT EXISTS ux_payments_idempotency ON payments(idempotency_key);
 
@@ -527,24 +537,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS ux_payments_idempotency ON payments(idempotenc
 -- =========================
 
 -- Kategoriler
-INSERT INTO categories (name, parent_id)
-VALUES ('Carpets', NULL),
-       ('Vintage', (SELECT id FROM categories WHERE name = 'Carpets' AND parent_id IS NULL)),
-       ('Modern', (SELECT id FROM categories WHERE name = 'Carpets' AND parent_id IS NULL)) ON CONFLICT DO NOTHING;
-
--- Demo kullanıcılar (Keycloak tarafıyla eşleşmesi için keycloak_id placeholder)
--- Not: First-login sync yaptığında bunları otomatik yaratmayı tercih edeceğiz.
-INSERT INTO users (keycloak_id, username, email, display_name)
-VALUES ('kc_testuser_sub', 'testuser', 'testuser@example.com', 'Test User'),
-       ('kc_admin_sub', 'admin', 'admin@example.com', 'Admin User') ON CONFLICT (keycloak_id) DO NOTHING;
-
--- Demo vendor (owner user)
-INSERT INTO vendors (user_id, status, shop_name, legal_name, vat_number)
-SELECT u.id, 'APPROVED', 'Localys Shop', 'Localys SARL', 'FRXX999999'
-FROM users u
-WHERE u.username = 'admin' ON CONFLICT (user_id) DO NOTHING;
-
--- Demo ürünler
+INSERT INTO categories (name, parent_id, created_at)
+VALUES ('Carpets', NULL, NOW()),
+       ('Vintage', (SELECT id FROM categories WHERE name = 'Carpets' AND parent_id IS NULL), NOW()),
+       ('Modern', (SELECT id FROM categories WHERE name = 'Carpets' AND parent_id IS NULL), NOW()) ON CONFLICT DO NOTHING;
+-- Demo Ã¼rÃ¼nler
 INSERT INTO products (vendor_id, category_id, sku, name, description, brand, price, currency, stock_qty, active)
 SELECT v.id,
        (SELECT id FROM categories WHERE name = 'Vintage' LIMIT 1),
@@ -565,7 +562,7 @@ SELECT v.id,
        (SELECT id FROM categories WHERE name = 'Modern' LIMIT 1),
   'CARPET-002',
   'Tapis Moderne Gris 200x290',
-  'Tapis moderne, facile à nettoyer.',
+  'Tapis moderne, facile Ã  nettoyer.',
   'Localys',
   249.00,
   'EUR',
@@ -579,3 +576,6 @@ INSERT INTO product_images (product_id, url, sort_order)
 SELECT p.id, 'https://picsum.photos/seed/' || p.sku || '/800/500', 0
 FROM products p
 WHERE p.sku IN ('CARPET-001', 'CARPET-002') ON CONFLICT DO NOTHING;
+
+
+

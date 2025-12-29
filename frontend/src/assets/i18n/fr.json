@@ -1,12 +1,137 @@
 {
-  "APP_TITLE": "Starter Auth Phase-1",
-  "HOME": "Accueil",
+  "APP_TITLE": "Marketplace Localys",
   "LOGIN": "Se connecter",
-  "LOGOUT": "Se d\u00e9connecter",
-  "CALL_SECURED": "Appeler l'API s\u00e9curis\u00e9e",
+  "LOGOUT": "Se deconnecter",
+  "CALL_SECURED": "Appeler l'API securisee",
   "CALL_ADMIN": "Appeler l'API admin",
   "LANGUAGE": "Langue",
-  "NOT_LOGGED": "Vous n'\u00eates pas connect\u00e9. Cliquez sur Se connecter.",
-  "SECURED_RESULT": "R\u00e9sultat s\u00e9curis\u00e9",
-  "ADMIN_RESULT": "R\u00e9sultat admin"
+  "NOT_LOGGED": "Vous n'etes pas connecte. Cliquez sur Se connecter.",
+  "SECURED_RESULT": "Resultat securise",
+  "ADMIN_RESULT": "Resultat admin",
+  "NAV": {
+    "HOME": "Accueil",
+    "SHOP": "Annonces",
+    "DEALS": "Offres",
+    "ABOUT": "A propos",
+    "CONTACT": "Contact",
+    "SEARCH_PLACEHOLDER": "Rechercher un produit, une marque ou une categorie"
+  },
+  "AUTH": {
+    "SIGN_IN": "Se connecter",
+    "CREATE_ACCOUNT": "Creer un compte",
+    "LOGOUT": "Se deconnecter",
+    "LOGIN_TITLE": "Se connecter a Localys",
+    "USERNAME": "Nom d'utilisateur",
+    "PASSWORD": "Mot de passe",
+    "LOGIN": "Se connecter",
+    "CREATE_ACCOUNT_TITLE": "Creer votre compte",
+    "EMAIL": "Email",
+    "USERNAME_REQUIRED": "Le nom d'utilisateur est obligatoire.",
+    "EMAIL_REQUIRED": "L'email est obligatoire.",
+    "PASSWORD_MIN": "Le mot de passe doit contenir au moins 6 caracteres.",
+    "REGISTER": "Creer un compte",
+    "REGISTERING": "Creation..."
+  },
+  "MENU": {
+    "MY_PROFILE": "Mon profil",
+    "MY_LISTINGS": "Mes annonces",
+    "FAVORITES": "Favoris",
+    "MESSAGES": "Messages"
+  },
+  "COMMON": {
+    "CANCEL": "Annuler",
+    "CLOSE": "Fermer"
+  },
+  "HOME": {
+    "PRODUCTS_TITLE": "Annonces",
+    "SORT_LOW_HIGH": "Prix : croissant",
+    "SORT_HIGH_LOW": "Prix : decroissant",
+    "SORT_RATING": "Note : decroissante",
+    "SORT_NAME": "Nom : A-Z",
+    "LOAD_MORE": "Charger plus d'annonces"
+  },
+  "FILTERS": {
+    "CATEGORIES": "Categories",
+    "ALL_PRODUCTS": "Toutes les annonces",
+    "PRICE_RANGE": "Fourchette de prix",
+    "PRICE_MIN": "$0",
+    "UP_TO": "Jusqu'a",
+    "RATING": "Note",
+    "AND_UP": "et plus"
+  },
+  "PRODUCT": {
+    "QUICK_VIEW": "Apercu rapide",
+    "IN_STOCK": "En stock",
+    "OUT_OF_STOCK": "Rupture de stock",
+    "ADD_TO_CART": "Ajouter au panier"
+  },
+  "ABOUT": {
+    "TITLE": "A propos de Localys",
+    "SUBTITLE": "Votre marketplace de confiance depuis 2023",
+    "OUR_STORY_ALT": "Notre histoire",
+    "OUR_STORY_TITLE": "Notre histoire",
+    "OUR_STORY_P1": "Fondee en 2023, Localys est partie d'une mission simple : rendre l'achat en ligne facile, fiable et agreable pour tous. Ce qui a commence comme une petite startup est devenu l'une des marketplaces les plus fiables de la region.",
+    "OUR_STORY_P2": "Nous pensons que l'achat doit etre une experience fluide et nous nous engageons a offrir les meilleures annonces avec un service client exceptionnel.",
+    "OUR_MISSION_TITLE": "Notre mission",
+    "OUR_MISSION_P1": "Connecter les personnes aux produits dont elles ont besoin et qu'elles aiment, tout en offrant une experience d'achat exceptionnelle de la decouverte a la livraison.",
+    "MISSION_ITEM_1": "Annonces de qualite selectionnees",
+    "MISSION_ITEM_2": "Livraison rapide et fiable",
+    "MISSION_ITEM_3": "Support client exceptionnel",
+    "MISSION_ITEM_4": "Prix competitifs",
+    "MISSION_ITEM_5": "Experience d'achat securisee",
+    "OUR_MISSION_ALT": "Notre mission",
+    "BY_THE_NUMBERS": "En chiffres",
+    "STAT_CUSTOMERS": "Utilisateurs satisfaits",
+    "STAT_PRODUCTS": "Annonces",
+    "STAT_BRANDS": "Categories",
+    "STAT_SUPPORT": "Support"
+  },
+  "CONTACT": {
+    "TITLE": "Contactez-nous",
+    "SUBTITLE": "Nous aimerions avoir de vos nouvelles. Contactez-nous !",
+    "ADDRESS_TITLE": "Notre adresse",
+    "ADDRESS_LINE_1": "123 rue Localys",
+    "ADDRESS_LINE_2": "Quartier des affaires",
+    "ADDRESS_LINE_3": "Istanbul, Turquie 34000",
+    "PHONE_TITLE": "Numero de telephone",
+    "PHONE_NUMBER": "+90 (212) 123 4567",
+    "PHONE_HOURS": "Lun-Ven : 9h00 - 18h00",
+    "EMAIL_TITLE": "Adresse email",
+    "EMAIL_PRIMARY": "info@localys.com",
+    "EMAIL_SUPPORT": "support@localys.com",
+    "MESSAGE_TITLE": "Envoyez-nous un message",
+    "NAME_PLACEHOLDER": "Votre nom",
+    "EMAIL_PLACEHOLDER": "Votre email",
+    "SUBJECT_PLACEHOLDER": "Sujet",
+    "MESSAGE_PLACEHOLDER": "Votre message",
+    "SEND_BUTTON": "Envoyer le message",
+    "FIND_US_TITLE": "Nous trouver",
+    "MAP_PLACEHOLDER": "Emplacement de la carte interactive"
+  },
+  "PROFILE": {
+    "TITLE": "Mon profil",
+    "SUBTITLE": "Gerez vos informations personnelles et vos parametres de securite.",
+    "DETAILS_TITLE": "Details du profil",
+    "DETAILS_PLACEHOLDER": "Le formulaire de profil sera ici.",
+    "SECURITY_TITLE": "Securite",
+    "SECURITY_PLACEHOLDER": "Les parametres de mot de passe et de securite seront ici."
+  },
+  "LISTINGS": {
+    "TITLE": "Mes annonces",
+    "SUBTITLE": "Suivez et gerez vos annonces.",
+    "PLACEHOLDER": "Le tableau des annonces apparaitra ici."
+  },
+  "FAVORITES": {
+    "TITLE": "Favoris",
+    "SUBTITLE": "Articles enregistres pour plus tard.",
+    "PLACEHOLDER": "La liste des favoris apparaitra ici."
+  },
+  "MESSAGES": {
+    "TITLE": "Messages",
+    "SUBTITLE": "Restez en contact avec les acheteurs et les vendeurs.",
+    "PLACEHOLDER": "Les conversations apparaitront ici."
+  },
+  "CATEGORIES": {
+    "PLACEHOLDER": "La page des categories arrive bientot."
+  }
 }
