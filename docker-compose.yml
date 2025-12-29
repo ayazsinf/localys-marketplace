@@ -32,26 +32,11 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
-      KC_DB_USERNAME: keycloak
-      KC_DB_PASSWORD: keycloak
+      KC_DB: dev-mem
     volumes:
-      - ./keycloak:/opt/keycloak/data/import
-    depends_on:
-      - keycloak-db
+       - keycloak_data:/opt/keycloak/data
     ports:
       - "8081:8080"
-
-  keycloak-db:
-    image: postgres:15
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: keycloak
-    volumes:
-      - keycloak-dbdata:/var/lib/postgresql/data
 
   backend:
     image: maven:3.9.9-eclipse-temurin-21
@@ -88,6 +73,5 @@ services:
 
 volumes:
   dbdata:
-  keycloak-dbdata:
   m2-cache:
   node_modules:
