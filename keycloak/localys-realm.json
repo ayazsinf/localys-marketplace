@@ -1,7 +1,9 @@
 {
   "realm": "localys-realm",
+  "displayName": "Localys",
   "enabled": true,
-  "registrationAllowed": false,
+  "loginTheme": "localys",
+  "registrationAllowed": true,
   "loginWithEmailAllowed": true,
   "resetPasswordAllowed": true,
   "roles": {

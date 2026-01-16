@@ -1,8 +1,19 @@
-<div class="product-card">
+<div class="product-card" (click)="openDetails()">
   <div class="product-image">
-      <img [alt]="product.name" [src]="product.imageUrls[0]">
+    <img [alt]="product.name" [src]="getImageUrl(product.imageUrls[0])">
+    <button
+      class="favorite-btn"
+      type="button"
+      [class.is-active]="isFavorite()"
+      [attr.aria-label]="isFavorite() ? ('FAVORITES.SAVED' | translate) : ('FAVORITES.ADD' | translate)"
+      (click)="toggleFavorite($event)">
+      <span aria-hidden="true">{{ isFavorite() ? '♥' : '♡' }}</span>
+      <span class="sr-only">
+        {{ isFavorite() ? ('FAVORITES.SAVED' | translate) : ('FAVORITES.ADD' | translate) }}
+      </span>
+    </button>
       <div class="product-overlay">
-          <button class="quick-view-btn" (click)="openQuickView(product)">{{ 'PRODUCT.QUICK_VIEW' | translate }}</button>
+          <button class="quick-view-btn" (click)="openQuickView(product, $event)">{{ 'PRODUCT.QUICK_VIEW' | translate }}</button>
     </div>
     <div class="stock-badge" [class.out-of-stock]="!product.inStock">
       {{ product.inStock ? ('PRODUCT.IN_STOCK' | translate) : ('PRODUCT.OUT_OF_STOCK' | translate) }}
@@ -22,7 +33,7 @@
         <span class="product-price">{{ product.price | currency:'USD' }}</span>
         <button
         class="add-to-cart-btn"
-        (click)="addToCart()"
+        (click)="addToCart($event)"
         [disabled]="!product.inStock">
         {{ product.inStock ? ('PRODUCT.ADD_TO_CART' | translate) : ('PRODUCT.OUT_OF_STOCK' | translate) }}
       </button>

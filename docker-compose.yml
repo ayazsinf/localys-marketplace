@@ -32,9 +32,11 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_DB: dev-mem
+      KC_DB: dev-file
     volumes:
-       - keycloak_data:/opt/keycloak/data
+      - keycloak_data:/opt/keycloak/data
+      - ./keycloak:/opt/keycloak/data/import:ro
+      - ./keycloak/themes:/opt/keycloak/themes:ro
     ports:
       - "8081:8080"
 
@@ -73,5 +75,6 @@ services:
 
 volumes:
   dbdata:
+  keycloak_data:
   m2-cache:
   node_modules:

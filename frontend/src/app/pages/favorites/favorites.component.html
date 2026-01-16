@@ -4,7 +4,18 @@
     <p>{{ 'FAVORITES.SUBTITLE' | translate }}</p>
   </div>
 
-  <div class="account-card">
+  <div class="favorites-toolbar">
+    <div class="status" *ngIf="isLoading">{{ 'FAVORITES.LOADING' | translate }}</div>
+    <div class="status error" *ngIf="!isLoading && errorMessage">
+      {{ errorMessage | translate }}
+    </div>
+  </div>
+
+  <div class="favorites-grid" *ngIf="!isLoading && favorites.length > 0">
+    <app-product-card *ngFor="let product of favorites" [product]="product"></app-product-card>
+  </div>
+
+  <div class="account-card" *ngIf="!isLoading && favorites.length === 0">
     <div class="placeholder">
       {{ 'FAVORITES.PLACEHOLDER' | translate }}
     </div>

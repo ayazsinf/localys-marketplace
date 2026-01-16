@@ -46,6 +46,15 @@ public class Product extends AuditableEntity {
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(name = "location_text", length = 200)
+    private String locationText;
+
+    @Column
+    private Double latitude;
+
+    @Column
+    private Double longitude;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC")
     private List<ProductImage> images = new ArrayList<>();

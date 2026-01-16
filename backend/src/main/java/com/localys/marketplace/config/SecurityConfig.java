@@ -35,6 +35,9 @@ public class SecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/ws/**").permitAll()
+                    .requestMatchers("/uploads/**").permitAll()
+                    .requestMatchers("/api/categories/**").permitAll()
                     .requestMatchers("/api/products/**").permitAll()
                     .requestMatchers("/api/vendor/**").hasRole("VENDOR")
                     .anyRequest().authenticated()

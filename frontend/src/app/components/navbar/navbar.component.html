@@ -64,7 +64,7 @@
                     <button
                             type="button"
                             class="nav-auth-link"
-                            (click)="openLoginDialog()">
+                            (click)="login()">
                         {{ 'AUTH.SIGN_IN' | translate }}
                     </button>
 
@@ -73,7 +73,7 @@
                     <button
                             type="button"
                             class="nav-auth-link nav-auth-link--primary"
-                            (click)="openRegisterDialog()">
+                            (click)="register()">
                         {{ 'AUTH.CREATE_ACCOUNT' | translate }}
                     </button>
                 } @else {

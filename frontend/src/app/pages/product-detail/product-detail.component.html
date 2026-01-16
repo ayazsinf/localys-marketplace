@@ -1,0 +1,64 @@
+<section class="product-detail" *ngIf="product; else loadingState">
+  <div class="detail-grid">
+    <div class="detail-gallery">
+      <div class="main-image">
+        <img [src]="getImageUrl(selectedImage || product.imageUrls?.[0])" [alt]="product.name">
+      </div>
+      <div class="thumbnail-row" *ngIf="product.imageUrls?.length">
+        <button
+          type="button"
+          class="thumb"
+          *ngFor="let image of product.imageUrls"
+          [class.is-active]="image === selectedImage"
+          (click)="selectImage(image)">
+          <img [src]="getImageUrl(image)" [alt]="product.name">
+        </button>
+      </div>
+
+      <div class="description-card">
+        <h3>{{ 'PRODUCT.DESCRIPTION' | translate }}</h3>
+        <p>{{ product.description }}</p>
+      </div>
+
+      <div class="map-card">
+        <h3>{{ 'PRODUCT.LOCATION_TITLE' | translate }}</h3>
+        <div id="listing-map" class="map-canvas"></div>
+        <p class="map-note">
+          {{ product.locationText || ('PRODUCT.LOCATION_MISSING' | translate) }}
+        </p>
+        <p class="map-note subtle">{{ 'PRODUCT.LOCATION_NOTE' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="detail-info">
+      <div class="seller-line">
+        <span>{{ 'PRODUCT.SELLER' | translate }}:</span>
+        <strong>{{ product.vendorShopName || product.vendorDisplayName || ('PRODUCT.SELLER_UNKNOWN' | translate) }}</strong>
+      </div>
+      <h1>{{ product.name }}</h1>
+      <p class="sku">SKU: {{ product.sku }}</p>
+      <p class="price">{{ product.price | currency:product.currency }}</p>
+
+      <div class="meta">
+        <span>{{ 'PRODUCT.IN_STOCK' | translate }}: {{ product.stockQty }}</span>
+        <span *ngIf="product.categoryName">{{ product.categoryName }}</span>
+        <span *ngIf="product.brand">{{ product.brand }}</span>
+      </div>
+
+      <div class="actions">
+        <button class="primary-btn" type="button" (click)="messageSeller()">
+          {{ 'PRODUCT.MESSAGE_SELLER' | translate }}
+        </button>
+        <button class="ghost-btn" type="button">
+          {{ 'PRODUCT.BUY_NOW' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<ng-template #loadingState>
+  <section class="product-detail loading">
+    {{ 'PRODUCT.LOADING' | translate }}
+  </section>
+</ng-template>

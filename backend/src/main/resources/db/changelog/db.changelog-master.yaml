@@ -75,3 +75,69 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 006-create-favorites
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V6__create_favorites.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 007-seed-categories
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V7__seed_categories.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 008-reset-categories
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V8__reset_categories.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 009-truncate-products
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V9__truncate_products.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 010-create-conversations
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V10__create_conversations.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 011-add-product-location
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V11__add_product_location.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

@@ -4,18 +4,283 @@
     <p>{{ 'PROFILE.SUBTITLE' | translate }}</p>
   </div>
 
+  <div class="profile-alert" *ngIf="needsProfileCompletion">
+    <div>
+      <h3>{{ 'PROFILE.COMPLETE_TITLE' | translate }}</h3>
+      <p>{{ 'PROFILE.COMPLETE_SUBTITLE' | translate }}</p>
+    </div>
+    <button type="button" class="btn-secondary" (click)="startEditingBasic()">
+      {{ 'PROFILE.COMPLETE_ACTION' | translate }}
+    </button>
+  </div>
+
+  <div class="profile-hero">
+    <div class="profile-avatar">{{ initials }}</div>
+    <div class="profile-info">
+      <h2>{{ displayName }}</h2>
+      <div class="profile-meta">
+        <span>@{{ username }}</span>
+        <span class="dot">|</span>
+        <span>{{ email }}</span>
+      </div>
+    </div>
+    <button
+      type="button"
+      class="btn-secondary"
+      (click)="isEditingAll ? stopEditingAll() : startEditingAll()">
+      {{ isEditingAll ? ('PROFILE.ACTION_DONE' | translate) : ('PROFILE.ACTION_EDIT_ALL' | translate) }}
+    </button>
+  </div>
+
   <div class="account-grid">
     <div class="account-card">
-      <h2>{{ 'PROFILE.DETAILS_TITLE' | translate }}</h2>
-      <div class="placeholder">
-        {{ 'PROFILE.DETAILS_PLACEHOLDER' | translate }}
+      <h2>{{ 'PROFILE.SECTION_BASIC' | translate }}</h2>
+      <div class="card-actions" *ngIf="!isEditingBasic">
+        <button type="button" class="btn-ghost" (click)="startEditingBasic()">
+          {{ 'PROFILE.ACTION_EDIT' | translate }}
+        </button>
+      </div>
+      <div *ngIf="isEditingBasic" class="inline-editor">
+        <div class="inline-row">
+          <span class="label">{{ 'PROFILE.LABEL_DISPLAY_NAME' | translate }}</span>
+          <input type="text" [(ngModel)]="basicForm.displayName" name="displayName">
+        </div>
+        <div class="inline-row">
+          <span class="label">{{ 'PROFILE.LABEL_EMAIL' | translate }}</span>
+          <input type="email" [(ngModel)]="basicForm.email" name="email">
+        </div>
+        <div class="inline-row">
+          <span class="label">{{ 'PROFILE.LABEL_PHONE' | translate }}</span>
+          <input type="text" [(ngModel)]="basicForm.phone" name="phone">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="cancelEditingBasic()">
+            {{ 'PROFILE.ACTION_CANCEL' | translate }}
+          </button>
+          <button type="button" class="btn-secondary" [disabled]="isSavingProfile" (click)="saveBasicProfile()">
+            {{ 'PROFILE.ACTION_SAVE' | translate }}
+          </button>
+        </div>
+      </div>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">{{ 'PROFILE.LABEL_DISPLAY_NAME' | translate }}</span>
+          <span class="value">{{ displayName }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">{{ 'PROFILE.LABEL_USERNAME' | translate }}</span>
+          <span class="value">@{{ username }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">{{ 'PROFILE.LABEL_EMAIL' | translate }}</span>
+          <span class="value">{{ email }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">{{ 'PROFILE.LABEL_PHONE' | translate }}</span>
+          <span class="value">
+            {{ phone || ('PROFILE.VALUE_NOT_SET' | translate) }}
+          </span>
+        </div>
       </div>
     </div>
 
     <div class="account-card">
-      <h2>{{ 'PROFILE.SECURITY_TITLE' | translate }}</h2>
-      <div class="placeholder">
-        {{ 'PROFILE.SECURITY_PLACEHOLDER' | translate }}
+      <h2>{{ 'PROFILE.SECTION_ADDRESS' | translate }}</h2>
+      <div class="card-actions" *ngIf="!isEditingAddressBook">
+        <button type="button" class="btn-ghost" (click)="isEditingAddressBook = true">
+          {{ 'PROFILE.ACTION_EDIT' | translate }}
+        </button>
+      </div>
+      <div class="card-actions" *ngIf="isEditingAddressBook">
+        <button type="button" class="btn-ghost" (click)="startAddAddress()">
+          {{ 'PROFILE.ACTION_ADD_ADDRESS' | translate }}
+        </button>
+        <button type="button" class="btn-ghost" (click)="isEditingAddressBook = false; cancelAddressEdit()">
+          {{ 'PROFILE.ACTION_CANCEL' | translate }}
+        </button>
+      </div>
+      <div class="address-list" *ngIf="profile?.addresses?.length">
+        <div class="address-item" *ngFor="let address of profile?.addresses">
+          <div *ngIf="editingAddressId !== address.id">
+            <strong>{{ address.label || ('PROFILE.ADDRESS_DEFAULT_LABEL' | translate) }}</strong>
+            <div>{{ address.line1 }}</div>
+            <div>{{ address.city }} {{ address.postalCode }}</div>
+            <div>{{ address.country }}</div>
+          </div>
+          <div *ngIf="editingAddressId === address.id" class="address-editor">
+            <input type="text" [(ngModel)]="addressForm.label" placeholder="{{ 'PROFILE.ADDRESS_LABEL' | translate }}">
+            <input type="text" [(ngModel)]="addressForm.fullName" placeholder="{{ 'PROFILE.ADDRESS_FULL_NAME' | translate }}">
+            <input type="text" [(ngModel)]="addressForm.phone" placeholder="{{ 'PROFILE.ADDRESS_PHONE' | translate }}">
+            <input type="text" [(ngModel)]="addressForm.line1" placeholder="{{ 'PROFILE.ADDRESS_LINE1' | translate }}">
+            <input type="text" [(ngModel)]="addressForm.line2" placeholder="{{ 'PROFILE.ADDRESS_LINE2' | translate }}">
+            <div class="address-editor-row">
+              <input type="text" [(ngModel)]="addressForm.city" placeholder="{{ 'PROFILE.ADDRESS_CITY' | translate }}">
+              <input type="text" [(ngModel)]="addressForm.postalCode" placeholder="{{ 'PROFILE.ADDRESS_POSTAL' | translate }}">
+            </div>
+            <input type="text" [(ngModel)]="addressForm.country" placeholder="{{ 'PROFILE.ADDRESS_COUNTRY' | translate }}">
+            <div class="address-flags">
+              <label class="checkbox">
+                <input type="checkbox" [(ngModel)]="addressForm.defaultShipping">
+                {{ 'PROFILE.ADDRESS_DEFAULT_SHIPPING' | translate }}
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" [(ngModel)]="addressForm.defaultBilling">
+                {{ 'PROFILE.ADDRESS_DEFAULT_BILLING' | translate }}
+              </label>
+            </div>
+          </div>
+          <div class="address-actions">
+            <button type="button" class="btn-ghost" (click)="startEditAddress(address)">
+              {{ 'PROFILE.ACTION_EDIT' | translate }}
+            </button>
+            <button type="button" class="btn-ghost" (click)="removeAddress(address.id)">
+              {{ 'PROFILE.ACTION_REMOVE' | translate }}
+            </button>
+          </div>
+          <div class="form-actions" *ngIf="editingAddressId === address.id">
+            <button type="button" class="btn-ghost" (click)="cancelAddressEdit()">
+              {{ 'PROFILE.ACTION_CANCEL' | translate }}
+            </button>
+            <button type="button" class="btn-secondary" [disabled]="isSavingAddress" (click)="saveAddress()">
+              {{ 'PROFILE.ACTION_SAVE' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <p class="empty-text" *ngIf="!profile?.addresses?.length">
+        {{ 'PROFILE.ADDRESS_EMPTY' | translate }}
+      </p>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">{{ 'PROFILE.LABEL_SHIPPING' | translate }}</span>
+          <span class="value">{{ shippingAddress }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">{{ 'PROFILE.LABEL_BILLING' | translate }}</span>
+          <span class="value">
+            {{ billingAddress || ('PROFILE.VALUE_SAME_AS_SHIPPING' | translate) }}
+          </span>
+        </div>
+      </div>
+      <div class="address-item address-item--new" *ngIf="isAddingAddress">
+        <div class="address-editor">
+          <input type="text" [(ngModel)]="addressForm.label" placeholder="{{ 'PROFILE.ADDRESS_LABEL' | translate }}">
+          <input type="text" [(ngModel)]="addressForm.fullName" placeholder="{{ 'PROFILE.ADDRESS_FULL_NAME' | translate }}">
+          <input type="text" [(ngModel)]="addressForm.phone" placeholder="{{ 'PROFILE.ADDRESS_PHONE' | translate }}">
+          <input type="text" [(ngModel)]="addressForm.line1" placeholder="{{ 'PROFILE.ADDRESS_LINE1' | translate }}">
+          <input type="text" [(ngModel)]="addressForm.line2" placeholder="{{ 'PROFILE.ADDRESS_LINE2' | translate }}">
+          <div class="address-editor-row">
+            <input type="text" [(ngModel)]="addressForm.city" placeholder="{{ 'PROFILE.ADDRESS_CITY' | translate }}">
+            <input type="text" [(ngModel)]="addressForm.postalCode" placeholder="{{ 'PROFILE.ADDRESS_POSTAL' | translate }}">
+          </div>
+          <input type="text" [(ngModel)]="addressForm.country" placeholder="{{ 'PROFILE.ADDRESS_COUNTRY' | translate }}">
+          <div class="address-flags">
+            <label class="checkbox">
+              <input type="checkbox" [(ngModel)]="addressForm.defaultShipping">
+              {{ 'PROFILE.ADDRESS_DEFAULT_SHIPPING' | translate }}
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" [(ngModel)]="addressForm.defaultBilling">
+              {{ 'PROFILE.ADDRESS_DEFAULT_BILLING' | translate }}
+            </label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="cancelAddressEdit()">
+            {{ 'PROFILE.ACTION_CANCEL' | translate }}
+          </button>
+          <button type="button" class="btn-secondary" [disabled]="isSavingAddress" (click)="saveAddress()">
+            {{ 'PROFILE.ACTION_SAVE' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="account-card">
+      <h2>{{ 'PROFILE.SECTION_PREFERENCES' | translate }}</h2>
+      <div class="card-actions" *ngIf="!isEditingPreferences">
+        <button type="button" class="btn-ghost" (click)="startEditingPreferences()">
+          {{ 'PROFILE.ACTION_EDIT' | translate }}
+        </button>
+      </div>
+      <div class="inline-editor" *ngIf="isEditingPreferences">
+        <div class="inline-row">
+          <span class="label">{{ 'PROFILE.LABEL_LANGUAGE' | translate }}</span>
+          <input type="text" [(ngModel)]="preferencesForm.language">
+        </div>
+        <div class="inline-row">
+          <span class="label">{{ 'PROFILE.LABEL_CURRENCY' | translate }}</span>
+          <input type="text" [(ngModel)]="preferencesForm.currency">
+        </div>
+        <div class="inline-row">
+          <span class="label">{{ 'PROFILE.LABEL_NOTIFICATIONS' | translate }}</span>
+          <label class="checkbox">
+            <input type="checkbox" [(ngModel)]="preferencesForm.notificationsEnabled">
+            {{ preferencesForm.notificationsEnabled ? ('PROFILE.VALUE_ENABLED' | translate) : ('PROFILE.VALUE_DISABLED' | translate) }}
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="cancelEditingPreferences()">
+            {{ 'PROFILE.ACTION_CANCEL' | translate }}
+          </button>
+          <button type="button" class="btn-secondary" (click)="savePreferences()">
+            {{ 'PROFILE.ACTION_SAVE' | translate }}
+          </button>
+        </div>
+      </div>
+      <div class="info-grid" *ngIf="!isEditingPreferences">
+        <div class="info-item">
+          <span class="label">{{ 'PROFILE.LABEL_LANGUAGE' | translate }}</span>
+          <span class="value">{{ language }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">{{ 'PROFILE.LABEL_CURRENCY' | translate }}</span>
+          <span class="value">{{ currency }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">{{ 'PROFILE.LABEL_NOTIFICATIONS' | translate }}</span>
+          <span class="value">
+            {{ notificationsEnabled ? ('PROFILE.VALUE_ENABLED' | translate) : ('PROFILE.VALUE_DISABLED' | translate) }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="account-card">
+      <h2>{{ 'PROFILE.SECTION_SECURITY' | translate }}</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">{{ 'PROFILE.LABEL_PASSWORD' | translate }}</span>
+          <span class="value">{{ passwordUpdated }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">{{ 'PROFILE.LABEL_2FA' | translate }}</span>
+          <span class="value">
+            {{ twoFactorEnabled ? ('PROFILE.VALUE_ENABLED' | translate) : ('PROFILE.VALUE_NOT_ENABLED' | translate) }}
+          </span>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button type="button" class="btn-ghost">
+          {{ 'PROFILE.ACTION_CHANGE_PASSWORD' | translate }}
+        </button>
+        <button type="button" class="btn-secondary">
+          {{ 'PROFILE.ACTION_ENABLE_2FA' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="account-card">
+      <h2>{{ 'PROFILE.SECTION_ACTIVITY' | translate }}</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">{{ 'PROFILE.LABEL_MEMBER_SINCE' | translate }}</span>
+          <span class="value">{{ memberSince }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">{{ 'PROFILE.LABEL_LAST_LOGIN' | translate }}</span>
+          <span class="value">{{ lastLogin }}</span>
+        </div>
       </div>
     </div>
   </div>

@@ -34,10 +34,12 @@
             "index": "src/index.html",
             "tsConfig": "tsconfig.json",
             "polyfills": [
-              "zone.js"
+              "zone.js",
+              "src/polyfills.ts"
             ],
             "assets": ["src/assets"],
             "styles": [
+              "node_modules/leaflet/dist/leaflet.css",
               "src/custom-theme.scss",
               "src/styles.css"
             ],
@@ -61,7 +63,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "buildTarget": "localys-frontend:build",
-            "port": 4300
+            "port": 4200
           }
         }
       }

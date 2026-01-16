@@ -1,0 +1,74 @@
+:root {
+  --localys-blue: #1565c0;
+  --localys-blue-dark: #0d47a1;
+  --localys-light: #f5f8ff;
+}
+
+body {
+  display: block;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(180deg, var(--localys-light) 0%, #ffffff 55%);
+  width: 320px;
+  height: 500px;
+}
+
+#kc-header {
+  background: var(--localys-blue);
+}
+
+
+#kc-header-wrapper {
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background-image: url("../img/logo.png");
+  background-repeat: no-repeat;
+  background-size: 28px 28px;
+  background-position: left center;
+  padding-left: 40px;
+}
+
+#kc-page-title {
+  color: var(--localys-blue-dark);
+}
+
+.pf-c-button.pf-m-primary {
+  background-color: var(--localys-blue);
+  border-color: var(--localys-blue);
+}
+
+.pf-c-button.pf-m-primary:hover,
+.pf-c-button.pf-m-primary:focus {
+  background-color: var(--localys-blue-dark);
+  border-color: var(--localys-blue-dark);
+}
+
+#kc-form-login {
+  border-top: 3px solid var(--localys-blue);
+}
+
+@media (min-width: 768px) {
+  #kc-content {
+    padding-top: 24px;
+  }
+}
+
+#kc-content::before {
+  content: "Welcome to Localys";
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--localys-blue-dark);
+  margin-bottom: 6px;
+}
+
+#kc-content::after {
+  content: "Sign in or create your account to manage your listings and purchases.";
+  display: block;
+  font-size: 0.95rem;
+  color: #5f6b7a;
+  margin-bottom: 16px;
+}

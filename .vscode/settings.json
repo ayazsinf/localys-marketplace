@@ -3,5 +3,6 @@
     "files.exclude": {
         "**/.vscode": false
     },
-    "debug.showInStatusBar": true
+    "debug.showInStatusBar": true,
+    "java.debug.settings.onBuildFailureProceed": true
 }

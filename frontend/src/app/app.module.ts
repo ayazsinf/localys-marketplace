@@ -5,56 +5,22 @@ import { ContactComponent } from './pages/contact/contact.component';
 import { CategoriesComponent } from './pages/categories/categories.component';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { LoginComponent } from './login/login.component';
 import { AboutComponent } from './pages/about/about.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ProductCardComponent } from './components/product-card/product-card.component';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { RegisterComponent } from './register-user/register';
 import { ProductQuickViewComponent } from './components/product-quick-view/product-quick-view.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { ListingsComponent } from './pages/listings/listings.component';
 import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { MessagesComponent } from './pages/messages/messages.component';
+import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
     NavbarComponent,
-    LoginComponent,
-    RegisterComponent,
-    SidebarComponent,
-    ProductCardComponent,
-    HomeComponent,
-    AboutComponent,
-    ContactComponent,
-    CategoriesComponent,
-    ProductQuickViewComponent,
-    ProfileComponent,
-    ListingsComponent,
-    FavoritesComponent,
-    MessagesComponent
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    NgOptimizedImage,
-    TranslateModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    ReactiveFormsModule
-  ],
-  exports: [
-    NavbarComponent,
-    LoginComponent,
-    RegisterComponent,
     SidebarComponent,
     ProductCardComponent,
     HomeComponent,
@@ -66,6 +32,31 @@ import { TranslateModule } from '@ngx-translate/core';
     ListingsComponent,
     FavoritesComponent,
     MessagesComponent,
+    ProductDetailComponent
+  ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    NgOptimizedImage,
+    TranslateModule,
+    MatDialogModule,
+    ReactiveFormsModule
+  ],
+  exports: [
+    NavbarComponent,
+    SidebarComponent,
+    ProductCardComponent,
+    HomeComponent,
+    AboutComponent,
+    ContactComponent,
+    CategoriesComponent,
+    ProductQuickViewComponent,
+    ProfileComponent,
+    ListingsComponent,
+    FavoritesComponent,
+    MessagesComponent,
+    ProductDetailComponent,
     TranslateModule
   ]
 })

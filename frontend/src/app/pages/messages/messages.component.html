@@ -4,9 +4,72 @@
     <p>{{ 'MESSAGES.SUBTITLE' | translate }}</p>
   </div>
 
-  <div class="account-card">
-    <div class="placeholder">
-      {{ 'MESSAGES.PLACEHOLDER' | translate }}
-    </div>
+  <div class="messages-shell">
+    <aside class="messages-list">
+      <div class="list-header">
+        <h2>{{ 'MESSAGES.INBOX_TITLE' | translate }}</h2>
+        <input
+          type="search"
+          [(ngModel)]="searchQuery"
+          [placeholder]="'MESSAGES.SEARCH_PLACEHOLDER' | translate" />
+      </div>
+
+      <div class="threads">
+        <button
+          type="button"
+          class="thread"
+          *ngFor="let conversation of filteredConversations; trackBy: trackByConversation"
+          [class.is-active]="conversation.id === selectedConversationId"
+          (click)="selectConversation(conversation)">
+          <div class="avatar">{{ conversation.name.charAt(0) }}</div>
+          <div class="thread-body">
+            <div class="thread-top">
+              <h3>{{ conversation.name }}</h3>
+              <span class="time">{{ conversation.lastTime }}</span>
+            </div>
+            <p class="preview">{{ conversation.lastMessage }}</p>
+          </div>
+          <span class="badge" *ngIf="conversation.unreadCount">{{ conversation.unreadCount }}</span>
+        </button>
+      </div>
+    </aside>
+
+    <section class="messages-panel">
+      <ng-container *ngIf="selectedConversation; else emptyState">
+        <header class="panel-header">
+          <div>
+            <h2>{{ selectedConversation?.name }}</h2>
+          </div>
+        </header>
+
+        <div class="messages-scroll">
+          <div
+            class="message"
+            *ngFor="let message of selectedConversation?.messages; trackBy: trackByMessage"
+              [class.me]="message.fromMe">
+            <div class="bubble">
+              <p>{{ message.text }}</p>
+              <span class="timestamp">{{ message.timestamp }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer">
+          <input
+            type="text"
+            [(ngModel)]="draftMessage"
+            [placeholder]="'MESSAGES.NEW_MESSAGE_PLACEHOLDER' | translate" />
+          <button class="primary-btn" type="button" (click)="sendMessage()">
+            {{ 'MESSAGES.SEND' | translate }}
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #emptyState>
+        <div class="empty-state">
+          {{ 'MESSAGES.EMPTY_THREAD' | translate }}
+        </div>
+      </ng-template>
+    </section>
   </div>
 </section>

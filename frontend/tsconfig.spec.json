@@ -2,8 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
-    "types": ["jasmine"],     // 👈 describe/it/beforeEach buradan geliyor
-    "module": "commonjs"      // çoğu Angular projede spec için böyle
+    "types": ["jasmine"],     
+    "module": "commonjs"      
   },
   "include": [
     "src/**/*.spec.ts",

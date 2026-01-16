@@ -22,6 +22,31 @@
   box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
 }
 
+.favorites-toolbar {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.status.error {
+  color: #b42318;
+}
+
+.favorites-grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
 .placeholder {
   background: #f3f4f6;
   border-radius: 10px;

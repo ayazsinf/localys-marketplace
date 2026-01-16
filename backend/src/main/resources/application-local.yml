@@ -27,6 +27,15 @@ spring:
         jwt:
           issuer-uri: http://localhost:8081/realms/localys-realm
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 30MB
+
+app:
+  media:
+    upload-dir: uploads
+
 server:
   port: 8085
 logging:

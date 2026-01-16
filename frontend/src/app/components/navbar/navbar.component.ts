@@ -1,7 +1,4 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { MatDialog } from "@angular/material/dialog";
-import { LoginComponent } from "../../login/login.component";
-import { RegisterComponent } from "../../register-user/register";
 import { AuthService } from "../../service/auth.service";
 import { CartService } from "../../service/cart.service";
 import { SearchService } from "../../service/search.service";
@@ -25,7 +22,6 @@ export class NavbarComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private cartService: CartService,
-    private dialog: MatDialog,
     private searchService: SearchService,
     private translateService: TranslateService
   ) {}
@@ -37,18 +33,12 @@ export class NavbarComponent implements OnInit {
     this.translateService.use(initialLang);
   }
 
-  openLoginDialog() {
-    this.dialog.open(LoginComponent, {
-      width: '400px',
-      disableClose: true
-    });
+  login() {
+    this.authService.login().subscribe();
   }
 
-  openRegisterDialog() {
-    this.dialog.open(RegisterComponent, {
-      width: '400px',
-      disableClose: true
-    });
+  register() {
+    this.authService.register().subscribe();
   }
 
   toggleMenu() {

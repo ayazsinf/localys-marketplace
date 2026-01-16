@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>{{ product.name }}</h2>
 
 <mat-dialog-content class="quick-view-content">
-    <img [alt]="product.name" [src]="product.imageUrls[1]">
+    <img [alt]="product.name" [src]="getImageUrl(product.imageUrls[1] || product.imageUrls[0])">
 
   <div class="quick-view-info">
     <p class="price">{{ product.price | currency:'USD' }}</p>

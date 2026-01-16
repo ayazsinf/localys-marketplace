@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import {LoginComponent} from "./login/login.component";
 import {AboutComponent} from "./pages/about/about.component";
 import {ContactComponent} from "./pages/contact/contact.component";
 import {CategoriesComponent} from "./pages/categories/categories.component";
@@ -9,6 +8,7 @@ import {ListingsComponent} from "./pages/listings/listings.component";
 import {FavoritesComponent} from "./pages/favorites/favorites.component";
 import {MessagesComponent} from "./pages/messages/messages.component";
 import {authGuard} from "./guard/AuthGuard";
+import {ProductDetailComponent} from "./pages/product-detail/product-detail.component";
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -19,5 +19,6 @@ export const routes: Routes = [
   { path: 'listings', component: ListingsComponent, canActivate: [authGuard] },
   { path: 'favorites', component: FavoritesComponent, canActivate: [authGuard] },
   { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },
+  { path: 'products/:id', component: ProductDetailComponent },
   { path: '**', redirectTo: '' }
 ];

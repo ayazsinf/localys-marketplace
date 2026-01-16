@@ -13,6 +13,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<Product> findByIdAndVendorId(Long id, Long vendorId);
 
+    boolean existsBySku(String sku);
+
     // Ürünleri ada göre artan sırayla listele
     List<Product> findAllByOrderByNameAsc();
 }
