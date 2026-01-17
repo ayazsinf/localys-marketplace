@@ -7,6 +7,8 @@ export interface Product {
   imageUrls: string[];
   categoryName: string;
   inStock: boolean;
+  stockQty?: number;
+  vendorUserId?: number | null;
 
   // UI-only opsiyonel:
   rating?: number;

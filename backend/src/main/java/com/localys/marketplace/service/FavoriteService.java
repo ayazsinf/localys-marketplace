@@ -48,6 +48,11 @@ public class FavoriteService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+        if (product.getVendor() != null
+                && product.getVendor().getUser() != null
+                && userId.equals(product.getVendor().getUser().getId())) {
+            throw new IllegalArgumentException("Cannot favorite own product");
+        }
         Favorite favorite = new Favorite();
         favorite.setUser(user);
         favorite.setProduct(product);

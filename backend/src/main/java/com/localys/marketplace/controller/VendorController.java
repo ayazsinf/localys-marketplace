@@ -50,7 +50,7 @@ public class VendorController {
     @PutMapping("/products/{id}")
     public ResponseEntity<Product> updateProduct(
             @AuthenticationPrincipal CustomUserDetails principal,
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestBody Product product) {
         Vendor vendor = getVendorOrThrow(principal);
         Product updatedProduct = productService.updateProductForVendor(id, product, vendor);
@@ -61,7 +61,7 @@ public class VendorController {
     @DeleteMapping("/products/{id}")
     public ResponseEntity<?> deleteProduct(
             @AuthenticationPrincipal CustomUserDetails principal,
-            @PathVariable Long id) {
+            @PathVariable("id") Long id) {
         Vendor vendor = getVendorOrThrow(principal);
         productService.deleteProductForVendor(id, vendor);
         return ResponseEntity.ok().build();

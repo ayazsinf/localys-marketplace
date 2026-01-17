@@ -11,6 +11,7 @@ public record ProductListDto(
         String currency,
         boolean inStock,
         String categoryName,
+        Long vendorUserId,
         List<String> imageUrls
 ) {
 }

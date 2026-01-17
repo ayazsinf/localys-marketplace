@@ -17,6 +17,8 @@ import { FavoritesComponent } from './pages/favorites/favorites.component';
 import { MessagesComponent } from './pages/messages/messages.component';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { CartComponent } from './pages/cart/cart.component';
+import { CheckoutComponent } from './pages/checkout/checkout.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,9 @@ import { TranslateModule } from '@ngx-translate/core';
     ListingsComponent,
     FavoritesComponent,
     MessagesComponent,
-    ProductDetailComponent
+    ProductDetailComponent,
+    CartComponent,
+    CheckoutComponent
   ],
   imports: [
     CommonModule,
@@ -57,6 +61,8 @@ import { TranslateModule } from '@ngx-translate/core';
     FavoritesComponent,
     MessagesComponent,
     ProductDetailComponent,
+    CartComponent,
+    CheckoutComponent,
     TranslateModule
   ]
 })

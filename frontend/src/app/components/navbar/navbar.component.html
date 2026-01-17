@@ -30,10 +30,26 @@
                     </button>
                 </div>
 
-                <button class="icon-btn cart-btn" type="button" (click)="openCart()">
-                    <span class="material-icons">shopping_cart</span>
-                    <span class="cart-count" *ngIf="cartCount$ | async as count">{{ count }}</span>
-                </button>
+                <div class="cart-notice-wrap">
+                    <button class="icon-btn cart-btn" type="button" (click)="openCart()">
+                        <span class="material-icons">shopping_cart</span>
+                        <span class="cart-count" *ngIf="cartCount$ | async as count">{{ count }}</span>
+                    </button>
+                    <div class="cart-notice" *ngIf="showCartNotice && cartNotice" [class.error]="cartNotice.type === 'error'">
+                        <div class="cart-notice-title">{{ cartNotice.message }}</div>
+                        <div class="cart-notice-meta" *ngIf="cartNotice.productName">
+                            <span class="cart-notice-name">{{ cartNotice.productName }}</span>
+                            <span class="cart-notice-qty" *ngIf="cartNotice.quantity">x{{ cartNotice.quantity }}</span>
+                        </div>
+                        <button
+                                type="button"
+                                class="cart-notice-link"
+                                *ngIf="cartNotice.type === 'success'"
+                                (click)="openCart()">
+                            Go to cart
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="lang-menu">

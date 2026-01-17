@@ -1,0 +1,72 @@
+<section class="cart-page">
+  <div class="cart-header">
+    <h1>Cart</h1>
+    <p>Review your items and choose what to purchase.</p>
+  </div>
+
+  <div class="cart-status" *ngIf="isLoading">Loading cart...</div>
+  <div class="cart-status error" *ngIf="!isLoading && errorMessage">{{ errorMessage }}</div>
+
+  <div class="cart-empty" *ngIf="!isLoading && items.length === 0">
+    Your cart is empty.
+  </div>
+
+  <div class="cart-content" *ngIf="!isLoading && items.length > 0">
+    <div class="cart-table">
+      <div class="cart-table-header">
+        <label class="cart-checkbox">
+          <input type="checkbox" [checked]="isAllSelected()" (change)="toggleAll()" />
+          <span>Select all</span>
+        </label>
+      </div>
+
+      <div class="cart-item" *ngFor="let item of items">
+        <label class="cart-checkbox">
+          <input type="checkbox" [checked]="isSelected(item.product.id)" (change)="toggleSelection(item.product.id)" />
+        </label>
+
+        <div class="cart-thumb">
+          <img [src]="getImageUrl(item.product.imageUrls[0])" alt="{{ item.product.name }}" />
+        </div>
+
+        <div class="cart-info">
+          <div class="cart-name">{{ item.product.name }}</div>
+          <div class="cart-price">{{ item.product.price | number:'1.2-2' }} {{ item.product.currency }}</div>
+        </div>
+
+        <div class="cart-qty" *ngIf="(item.product.stockQty ?? 0) > 1; else singleQty">
+          <button
+            type="button"
+            [disabled]="item.quantity <= 1"
+            (click)="changeQuantity(item, -1)">
+            -
+          </button>
+          <span>{{ item.quantity }}</span>
+          <button
+            type="button"
+            [disabled]="item.quantity >= (item.product.stockQty ?? item.quantity)"
+            (click)="changeQuantity(item, 1)">
+            +
+          </button>
+        </div>
+        <ng-template #singleQty>
+          <div class="cart-qty-label">Qty: {{ item.quantity }}</div>
+        </ng-template>
+
+        <div class="cart-total">
+          {{ getLineTotal(item) | number:'1.2-2' }} {{ item.product.currency }}
+        </div>
+
+        <button type="button" class="cart-remove" (click)="removeItem(item)">Remove</button>
+      </div>
+    </div>
+
+    <div class="cart-summary">
+      <div class="summary-row">
+        <span>Selected total</span>
+        <strong>{{ getSelectedTotal() | number:'1.2-2' }} {{ items[0]?.product.currency }}</strong>
+      </div>
+      <button type="button" class="checkout-btn" (click)="checkout()">Proceed to checkout</button>
+    </div>
+  </div>
+</section>

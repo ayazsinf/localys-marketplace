@@ -6,6 +6,7 @@ import {CartService} from "../../service/cart.service";
 import {environment} from "../../../environments/environment";
 import {FavoritesService} from "../../service/favorites.service";
 import {Router} from "@angular/router";
+import {CurrentUserService} from "../../service/current-user.service";
 
 @Component({
   selector: 'app-product-card',
@@ -23,7 +24,8 @@ export class ProductCardComponent implements OnInit {
     constructor(private dialog: MatDialog,
                 private cartService: CartService,
                 private favoritesService: FavoritesService,
-                private router: Router) {
+                private router: Router,
+                private currentUserService: CurrentUserService) {
     }
   ngOnInit() {
     this.product.rating=Math.floor(Math.random() * 5) + 1;
@@ -58,6 +60,9 @@ export class ProductCardComponent implements OnInit {
 
   addToCart(event?: Event) {
     event?.stopPropagation();
+    if (this.isOwner()) {
+      return;
+    }
     this.cartService.add(this.product);
   }
 
@@ -72,6 +77,9 @@ export class ProductCardComponent implements OnInit {
 
   toggleFavorite(event: Event) {
     event.stopPropagation();
+    if (this.isOwner()) {
+      return;
+    }
     this.favoritesService.toggleFavorite(this.product.id).subscribe({
       error: () => {}
     });
@@ -94,6 +102,11 @@ export class ProductCardComponent implements OnInit {
     }
     const normalized = url.startsWith('/') ? url : `/${url}`;
     return `${environment.apiUrl}${normalized}`;
+  }
+
+  isOwner(): boolean {
+    const currentUserId = this.currentUserService.userId;
+    return !!currentUserId && this.product.vendorUserId === currentUserId;
   }
 
 }

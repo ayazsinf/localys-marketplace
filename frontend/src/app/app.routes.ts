@@ -9,6 +9,8 @@ import {FavoritesComponent} from "./pages/favorites/favorites.component";
 import {MessagesComponent} from "./pages/messages/messages.component";
 import {authGuard} from "./guard/AuthGuard";
 import {ProductDetailComponent} from "./pages/product-detail/product-detail.component";
+import {CartComponent} from "./pages/cart/cart.component";
+import {CheckoutComponent} from "./pages/checkout/checkout.component";
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -19,6 +21,8 @@ export const routes: Routes = [
   { path: 'listings', component: ListingsComponent, canActivate: [authGuard] },
   { path: 'favorites', component: FavoritesComponent, canActivate: [authGuard] },
   { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },
+  { path: 'cart', component: CartComponent, canActivate: [authGuard] },
+  { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard] },
   { path: 'products/:id', component: ProductDetailComponent },
   { path: '**', redirectTo: '' }
 ];

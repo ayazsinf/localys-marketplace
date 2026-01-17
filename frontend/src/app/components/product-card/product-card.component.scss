@@ -89,6 +89,11 @@
     &.is-active {
       background: #fee2e2;
     }
+
+    &.is-disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 }
 

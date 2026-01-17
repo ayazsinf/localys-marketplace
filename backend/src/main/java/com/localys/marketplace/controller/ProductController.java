@@ -41,14 +41,20 @@ public class ProductController {
                 .map(ProductImage::getUrl)
                 .toList();
 
+        Long vendorUserId = null;
+        if (p.getVendor() != null && p.getVendor().getUser() != null) {
+            vendorUserId = p.getVendor().getUser().getId();
+        }
+
         return new ProductListDto(
                 p.getId(),
                 p.getName(),
                 p.getDescription(),
                 p.getPrice(),
-                p.getCurrency(),                               // String currency
-                p.getStockQty() > 0,                                 // boolean inStock (veya getInStock())
-                p.getCategory() != null ? p.getCategory().getName() : null,  // String categoryName
+                p.getCurrency(),
+                p.getStockQty() > 0,
+                p.getCategory() != null ? p.getCategory().getName() : null,
+                vendorUserId,
                 imageUrls
         );
     }

@@ -102,7 +102,7 @@ public class UserController {
     @Transactional
     public ResponseEntity<AddressResponse> updateAddress(
             @AuthenticationPrincipal CustomUserDetails principal,
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestBody AddressRequest request
     ) {
         if (principal == null) {
@@ -123,7 +123,7 @@ public class UserController {
     @Transactional
     public ResponseEntity<Void> deleteAddress(
             @AuthenticationPrincipal CustomUserDetails principal,
-            @PathVariable Long id
+            @PathVariable("id") Long id
     ) {
         if (principal == null) {
             return ResponseEntity.status(401).build();

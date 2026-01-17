@@ -1,0 +1,29 @@
+<section class="checkout-page">
+  <div class="checkout-header">
+    <h1>Checkout</h1>
+    <p>Confirm your items before purchase.</p>
+  </div>
+
+  <div class="checkout-card" *ngIf="items.length === 0">
+    No items selected.
+  </div>
+
+  <div class="checkout-card" *ngIf="items.length > 0">
+    <div class="checkout-item" *ngFor="let item of items">
+      <div>
+        <div class="checkout-name">{{ item.product.name }}</div>
+        <div class="checkout-meta">Qty: {{ item.quantity }}</div>
+      </div>
+      <div class="checkout-price">
+        {{ item.product.price * item.quantity | number:'1.2-2' }} {{ item.product.currency }}
+      </div>
+    </div>
+
+    <div class="checkout-total">
+      <span>Total</span>
+      <strong>{{ getTotal() | number:'1.2-2' }} {{ items[0]?.product.currency }}</strong>
+    </div>
+
+    <button type="button" class="checkout-btn">Place order</button>
+  </div>
+</section>

@@ -62,6 +62,11 @@ public class FavoriteController {
                 .map(ProductImage::getUrl)
                 .toList();
 
+        Long vendorUserId = null;
+        if (product.getVendor() != null && product.getVendor().getUser() != null) {
+            vendorUserId = product.getVendor().getUser().getId();
+        }
+
         return new ProductListDto(
                 product.getId(),
                 product.getName(),
@@ -70,6 +75,7 @@ public class FavoriteController {
                 product.getCurrency(),
                 product.getStockQty() > 0,
                 product.getCategory() != null ? product.getCategory().getName() : null,
+                vendorUserId,
                 imageUrls
         );
     }

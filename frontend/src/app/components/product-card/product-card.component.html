@@ -5,6 +5,8 @@
       class="favorite-btn"
       type="button"
       [class.is-active]="isFavorite()"
+      [class.is-disabled]="isOwner()"
+      [disabled]="isOwner()"
       [attr.aria-label]="isFavorite() ? ('FAVORITES.SAVED' | translate) : ('FAVORITES.ADD' | translate)"
       (click)="toggleFavorite($event)">
       <span aria-hidden="true">{{ isFavorite() ? '♥' : '♡' }}</span>
@@ -34,8 +36,8 @@
         <button
         class="add-to-cart-btn"
         (click)="addToCart($event)"
-        [disabled]="!product.inStock">
-        {{ product.inStock ? ('PRODUCT.ADD_TO_CART' | translate) : ('PRODUCT.OUT_OF_STOCK' | translate) }}
+        [disabled]="!product.inStock || isOwner()">
+        {{ product.inStock ? (isOwner() ? 'Your listing' : ('PRODUCT.ADD_TO_CART' | translate)) : ('PRODUCT.OUT_OF_STOCK' | translate) }}
       </button>
     </div>
   </div>

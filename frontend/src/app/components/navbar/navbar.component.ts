@@ -1,8 +1,11 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from "../../service/auth.service";
-import { CartService } from "../../service/cart.service";
+import { CartNotice, CartService } from "../../service/cart.service";
 import { SearchService } from "../../service/search.service";
 import { TranslateService } from "@ngx-translate/core";
+import { Subscription } from "rxjs";
+import { Router } from "@angular/router";
+import { CurrentUserService } from "../../service/current-user.service";
 
 @Component({
   selector: 'app-navbar',
@@ -10,7 +13,7 @@ import { TranslateService } from "@ngx-translate/core";
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   isMenuOpen = false;
   isProfileMenuOpen = false;
   isLangMenuOpen = false;
@@ -18,12 +21,18 @@ export class NavbarComponent implements OnInit {
   cartCount$ = this.cartService.count$;
   supportedLangs = ['en', 'tr', 'fr'];
   currentLang = 'en';
+  cartNotice: CartNotice | null = null;
+  showCartNotice = false;
+  private noticeTimer?: number;
+  private subscriptions = new Subscription();
 
   constructor(
     public authService: AuthService,
     private cartService: CartService,
     private searchService: SearchService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private router: Router,
+    private currentUserService: CurrentUserService
   ) {}
 
   ngOnInit() {
@@ -31,6 +40,33 @@ export class NavbarComponent implements OnInit {
     const initialLang = storedLang || this.translateService.currentLang || this.translateService.getDefaultLang() || 'en';
     this.currentLang = initialLang;
     this.translateService.use(initialLang);
+    if (this.authService.isAuthenticated) {
+      this.cartService.refresh().subscribe();
+      this.currentUserService.load().subscribe();
+    }
+    const noticeSub = this.cartService.notice$.subscribe(notice => {
+      if (!notice) {
+        return;
+      }
+      this.cartNotice = notice;
+      this.showCartNotice = true;
+      if (this.noticeTimer) {
+        window.clearTimeout(this.noticeTimer);
+      }
+      this.noticeTimer = window.setTimeout(() => {
+        this.showCartNotice = false;
+        this.cartNotice = null;
+        this.cartService.clearNotice();
+      }, 4000);
+    });
+    this.subscriptions.add(noticeSub);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+    if (this.noticeTimer) {
+      window.clearTimeout(this.noticeTimer);
+    }
   }
 
   login() {
@@ -74,10 +110,11 @@ export class NavbarComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.closeProfileMenu();
+    this.currentUserService.clear();
   }
 
   openCart(): void {
-    // Placeholder for cart panel
+    this.router.navigate(['/cart']);
   }
 
   onSearch(): void {
