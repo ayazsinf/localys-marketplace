@@ -49,7 +49,18 @@
         <button class="primary-btn" type="button" (click)="messageSeller()">
           {{ 'PRODUCT.MESSAGE_SELLER' | translate }}
         </button>
-        <button class="ghost-btn" type="button">
+        <button
+          class="ghost-btn"
+          type="button"
+          (click)="addToCart()"
+          [disabled]="isOwner() || !product?.active">
+          {{ 'PRODUCT.ADD_TO_CART' | translate }}
+        </button>
+        <button
+          class="ghost-btn"
+          type="button"
+          (click)="buyNow()"
+          [disabled]="isOwner() || !product?.active">
           {{ 'PRODUCT.BUY_NOW' | translate }}
         </button>
       </div>

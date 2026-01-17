@@ -22,7 +22,7 @@ export const routes: Routes = [
   { path: 'favorites', component: FavoritesComponent, canActivate: [authGuard] },
   { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },
   { path: 'cart', component: CartComponent, canActivate: [authGuard] },
-  { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard] },
+  { path: 'checkout', component: CheckoutComponent },
   { path: 'products/:id', component: ProductDetailComponent },
   { path: '**', redirectTo: '' }
 ];

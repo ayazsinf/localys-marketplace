@@ -21,37 +21,228 @@
   padding: 20px;
 }
 
-.checkout-item {
+.checkout-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+}
+
+.checkout-main {
   display: flex;
-  justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid #e5e7eb;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.checkout-item:last-child {
-  border-bottom: none;
+.checkout-summary {
+  position: sticky;
+  top: 90px;
+  height: fit-content;
 }
 
-.checkout-name {
-  font-weight: 600;
+.auth-card h2 {
+  margin-bottom: 6px;
+}
+
+.auth-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.auth-actions .primary {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.auth-actions .ghost {
+  background: #f3f4f6;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
   color: #111827;
 }
 
-.checkout-meta {
+.address-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.address-card {
+  text-align: left;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.address-card.active {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
+}
+
+.address-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.address-line {
+  font-size: 0.9rem;
   color: #6b7280;
+}
+
+.add-address-btn {
+  margin-top: 10px;
+}
+
+.new-address {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.field label {
+  display: block;
+  font-size: 0.85rem;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.field input {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.location-results {
+  margin-top: 8px;
+  display: grid;
+  gap: 6px;
+}
+
+.location-result {
+  text-align: left;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
   font-size: 0.9rem;
 }
 
-.checkout-price {
+.location-result:hover {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+}
+
+.location-hint {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.option-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.option input {
+  margin-right: 8px;
+}
+
+.payment-card {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+
+.payment-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.payment-note {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.checkout-status {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: #1d4ed8;
+}
+
+.checkout-error {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #b91c1c;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-name {
   font-weight: 600;
   color: #111827;
 }
 
-.checkout-total {
+.summary-meta {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.summary-row {
   display: flex;
   justify-content: space-between;
-  padding-top: 16px;
+  padding-top: 12px;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
   font-size: 1.1rem;
+  padding-top: 16px;
 }
 
 .checkout-btn {
@@ -66,6 +257,25 @@
   cursor: pointer;
 }
 
-.checkout-btn:hover {
+.checkout-btn:disabled {
+  background: #cbd5f5;
+  cursor: not-allowed;
+}
+
+.checkout-btn:hover:not(:disabled) {
   background: #1d4ed8;
+}
+
+@media (max-width: 960px) {
+  .checkout-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-summary {
+    position: static;
+  }
+
+  .field-row {
+    grid-template-columns: 1fr;
+  }
 }

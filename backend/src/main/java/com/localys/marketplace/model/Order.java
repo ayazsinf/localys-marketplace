@@ -21,7 +21,7 @@ public class Order extends AuditableEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private OrderStatus status = OrderStatus.CREATED;
+    private OrderStatus status = OrderStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipping_address_id")
@@ -33,6 +33,15 @@ public class Order extends AuditableEntity {
 
     @Column(name = "total_amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount = BigDecimal.ZERO;
+
+    @Column(name = "shipping_method", length = 50)
+    private String shippingMethod;
+
+    @Column(name = "shipping_price", precision = 12, scale = 2)
+    private BigDecimal shippingPrice = BigDecimal.ZERO;
+
+    @Column(name = "payment_method", length = 50)
+    private String paymentMethod;
 
     @Column(nullable = false, length = 3)
     private String currency = "EUR";

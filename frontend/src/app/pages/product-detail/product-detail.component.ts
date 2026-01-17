@@ -1,10 +1,13 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
+import { CartService } from '../../service/cart.service';
+import { CurrentUserService } from '../../service/current-user.service';
 import { MessagingService } from '../../service/messaging.service';
 import { ProductDetail, ProductService } from '../../service/product.service';
 import { environment } from '../../../environments/environment';
 import * as L from 'leaflet';
+import { Product } from '../../modules/product.model';
 
 @Component({
   selector: 'app-product-detail',
@@ -25,6 +28,8 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
     private productService: ProductService,
     private messagingService: MessagingService,
     private authService: AuthService,
+    private cartService: CartService,
+    private currentUserService: CurrentUserService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -74,6 +79,41 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
         this.router.navigate(['/messages'], { queryParams: { conversationId: conversation.id } });
       }
     });
+  }
+
+  addToCart(): void {
+    if (!this.product) {
+      return;
+    }
+    if (this.isOwner()) {
+      return;
+    }
+    this.cartService.addToCart(this.toCartProduct(this.product)).subscribe();
+  }
+
+  buyNow(): void {
+    if (!this.product) {
+      return;
+    }
+    if (this.isOwner()) {
+      return;
+    }
+    if (!this.authService.isAuthenticated) {
+      this.authService.login().subscribe();
+      return;
+    }
+    this.cartService.addToCart(this.toCartProduct(this.product)).subscribe({
+      next: () => {
+        this.router.navigate(['/checkout'], {
+          queryParams: { items: this.product?.id }
+        });
+      }
+    });
+  }
+
+  isOwner(): boolean {
+    const userId = this.currentUserService.userId;
+    return !!(userId && this.product?.vendorUserId && userId === this.product.vendorUserId);
   }
 
   private initMap(): void {
@@ -167,5 +207,20 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
     }
     const normalized = url.startsWith('/') ? url : `/${url}`;
     return `${environment.apiUrl}${normalized}`;
+  }
+
+  private toCartProduct(product: ProductDetail): Product {
+    return {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      currency: product.currency,
+      imageUrls: product.imageUrls ?? [],
+      categoryName: product.categoryName ?? '',
+      inStock: product.active,
+      stockQty: product.stockQty ?? undefined,
+      vendorUserId: product.vendorUserId ?? null
+    };
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Product } from '../modules/product.model';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, EMPTY, map, Observable, tap, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 
@@ -65,15 +66,19 @@ export class CartService {
   }
 
   add(product: Product, quantity: number = 1): void {
+    this.addToCart(product, quantity).subscribe();
+  }
+
+  addToCart(product: Product, quantity: number = 1): Observable<CartItem[]> {
     if (!this.authService.isAuthenticated) {
       this.authService.login().subscribe();
-      return;
+      return EMPTY;
     }
-    this.http.post<CartResponse>('/api/cart/items', {
+    return this.http.post<CartResponse>('/api/cart/items', {
       productId: product.id,
       quantity
-    }).subscribe({
-      next: cart => {
+    }).pipe(
+      tap(cart => {
         this.applyCart(cart);
         this.noticeSubject.next({
           type: 'success',
@@ -81,15 +86,17 @@ export class CartService {
           productName: product.name,
           quantity
         });
-      },
-      error: err => {
+      }),
+      map(() => this.itemsSubject.value),
+      catchError(err => {
         this.noticeSubject.next({
           type: 'error',
           message: this.readCartError(err, 'Could not add item.'),
           productName: product.name
         });
-      }
-    });
+        return throwError(() => err);
+      })
+    );
   }
 
   updateQuantity(productId: number, quantity: number): void {

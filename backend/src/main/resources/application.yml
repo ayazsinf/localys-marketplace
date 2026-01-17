@@ -22,3 +22,11 @@ spring:
 logging:
   level:
     sql: trace
+
+app:
+  payment:
+    stripe:
+      secret-key: ${STRIPE_SECRET_KEY:}
+      success-url: http://localhost:4200/checkout?success=true
+      cancel-url: http://localhost:4200/checkout?canceled=true
+      webhook-secret: ${STRIPE_WEBHOOK_SECRET:}

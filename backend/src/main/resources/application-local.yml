@@ -35,6 +35,11 @@ spring:
 app:
   media:
     upload-dir: uploads
+  payment:
+    stripe:
+      secret-key: ${STRIPE_SECRET_KEY:}
+      success-url: ${STRIPE_SUCCESS_URL:http://localhost:4200/checkout?success=true}
+      cancel-url: ${STRIPE_CANCEL_URL:http://localhost:4200/checkout?canceled=true}
 
 server:
   port: 8085

@@ -1,29 +1,180 @@
 <section class="checkout-page">
   <div class="checkout-header">
     <h1>Checkout</h1>
-    <p>Confirm your items before purchase.</p>
+    <p>Review your order, choose delivery, and pay securely.</p>
   </div>
 
   <div class="checkout-card" *ngIf="items.length === 0">
     No items selected.
   </div>
 
-  <div class="checkout-card" *ngIf="items.length > 0">
-    <div class="checkout-item" *ngFor="let item of items">
-      <div>
-        <div class="checkout-name">{{ item.product.name }}</div>
-        <div class="checkout-meta">Qty: {{ item.quantity }}</div>
+  <div class="checkout-layout" *ngIf="items.length > 0">
+    <div class="checkout-main">
+      <div class="checkout-card auth-card" *ngIf="!authService.isAuthenticated">
+        <h2>Sign in to continue</h2>
+        <p>Log in or create an account to finish your purchase.</p>
+        <div class="auth-actions">
+          <button type="button" class="primary" (click)="login()">Sign in</button>
+          <button type="button" class="ghost" (click)="register()">Create account</button>
+        </div>
       </div>
-      <div class="checkout-price">
-        {{ item.product.price * item.quantity | number:'1.2-2' }} {{ item.product.currency }}
+
+      <div class="checkout-card" *ngIf="authService.isAuthenticated">
+        <h2>Delivery address</h2>
+        <p>Select a saved address or add a new one.</p>
+
+        <div class="address-grid" *ngIf="addresses.length > 0">
+          <button
+            type="button"
+            class="address-card"
+            *ngFor="let address of addresses"
+            [class.active]="address.id === selectedAddressId"
+            (click)="selectExistingAddress(address.id)">
+            <div class="address-title">{{ address.fullName || 'Saved address' }}</div>
+            <div class="address-line">{{ address.line1 }}</div>
+            <div class="address-line" *ngIf="address.line2">{{ address.line2 }}</div>
+            <div class="address-line">{{ address.postalCode }} {{ address.city }}</div>
+            <div class="address-line">{{ address.country }}</div>
+          </button>
+        </div>
+
+        <button type="button" class="ghost add-address-btn" (click)="toggleNewAddress()">
+          {{ useNewAddress ? 'Use saved address' : 'Add new address' }}
+        </button>
+
+        <div class="new-address" *ngIf="useNewAddress">
+          <div class="field">
+            <label>Search address or postal code</label>
+            <input
+              type="text"
+              [value]="locationQuery"
+              (input)="searchLocation($any($event.target).value)"
+              placeholder="Paris 75001" />
+            <div class="location-results" *ngIf="locationResults.length">
+              <button
+                type="button"
+                class="location-result"
+                *ngFor="let result of locationResults"
+                (click)="selectLocation(result)">
+                {{ result.label }}
+              </button>
+            </div>
+            <div class="location-hint" *ngIf="isSearchingLocation">Searching...</div>
+          </div>
+          <div class="field">
+            <label>Address label</label>
+            <input type="text" [(ngModel)]="newAddress.label" placeholder="Home, Office, etc." />
+          </div>
+          <div class="field">
+            <label>Full name</label>
+            <input type="text" [(ngModel)]="newAddress.fullName" placeholder="John Doe" />
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input type="text" [(ngModel)]="newAddress.phone" placeholder="+33 6 00 00 00 00" />
+          </div>
+          <div class="field">
+            <label>Address line 1</label>
+            <input type="text" [(ngModel)]="newAddress.line1" placeholder="12 Rue de Rivoli" />
+          </div>
+          <div class="field">
+            <label>Address line 2</label>
+            <input type="text" [(ngModel)]="newAddress.line2" placeholder="Apartment, floor, etc." />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Postal code</label>
+              <input type="text" [(ngModel)]="newAddress.postalCode" placeholder="75001" />
+            </div>
+            <div class="field">
+              <label>City</label>
+              <input type="text" [(ngModel)]="newAddress.city" placeholder="Paris" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Country</label>
+            <input type="text" [(ngModel)]="newAddress.country" placeholder="FR" />
+          </div>
+        </div>
+      </div>
+
+      <div class="checkout-card" *ngIf="authService.isAuthenticated">
+        <h2>Shipping method</h2>
+        <div class="option-list">
+          <label class="option" *ngFor="let option of shippingOptions">
+            <input
+              type="radio"
+              name="shipping"
+              [value]="option.id"
+              [(ngModel)]="selectedShippingId" />
+            <span>{{ option.label }}</span>
+            <strong>{{ option.price | number:'1.2-2' }} {{ getCurrency() }}</strong>
+          </label>
+        </div>
+      </div>
+
+      <div class="checkout-card" *ngIf="authService.isAuthenticated">
+        <h2>Payment</h2>
+        <div class="option-list">
+          <label class="option" *ngFor="let option of paymentOptions">
+            <input
+              type="radio"
+              name="payment"
+              [value]="option.id"
+              [(ngModel)]="selectedPaymentId" />
+            <span>{{ option.label }}</span>
+          </label>
+        </div>
+
+        <div class="payment-note" *ngIf="selectedPaymentId === 'stripe'">
+          You will be redirected to Stripe Checkout to complete the payment securely.
+        </div>
+
+        <div class="payment-note" *ngIf="selectedPaymentId === 'paypal'">
+          PayPal checkout is coming soon.
+        </div>
+        <div class="payment-note" *ngIf="selectedPaymentId === 'apple'">
+          Apple Pay will be available in a future update.
+        </div>
       </div>
     </div>
 
-    <div class="checkout-total">
-      <span>Total</span>
-      <strong>{{ getTotal() | number:'1.2-2' }} {{ items[0]?.product.currency }}</strong>
-    </div>
+    <aside class="checkout-summary">
+      <div class="checkout-card">
+        <h2>Order summary</h2>
+        <div class="summary-item" *ngFor="let item of items">
+          <div>
+            <div class="summary-name">{{ item.product.name }}</div>
+            <div class="summary-meta">Qty: {{ item.quantity }}</div>
+          </div>
+          <div class="summary-price">
+            {{ item.product.price * item.quantity | number:'1.2-2' }} {{ item.product.currency }}
+          </div>
+        </div>
 
-    <button type="button" class="checkout-btn">Place order</button>
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <strong>{{ getSubtotal() | number:'1.2-2' }} {{ getCurrency() }}</strong>
+        </div>
+        <div class="summary-row">
+          <span>Shipping</span>
+          <strong>{{ getShippingPrice() | number:'1.2-2' }} {{ getCurrency() }}</strong>
+        </div>
+        <div class="summary-total">
+          <span>Total</span>
+          <strong>{{ getTotal() | number:'1.2-2' }} {{ getCurrency() }}</strong>
+        </div>
+
+        <button
+          type="button"
+          class="checkout-btn"
+          [disabled]="!canPlaceOrder() || isSubmitting"
+          (click)="placeOrder()">
+          {{ isSubmitting ? 'Processing...' : 'Place order' }}
+        </button>
+        <div class="checkout-status" *ngIf="orderStatus">{{ orderStatus }}</div>
+        <div class="checkout-error" *ngIf="orderError">{{ orderError }}</div>
+      </div>
+    </aside>
   </div>
 </section>
