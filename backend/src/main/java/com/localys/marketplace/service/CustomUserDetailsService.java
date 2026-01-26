@@ -18,9 +18,11 @@ import java.util.UUID;
 public class CustomUserDetailsService implements UserDetailsService {
 
   private final UserRepository userRepository;
+  private final EmailService emailService;
 
-    public CustomUserDetailsService(UserRepository repo) {
+    public CustomUserDetailsService(UserRepository repo, EmailService emailService) {
         this.userRepository = repo;
+        this.emailService = emailService;
     }
 
     @Override
@@ -66,7 +68,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         created.setEnabled(true);
         created.setRole(USER_ROLE.ROLE_USER);
 
-        return new CustomUserDetails(userRepository.save(created));
+        UserEntity saved = userRepository.save(created);
+        emailService.sendWelcomeEmail(saved);
+        return new CustomUserDetails(saved);
     }
 
     private void syncUserBasics(

@@ -55,22 +55,22 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   getMe(): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${environment.apiUrl}/api/users/me`);
+    return this.http.get<UserProfile>(`${environment.apiUrl}/users/me`);
   }
 
   updateMe(payload: UserProfileUpdate): Observable<UserProfile> {
-    return this.http.put<UserProfile>(`${environment.apiUrl}/api/users/me`, payload);
+    return this.http.put<UserProfile>(`${environment.apiUrl}/users/me`, payload);
   }
 
   addAddress(payload: AddressRequest): Observable<UserAddress> {
-    return this.http.post<UserAddress>(`${environment.apiUrl}/api/users/me/addresses`, payload);
+    return this.http.post<UserAddress>(`${environment.apiUrl}/users/me/addresses`, payload);
   }
 
   updateAddress(id: number, payload: AddressRequest): Observable<UserAddress> {
-    return this.http.put<UserAddress>(`${environment.apiUrl}/api/users/me/addresses/${id}`, payload);
+    return this.http.put<UserAddress>(`${environment.apiUrl}/users/me/addresses/${id}`, payload);
   }
 
   deleteAddress(id: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiUrl}/api/users/me/addresses/${id}`);
+    return this.http.delete<void>(`${environment.apiUrl}/users/me/addresses/${id}`);
   }
 }

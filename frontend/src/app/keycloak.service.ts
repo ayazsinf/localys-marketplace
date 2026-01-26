@@ -11,7 +11,6 @@ export async function initKeycloak(): Promise<void> {
     await keycloak.init({
       onLoad: 'check-sso',   // **Burada login-required YASAK!**
       redirectUri: window.location.origin,
-      silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
       pkceMethod: 'S256',
       checkLoginIframe: false
     });

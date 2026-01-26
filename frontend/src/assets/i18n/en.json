@@ -41,7 +41,22 @@
   "COMMON": {
     "CANCEL": "Cancel",
     "CLOSE": "Close",
-    "SAVE": "Save"
+    "SAVE": "Save",
+    "NOTIFICATIONS": "Notifications",
+    "MARK_ALL_READ": "Mark all as read",
+    "NO_NOTIFICATIONS": "No notifications yet"
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifications",
+    "SUBTITLE": "Keep track of activity and updates.",
+    "FILTER_ALL": "All",
+    "FILTER_UNREAD": "Unread",
+    "FILTER_READ": "Read",
+    "UNREAD": "Unread",
+    "VIEW_ALL": "View all notifications",
+    "LOADING": "Loading notifications...",
+    "NO_MATCHES": "No notifications match this filter.",
+    "LOAD_ERROR": "Could not load notifications."
   },
   "HOME": {
     "PRODUCTS_TITLE": "Our Products",

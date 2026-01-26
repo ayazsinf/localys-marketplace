@@ -1,0 +1,70 @@
+<section class="account-page">
+  <div class="account-header">
+    <h1>{{ 'NOTIFICATIONS.TITLE' | translate }}</h1>
+    <p>{{ 'NOTIFICATIONS.SUBTITLE' | translate }}</p>
+  </div>
+
+  <div class="notifications-toolbar">
+    <div class="filter-group">
+      <button
+        type="button"
+        class="filter-btn"
+        [class.active]="activeFilter === 'all'"
+        (click)="setFilter('all')">
+        {{ 'NOTIFICATIONS.FILTER_ALL' | translate }}
+      </button>
+      <button
+        type="button"
+        class="filter-btn"
+        [class.active]="activeFilter === 'unread'"
+        (click)="setFilter('unread')">
+        {{ 'NOTIFICATIONS.FILTER_UNREAD' | translate }}
+      </button>
+      <button
+        type="button"
+        class="filter-btn"
+        [class.active]="activeFilter === 'read'"
+        (click)="setFilter('read')">
+        {{ 'NOTIFICATIONS.FILTER_READ' | translate }}
+      </button>
+    </div>
+    <button
+      type="button"
+      class="mark-all"
+      [disabled]="notifications.length === 0"
+      (click)="markAllRead()">
+      {{ 'COMMON.MARK_ALL_READ' | translate }}
+    </button>
+  </div>
+
+  <div class="status" *ngIf="isLoading">{{ 'NOTIFICATIONS.LOADING' | translate }}</div>
+  <div class="status error" *ngIf="!isLoading && errorMessage">
+    {{ errorMessage | translate }}
+  </div>
+
+  <div class="notification-list" *ngIf="!isLoading && filteredNotifications.length > 0">
+    <button
+      type="button"
+      class="notification-card"
+      *ngFor="let item of filteredNotifications; trackBy: trackByNotification"
+      [class.unread]="!item.read"
+      (click)="openNotification(item)">
+      <div class="notification-card__content">
+        <div class="notification-card__title">{{ item.title }}</div>
+        <div class="notification-card__message">{{ item.message }}</div>
+      </div>
+      <div class="notification-card__meta">
+        <span class="notification-card__status" *ngIf="!item.read">
+          {{ 'NOTIFICATIONS.UNREAD' | translate }}
+        </span>
+        <span class="notification-card__time">{{ formatTime(item.createdAt) }}</span>
+      </div>
+    </button>
+  </div>
+
+  <div class="account-card" *ngIf="!isLoading && filteredNotifications.length === 0">
+    <div class="placeholder">
+      {{ activeFilter === 'all' ? ('COMMON.NO_NOTIFICATIONS' | translate) : ('NOTIFICATIONS.NO_MATCHES' | translate) }}
+    </div>
+  </div>
+</section>

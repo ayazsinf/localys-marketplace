@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: appuser
       POSTGRES_PASSWORD: apppass
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - dbdata:/var/lib/postgresql/data
 
@@ -32,7 +32,10 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_DB: dev-file
+      KC_DB: postgres
+      KC_DB_URL: ${KEYCLOAK_DB_URL}
+      KC_DB_USERNAME: ${KEYCLOAK_DB_USERNAME}
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
     volumes:
       - keycloak_data:/opt/keycloak/data
       - ./keycloak:/opt/keycloak/data/import:ro

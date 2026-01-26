@@ -34,6 +34,9 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
   ) {}
 
   ngOnInit(): void {
+    if (this.authService.isAuthenticated) {
+      this.currentUserService.ensureLoaded();
+    }
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!Number.isFinite(id)) {
       this.router.navigate(['/']);
@@ -85,6 +88,10 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
     if (!this.product) {
       return;
     }
+    if (this.authService.isAuthenticated && !this.currentUserService.userId) {
+      this.currentUserService.ensureLoaded();
+      return;
+    }
     if (this.isOwner()) {
       return;
     }
@@ -93,6 +100,10 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
 
   buyNow(): void {
     if (!this.product) {
+      return;
+    }
+    if (this.authService.isAuthenticated && !this.currentUserService.userId) {
+      this.currentUserService.ensureLoaded();
       return;
     }
     if (this.isOwner()) {

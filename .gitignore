@@ -21,6 +21,8 @@ backend/.settings/
 # Node / Angular
 frontend/node_modules
 frontend/dist
+frontend/node/
+node_modules/
 
 # Logs
 *.log

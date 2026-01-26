@@ -1,4 +1,4 @@
-ï»¿{
+{
   "APP_TITLE": "Localys Pazaryeri",
   "LOGIN": "Giris",
   "LOGOUT": "Cikis",
@@ -41,7 +41,22 @@
   "COMMON": {
     "CANCEL": "Iptal",
     "CLOSE": "Kapat",
-    "SAVE": "Kaydet"
+    "SAVE": "Kaydet",
+    "NOTIFICATIONS": "Bildirimler",
+    "MARK_ALL_READ": "Tümünü okundu yap",
+    "NO_NOTIFICATIONS": "Henüz bildirim yok"
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Bildirimler",
+    "SUBTITLE": "Hareketleri ve guncellemeleri takip edin.",
+    "FILTER_ALL": "Tum",
+    "FILTER_UNREAD": "Okunmamis",
+    "FILTER_READ": "Okunmus",
+    "UNREAD": "Okunmamis",
+    "VIEW_ALL": "Tum bildirimleri gor",
+    "LOADING": "Bildirimler yukleniyor...",
+    "NO_MATCHES": "Bu filtre icin bildirim yok.",
+    "LOAD_ERROR": "Bildirimler yuklenemedi."
   },
   "HOME": {
     "PRODUCTS_TITLE": "Ilanlar",
@@ -245,3 +260,4 @@
     "PLACEHOLDER": "Kategoriler sayfasi yakinda."
   }
 }
+

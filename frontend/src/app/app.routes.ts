@@ -11,6 +11,7 @@ import {authGuard} from "./guard/AuthGuard";
 import {ProductDetailComponent} from "./pages/product-detail/product-detail.component";
 import {CartComponent} from "./pages/cart/cart.component";
 import {CheckoutComponent} from "./pages/checkout/checkout.component";
+import {NotificationsComponent} from "./pages/notifications/notifications.component";
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'listings', component: ListingsComponent, canActivate: [authGuard] },
   { path: 'favorites', component: FavoritesComponent, canActivate: [authGuard] },
   { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },
+  { path: 'notifications', component: NotificationsComponent, canActivate: [authGuard] },
   { path: 'cart', component: CartComponent, canActivate: [authGuard] },
   { path: 'checkout', component: CheckoutComponent },
   { path: 'products/:id', component: ProductDetailComponent },

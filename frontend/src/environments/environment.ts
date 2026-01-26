@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    apiUrl: 'http://localhost:8085',
+    apiUrl: '/api',
     appName: 'Localys',
     keycloak: {
         url: 'http://localhost:8081',

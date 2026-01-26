@@ -7,6 +7,7 @@ import {environment} from "../../../environments/environment";
 import {FavoritesService} from "../../service/favorites.service";
 import {Router} from "@angular/router";
 import {CurrentUserService} from "../../service/current-user.service";
+import { AuthService } from "../../service/auth.service";
 
 @Component({
   selector: 'app-product-card',
@@ -25,11 +26,15 @@ export class ProductCardComponent implements OnInit {
                 private cartService: CartService,
                 private favoritesService: FavoritesService,
                 private router: Router,
-                private currentUserService: CurrentUserService) {
+                private currentUserService: CurrentUserService,
+                private authService: AuthService) {
     }
   ngOnInit() {
     this.product.rating=Math.floor(Math.random() * 5) + 1;
     this.favoritesService.ensureFavoriteIds();
+    if (this.authService.isAuthenticated) {
+      this.currentUserService.ensureLoaded();
+    }
   }
   generateStars(rating: number ): string {
     const maxStars = 5;
@@ -60,6 +65,10 @@ export class ProductCardComponent implements OnInit {
 
   addToCart(event?: Event) {
     event?.stopPropagation();
+    if (this.authService.isAuthenticated && !this.currentUserService.userId) {
+      this.currentUserService.ensureLoaded();
+      return;
+    }
     if (this.isOwner()) {
       return;
     }
@@ -77,6 +86,10 @@ export class ProductCardComponent implements OnInit {
 
   toggleFavorite(event: Event) {
     event.stopPropagation();
+    if (this.authService.isAuthenticated && !this.currentUserService.userId) {
+      this.currentUserService.ensureLoaded();
+      return;
+    }
     if (this.isOwner()) {
       return;
     }

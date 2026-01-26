@@ -11,6 +11,14 @@
   <properties>
     <java.version>21</java.version>
     <spring-boot.version>3.3.4</spring-boot.version>
+  <frontend.dir>${project.basedir}/../frontend</frontend.dir>
+
+  <!-- dist yolu -->
+<frontend.dist.dir>${frontend.dir}/dist/localys-frontend/browser</frontend.dist.dir>
+
+
+  <node.version>v24.11.1</node.version>
+  <npm.version>10.2.4</npm.version>
   </properties>
 
   <dependencyManagement>
@@ -64,6 +72,10 @@
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-core</artifactId>
     </dependency>
@@ -106,30 +118,118 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <!-- Spring Boot plugin MUST repackage -->
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>repackage</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>21</source>
-          <target>21</target>
-            <compilerArgs>--enable-preview</compilerArgs>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+<build>
+  <plugins>
+    <!-- Java 21 compiler -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <release>21</release>
+        <compilerArgs>
+          <arg>--enable-preview</arg>
+        </compilerArgs>
+      </configuration>
+    </plugin>
+    <!-- Needed for mvn spring-boot:run (no repackage here) -->
+    <plugin>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-maven-plugin</artifactId>
+    </plugin>
+  </plugins>
+</build>
+
+<profiles>
+  <profile>
+    <id>bundle</id>
+    <build>
+      <plugins>
+        <!-- 1) Node/NPM kur + npm install + npm run build -->
+        <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>1.15.0</version>
+          <configuration>
+            <workingDirectory>${frontend.dir}</workingDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <id>install-node-and-npm</id>
+              <phase>generate-resources</phase>
+              <goals>
+                <goal>install-node-and-npm</goal>
+              </goals>
+              <configuration>
+                <nodeVersion>${node.version}</nodeVersion>
+                <npmVersion>${npm.version}</npmVersion>
+              </configuration>
+            </execution>
+            <execution>
+              <id>npm-install</id>
+              <phase>generate-resources</phase>
+              <goals>
+                <goal>npm</goal>
+              </goals>
+              <configuration>
+                <arguments>install</arguments>
+              </configuration>
+            </execution>
+            <execution>
+              <id>npm-build</id>
+              <phase>generate-resources</phase>
+              <goals>
+                <goal>npm</goal>
+              </goals>
+              <configuration>
+                <arguments>run build</arguments>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <!-- 2) dist/localys-frontend -> backend jar icine /static olarak kopyala -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>3.1.0</version>
+          <executions>
+            <execution>
+              <id>copy-angular-to-static</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>run</goal>
+              </goals>
+              <configuration>
+                <target>
+                  <echo message="FRONTEND DIR: ${frontend.dir}" />
+                  <echo message="FRONTEND DIST DIR: ${frontend.dist.dir}" />
+                  <mkdir dir="${project.build.outputDirectory}/static"/>
+                  <copy todir="${project.build.outputDirectory}/static" failonerror="true">
+                    <fileset dir="${frontend.dist.dir}" />
+                  </copy>
+                </target>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <!-- 3) Spring Boot Fat Jar -->
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>repackage</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
+</profiles>
+
 
 </project>
+

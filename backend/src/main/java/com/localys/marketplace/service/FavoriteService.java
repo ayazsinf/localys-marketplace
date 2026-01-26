@@ -6,6 +6,7 @@ import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.repository.FavoriteRepository;
 import com.localys.marketplace.repository.ProductRepository;
 import com.localys.marketplace.repository.UserRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,15 +18,18 @@ public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public FavoriteService(
             FavoriteRepository favoriteRepository,
             ProductRepository productRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            NotificationService notificationService
     ) {
         this.favoriteRepository = favoriteRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
     public List<Product> getFavoriteProducts(Long userId) {
@@ -40,14 +44,15 @@ public class FavoriteService {
                 .toList();
     }
 
+    @Transactional(noRollbackFor = DataIntegrityViolationException.class)
     public void addFavorite(Long userId, Long productId) {
         if (favoriteRepository.existsByUserIdAndProductId(userId, productId)) {
             return;
         }
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
         if (product.getVendor() != null
                 && product.getVendor().getUser() != null
                 && userId.equals(product.getVendor().getUser().getId())) {
@@ -56,11 +61,32 @@ public class FavoriteService {
         Favorite favorite = new Favorite();
         favorite.setUser(user);
         favorite.setProduct(product);
-        favoriteRepository.save(favorite);
+        try {
+            favoriteRepository.save(favorite);
+        } catch (DataIntegrityViolationException ex) {
+            // Favori zaten varsa tekrar eklemeyi sessizce yoksay.
+            return;
+        }
+        try {
+            notifyVendorFavoriteAdded(user, product);
+        } catch (RuntimeException ex) {
+            // Bildirim hatasi favori kaydini engellemesin.
+        }
     }
 
     @Transactional
     public void removeFavorite(Long userId, Long productId) {
         favoriteRepository.deleteByUserIdAndProductId(userId, productId);
+    }
+
+    private void notifyVendorFavoriteAdded(UserEntity actor, Product product) {
+        if (product.getVendor() == null || product.getVendor().getUser() == null) {
+            return;
+        }
+        UserEntity vendorUser = product.getVendor().getUser();
+        if (vendorUser.getId().equals(actor.getId())) {
+            return;
+        }
+        notificationService.createFavoriteAddedNotification(vendorUser, actor, product);
     }
 }

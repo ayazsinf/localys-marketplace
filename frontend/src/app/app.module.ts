@@ -19,6 +19,7 @@ import { ProductDetailComponent } from './pages/product-detail/product-detail.co
 import { TranslateModule } from '@ngx-translate/core';
 import { CartComponent } from './pages/cart/cart.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
+import { NotificationsComponent } from './pages/notifications/notifications.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { CheckoutComponent } from './pages/checkout/checkout.component';
     MessagesComponent,
     ProductDetailComponent,
     CartComponent,
-    CheckoutComponent
+    CheckoutComponent,
+    NotificationsComponent
   ],
   imports: [
     CommonModule,
@@ -63,6 +65,7 @@ import { CheckoutComponent } from './pages/checkout/checkout.component';
     ProductDetailComponent,
     CartComponent,
     CheckoutComponent,
+    NotificationsComponent,
     TranslateModule
   ]
 })

@@ -3,9 +3,10 @@ import { AuthService } from "../../service/auth.service";
 import { CartNotice, CartService } from "../../service/cart.service";
 import { SearchService } from "../../service/search.service";
 import { TranslateService } from "@ngx-translate/core";
-import { Subscription } from "rxjs";
+import { Subscription, timer } from "rxjs";
 import { Router } from "@angular/router";
 import { CurrentUserService } from "../../service/current-user.service";
+import { NotificationDto, NotificationService } from "../../service/notification.service";
 
 @Component({
   selector: 'app-navbar',
@@ -17,12 +18,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isMenuOpen = false;
   isProfileMenuOpen = false;
   isLangMenuOpen = false;
+  isNotificationsOpen = false;
   searchTerm = '';
   cartCount$ = this.cartService.count$;
   supportedLangs = ['en', 'tr', 'fr'];
   currentLang = 'en';
   cartNotice: CartNotice | null = null;
   showCartNotice = false;
+  notifications: NotificationDto[] = [];
+  unreadCount = 0;
   private noticeTimer?: number;
   private subscriptions = new Subscription();
 
@@ -32,7 +36,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private searchService: SearchService,
     private translateService: TranslateService,
     private router: Router,
-    private currentUserService: CurrentUserService
+    private currentUserService: CurrentUserService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -43,7 +48,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (this.authService.isAuthenticated) {
       this.cartService.refresh().subscribe();
       this.currentUserService.load().subscribe();
+      this.refreshUnreadCount();
     }
+    const notificationPoll = timer(0, 30000).subscribe(() => {
+      if (!this.authService.isAuthenticated) {
+        return;
+      }
+      this.currentUserService.ensureLoaded();
+      this.refreshUnreadCount();
+      if (this.isNotificationsOpen) {
+        this.loadNotifications();
+      }
+    });
+    this.subscriptions.add(notificationPoll);
     const noticeSub = this.cartService.notice$.subscribe(notice => {
       if (!notice) {
         return;
@@ -93,8 +110,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.isLangMenuOpen = !this.isLangMenuOpen;
   }
 
+  toggleNotificationsMenu() {
+    this.isNotificationsOpen = !this.isNotificationsOpen;
+    if (this.isNotificationsOpen) {
+      this.loadNotifications();
+      this.refreshUnreadCount();
+    }
+  }
+
   closeLangMenu() {
     this.isLangMenuOpen = false;
+  }
+
+  closeNotificationsMenu() {
+    this.isNotificationsOpen = false;
   }
 
   setLanguage(lang: string) {
@@ -110,7 +139,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   logout() {
     this.authService.logout();
     this.closeProfileMenu();
+    this.closeNotificationsMenu();
     this.currentUserService.clear();
+    this.unreadCount = 0;
+    this.notifications = [];
   }
 
   openCart(): void {
@@ -120,6 +152,45 @@ export class NavbarComponent implements OnInit, OnDestroy {
   onSearch(): void {
     const term = this.searchTerm.trim();
     this.searchService.setSearchTerm(term);
+  }
+
+  openNotification(notification: NotificationDto): void {
+    if (!notification.read) {
+      this.notificationService.markRead(notification.id).subscribe(() => {
+        notification.read = true;
+        if (this.unreadCount > 0) {
+          this.unreadCount -= 1;
+        }
+      });
+    }
+    if (notification.link) {
+      this.router.navigateByUrl(notification.link);
+    } else {
+      this.router.navigate(['/notifications']);
+    }
+    this.closeNotificationsMenu();
+  }
+
+  markAllNotificationsRead(): void {
+    this.notificationService.markAllRead().subscribe(() => {
+      this.notifications = this.notifications.map(notification => ({
+        ...notification,
+        read: true
+      }));
+      this.unreadCount = 0;
+    });
+  }
+
+  private loadNotifications(): void {
+    this.notificationService.list().subscribe(notifications => {
+      this.notifications = notifications;
+    });
+  }
+
+  private refreshUnreadCount(): void {
+    this.notificationService.unreadCount().subscribe(count => {
+      this.unreadCount = count;
+    });
   }
 
   @HostListener('document:click', ['$event'])
@@ -140,7 +211,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (target.closest('.lang-trigger')) {
       return;
     }
+    if (target.closest('.notification-menu')) {
+      return;
+    }
+    if (target.closest('.notification-trigger')) {
+      return;
+    }
     this.closeProfileMenu();
     this.closeLangMenu();
+    this.closeNotificationsMenu();
   }
 }

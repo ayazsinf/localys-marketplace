@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, map, switchMap, tap, throwError } from 'rxjs';
 import { Product } from '../modules/product.model';
 
 @Injectable({
@@ -59,11 +59,18 @@ export class FavoritesService {
 
     return request$.pipe(
       tap(() => {
+        const latest = this.favoriteIdsSubject.value;
         const next = isFav
-          ? current.filter(id => id !== productId)
-          : [...current, productId];
+          ? latest.filter(id => id !== productId)
+          : Array.from(new Set([...latest, productId]));
         this.favoriteIdsSubject.next(next);
-      })
+      }),
+      switchMap(() => this.loadFavoriteIds().pipe(map(() => undefined))),
+      catchError(error =>
+        this.loadFavoriteIds().pipe(
+          switchMap(() => throwError(() => error))
+        )
+      )
     );
   }
 }

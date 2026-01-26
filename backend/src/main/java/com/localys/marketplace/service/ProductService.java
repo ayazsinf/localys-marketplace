@@ -20,6 +20,9 @@ public class ProductService {
     @Autowired
     private MediaStorageService mediaStorageService;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public List<Product> getProductsByVendor(Long vendorId) {
         return productRepository.findByVendorId(vendorId);
     }
@@ -38,7 +41,11 @@ public class ProductService {
         if (product.getSku() == null || product.getSku().isBlank()) {
             product.setSku(generateSku());
         }
-        return productRepository.save(product);
+        Product saved = productRepository.save(product);
+        if (vendor != null && vendor.getUser() != null) {
+            notificationService.createProductCreatedNotification(vendor.getUser(), saved);
+        }
+        return saved;
     }
 
     public Product updateProductForVendor(Long id, Product productDetails, Vendor vendor) {

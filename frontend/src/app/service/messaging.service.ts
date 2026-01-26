@@ -37,17 +37,17 @@ export class MessagingService {
   constructor(private http: HttpClient) {}
 
   listConversations() {
-    return this.http.get<ConversationDto[]>(`${environment.apiUrl}/api/conversations`);
+    return this.http.get<ConversationDto[]>(`${environment.apiUrl}/conversations`);
   }
 
   getMessages(conversationId: number, limit = 50) {
     return this.http.get<MessageDto[]>(
-      `${environment.apiUrl}/api/conversations/${conversationId}/messages?limit=${limit}`
+      `${environment.apiUrl}/conversations/${conversationId}/messages?limit=${limit}`
     );
   }
 
   createConversationWith(userId: number) {
-    return this.http.post<ConversationDto>(`${environment.apiUrl}/api/conversations/with/${userId}`, {});
+    return this.http.post<ConversationDto>(`${environment.apiUrl}/conversations/with/${userId}`, {});
   }
 
   sendMessage(conversationId: number, recipientId: number | null, body: string) {
@@ -57,7 +57,7 @@ export class MessagingService {
       body
     };
     return this.http.post<MessageDto>(
-      `${environment.apiUrl}/api/conversations/${conversationId}/messages`,
+      `${environment.apiUrl}/conversations/${conversationId}/messages`,
       payload
     );
   }
@@ -82,7 +82,7 @@ export class MessagingService {
         }
 
         this.stompClient = new Client({
-          webSocketFactory: () => new SockJS(`${environment.apiUrl}/ws?access_token=${token}`),
+          webSocketFactory: () => new SockJS(`${resolveWsBase()}/ws?access_token=${token}`),
           reconnectDelay: 5000,
           onConnect: () => {
             this.connected = true;
@@ -131,4 +131,11 @@ export class MessagingService {
     this.connected = false;
     this.connectPromise = null;
   }
+}
+
+function resolveWsBase(): string {
+  if (environment.apiUrl.endsWith('/api')) {
+    return environment.apiUrl.slice(0, -4);
+  }
+  return environment.apiUrl;
 }

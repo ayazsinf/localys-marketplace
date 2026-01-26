@@ -18,13 +18,16 @@ public class AuthService {
     private final CustomUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
     public AuthService(UserRepository userRepository,
                        CustomUserDetailsService uds,
-                       PasswordEncoder encoder) {
+                       PasswordEncoder encoder,
+                       EmailService emailService) {
         this.userDetailsService = uds;
         this.passwordEncoder = encoder;
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     public String login(String username, String rawPassword) {
@@ -57,7 +60,8 @@ public class AuthService {
         user.setEnabled(true);
         user.setRole(USER_ROLE.ROLE_USER);
 
-        userRepository.save(user);
+        UserEntity saved = userRepository.save(user);
+        emailService.sendWelcomeEmail(saved);
 
         // 3) İstersek direkt token üret
         // JWT devre disi (Keycloak'a gecis icin)

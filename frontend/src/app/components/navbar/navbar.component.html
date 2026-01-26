@@ -93,6 +93,49 @@
                         {{ 'AUTH.CREATE_ACCOUNT' | translate }}
                     </button>
                 } @else {
+                    <div class="notification-menu">
+                        <button
+                                type="button"
+                                class="notification-trigger"
+                                [attr.aria-expanded]="isNotificationsOpen"
+                                [attr.aria-label]="'COMMON.NOTIFICATIONS' | translate"
+                                (click)="toggleNotificationsMenu()">
+                            <span class="material-icons">notifications</span>
+                            <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+                        </button>
+                        <div class="notification-dropdown" [class.open]="isNotificationsOpen">
+                            <div class="notification-header">
+                                <span>{{ 'COMMON.NOTIFICATIONS' | translate }}</span>
+                                <button type="button" class="notification-mark-all" (click)="markAllNotificationsRead()">
+                                    {{ 'COMMON.MARK_ALL_READ' | translate }}
+                                </button>
+                            </div>
+                            <div class="notification-list">
+                                @if (notifications.length === 0) {
+                                    <div class="notification-empty">{{ 'COMMON.NO_NOTIFICATIONS' | translate }}</div>
+                                } @else {
+                                    @for (item of notifications; track item.id) {
+                                        <button
+                                                type="button"
+                                                class="notification-item"
+                                                [class.unread]="!item.read"
+                                                (click)="openNotification(item)">
+                                            <div class="notification-title">{{ item.title }}</div>
+                                            <div class="notification-message">{{ item.message }}</div>
+                                        </button>
+                                    }
+                                }
+                            </div>
+                            <div class="notification-footer">
+                                <a
+                                        class="notification-view-all"
+                                        routerLink="/notifications"
+                                        (click)="closeNotificationsMenu()">
+                                    {{ 'NOTIFICATIONS.VIEW_ALL' | translate }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     <div class="profile-menu">
                         <button
                                 type="button"
@@ -121,4 +164,3 @@
         </div>
     </div>
 </nav>
-

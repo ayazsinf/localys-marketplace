@@ -41,7 +41,22 @@
   "COMMON": {
     "CANCEL": "Annuler",
     "CLOSE": "Fermer",
-    "SAVE": "Enregistrer"
+    "SAVE": "Enregistrer",
+    "NOTIFICATIONS": "Notifications",
+    "MARK_ALL_READ": "Tout marquer comme lu",
+    "NO_NOTIFICATIONS": "Aucune notification pour le moment"
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifications",
+    "SUBTITLE": "Suivez l'activite et les mises a jour.",
+    "FILTER_ALL": "Toutes",
+    "FILTER_UNREAD": "Non lues",
+    "FILTER_READ": "Lues",
+    "UNREAD": "Non lue",
+    "VIEW_ALL": "Voir toutes les notifications",
+    "LOADING": "Chargement des notifications...",
+    "NO_MATCHES": "Aucune notification pour ce filtre.",
+    "LOAD_ERROR": "Impossible de charger les notifications."
   },
   "HOME": {
     "PRODUCTS_TITLE": "Annonces",
