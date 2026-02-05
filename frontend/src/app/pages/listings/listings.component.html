@@ -43,14 +43,15 @@
       </label>
       <label>
         <span>{{ 'LISTINGS.FIELD_CATEGORY' | translate }}</span>
-        <select [ngModel]="selectedParentId" (ngModelChange)="onParentCategoryChange($event)">
+        <select [(ngModel)]="selectedParentId" (ngModelChange)="onParentCategoryChange($event)">
           <option [ngValue]="null">{{ 'LISTINGS.FIELD_CATEGORY_PLACEHOLDER' | translate }}</option>
           <option *ngFor="let category of categories" [ngValue]="category.id">{{ category.name }}</option>
         </select>
       </label>
+
       <label>
         <span>{{ 'LISTINGS.FIELD_SUBCATEGORY' | translate }}</span>
-        <select [(ngModel)]="form.categoryId" [disabled]="!selectedParentId">
+        <select [(ngModel)]="form.subcategoryId" [disabled]="!selectedParentId">
           <option [ngValue]="null">{{ 'LISTINGS.FIELD_SUBCATEGORY_PLACEHOLDER' | translate }}</option>
           <option *ngFor="let sub of subcategories" [ngValue]="sub.id">{{ sub.name }}</option>
         </select>

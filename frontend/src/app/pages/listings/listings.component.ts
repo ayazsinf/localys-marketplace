@@ -48,6 +48,7 @@ export class ListingsComponent implements OnInit {
     sku: '',
     brand: '',
     categoryId: null,
+    subcategoryId: null,
     locationText: '',
     latitude: null,
     longitude: null
@@ -99,6 +100,7 @@ export class ListingsComponent implements OnInit {
       sku: '',
       brand: '',
       categoryId: null,
+      subcategoryId: null as number | null,
       locationText: '',
       latitude: null,
       longitude: null
@@ -126,6 +128,7 @@ export class ListingsComponent implements OnInit {
       sku: listing.sku,
       brand: listing.brand,
       categoryId: listing.categoryId ?? null,
+      subcategoryId: null as number | null,
       locationText: listing.locationText ?? '',
       latitude: listing.latitude ?? null,
       longitude: listing.longitude ?? null

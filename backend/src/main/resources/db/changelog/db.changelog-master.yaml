@@ -175,3 +175,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 015-cart-status-to-varchar
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V15__cart_status_to_varchar.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

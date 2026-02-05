@@ -32,6 +32,7 @@ export interface ListingRequest {
   sku?: string | null;
   brand?: string | null;
   categoryId?: number | null;
+  subcategoryId?: number | null;
   locationText?: string | null;
   latitude?: number | null;
   longitude?: number | null;
