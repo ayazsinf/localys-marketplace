@@ -1,9 +1,10 @@
 import Keycloak from 'keycloak-js';
+import { environment } from '../environments/environment';
 
 export const keycloak = new Keycloak({
-  url: 'http://localhost:8081/',
-  realm: 'localys-realm',
-  clientId: 'localys-frontend'
+  url: environment.keycloak.url,
+  realm: environment.keycloak.realm,
+  clientId: environment.keycloak.clientId
 });
 
 export async function initKeycloak(): Promise<void> {
