@@ -2,7 +2,7 @@ export const environment = {
     production: true,
     apiUrl: '/api',
     keycloak: {
-        url: 'http://keycloak:8081',
+        url: 'https://keycloak.localys.shop',
         realm: 'localys-realm',
         clientId: 'localys-frontend'
     }
