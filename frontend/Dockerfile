@@ -12,7 +12,7 @@ RUN npm install --legacy-peer-deps
 COPY . .
 
 # Angular 17+ için production config gerekmez
-RUN ng build
+RUN ng build --configuration production
 
 # Stage 2 — Serve with Nginx
 FROM nginx:1.25-alpine
