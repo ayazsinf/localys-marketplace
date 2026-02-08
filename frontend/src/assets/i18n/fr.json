@@ -42,6 +42,7 @@
     "CANCEL": "Annuler",
     "CLOSE": "Fermer",
     "SAVE": "Enregistrer",
+    "TRIAL_BANNER": "Ce site est une version d'essai.",
     "NOTIFICATIONS": "Notifications",
     "MARK_ALL_READ": "Tout marquer comme lu",
     "NO_NOTIFICATIONS": "Aucune notification pour le moment"

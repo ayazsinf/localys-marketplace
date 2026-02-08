@@ -42,6 +42,7 @@
     "CANCEL": "Cancel",
     "CLOSE": "Close",
     "SAVE": "Save",
+    "TRIAL_BANNER": "This site is a trial version.",
     "NOTIFICATIONS": "Notifications",
     "MARK_ALL_READ": "Mark all as read",
     "NO_NOTIFICATIONS": "No notifications yet"
