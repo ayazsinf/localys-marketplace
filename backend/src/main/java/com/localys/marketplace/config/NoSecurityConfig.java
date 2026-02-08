@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@Profile("!local")
+@Profile("local")
 @Order(1)
 public class NoSecurityConfig {
 
