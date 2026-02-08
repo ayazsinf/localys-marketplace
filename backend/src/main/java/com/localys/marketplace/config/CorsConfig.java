@@ -33,7 +33,13 @@ public class CorsConfig {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:4300","http://localhost:4200")
+                .allowedOrigins(
+                        "http://localhost:4300",
+                        "http://localhost:4200",
+                        "https://localys.shop",
+                        "https://www.localys.shop",
+                        "https://app.localys.shop"
+                )
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);
