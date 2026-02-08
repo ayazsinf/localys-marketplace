@@ -15,10 +15,9 @@ spring:
 
   security:
     oauth2:
-      resourceserver:
+      resource server:
         jwt:
-          issuer-uri: http://keycloak:8081/realms/localys-realm
-
+          issuer-uri: ${OIDC_ISSUER_URI:https://keycloak.localys.shop/realms/localys-realm}
   servlet:
     multipart:
       max-file-size: 10MB
