@@ -281,7 +281,8 @@ export class ListingsComponent implements OnInit {
   }
 
   saveListing(): void {
-    if (!this.form.name?.trim() || !this.form.categoryId) {
+    const resolvedCategoryId = this.form.categoryId ?? (this.subcategories.length === 0 ? this.selectedParentId : null);
+    if (!this.form.name?.trim() || !resolvedCategoryId) {
       this.errorMessage = 'LISTINGS.ERROR_REQUIRED';
       return;
     }
@@ -291,7 +292,8 @@ export class ListingsComponent implements OnInit {
     const payload: ListingRequest = {
       ...this.form,
       name: this.form.name.trim(),
-      sku: this.form.sku?.trim() || null
+      sku: this.form.sku?.trim() || null,
+      categoryId: resolvedCategoryId
     };
 
     const request$ = this.editingId

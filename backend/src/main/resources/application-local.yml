@@ -42,7 +42,7 @@ app:
       cancel-url: ${STRIPE_CANCEL_URL:http://localhost:4200/checkout?canceled=true}
 
 server:
-  port: 8085
+  port: 8080
 logging:
   level:
     org.springframework: DEBUG

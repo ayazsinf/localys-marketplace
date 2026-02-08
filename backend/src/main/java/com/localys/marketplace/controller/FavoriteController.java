@@ -26,6 +26,9 @@ public class FavoriteController {
 
     @GetMapping
     public List<ProductListDto> listFavorites(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return List.of();
+        }
         return favoriteService.getFavoriteProducts(userDetails.getUserId()).stream()
                 .map(this::toDto)
                 .toList();
@@ -33,6 +36,9 @@ public class FavoriteController {
 
     @GetMapping("/ids")
     public List<Long> listFavoriteIds(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return List.of();
+        }
         return favoriteService.getFavoriteProductIds(userDetails.getUserId());
     }
 
@@ -41,6 +47,9 @@ public class FavoriteController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("productId") Long productId
     ) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         favoriteService.addFavorite(userDetails.getUserId(), productId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -50,6 +59,9 @@ public class FavoriteController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("productId") Long productId
     ) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         favoriteService.removeFavorite(userDetails.getUserId(), productId);
         return ResponseEntity.noContent().build();
     }

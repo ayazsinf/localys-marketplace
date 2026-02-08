@@ -20,11 +20,17 @@ public class NotificationController {
 
     @GetMapping
     public List<NotificationDto> list(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return List.of();
+        }
         return notificationService.listForUser(userDetails.getUserId());
     }
 
     @GetMapping("/unread-count")
     public long unreadCount(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return 0L;
+        }
         return notificationService.countUnread(userDetails.getUserId());
     }
 
@@ -33,11 +39,17 @@ public class NotificationController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("notificationId") Long notificationId
     ) {
+        if (userDetails == null) {
+            return;
+        }
         notificationService.markRead(userDetails.getUserId(), notificationId);
     }
 
     @PostMapping("/read-all")
     public void markAllRead(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return;
+        }
         notificationService.markAllRead(userDetails.getUserId());
     }
 }

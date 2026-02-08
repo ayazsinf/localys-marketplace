@@ -51,7 +51,7 @@
 
       <label>
         <span>{{ 'LISTINGS.FIELD_SUBCATEGORY' | translate }}</span>
-        <select [(ngModel)]="form.subcategoryId" [disabled]="!selectedParentId">
+        <select [(ngModel)]="form.categoryId" [disabled]="!selectedParentId">
           <option [ngValue]="null">{{ 'LISTINGS.FIELD_SUBCATEGORY_PLACEHOLDER' | translate }}</option>
           <option *ngFor="let sub of subcategories" [ngValue]="sub.id">{{ sub.name }}</option>
         </select>

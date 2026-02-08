@@ -8,6 +8,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AssetsTranslateLoader } from './translate-loader';
 import { httpAuthInterceptor } from './auth.interceptor';
+import { loadingInterceptor } from './loading.interceptor';
 import { initKeycloak } from './keycloak.service';
 export function createTranslateLoader(http: HttpClient) {
     return new AssetsTranslateLoader(http);
@@ -20,7 +21,7 @@ export const appConfig: ApplicationConfig = {
 
         // 🔥 HttpClient provider — zorunlu
         provideHttpClient(
-            withInterceptors([httpAuthInterceptor])
+            withInterceptors([loadingInterceptor, httpAuthInterceptor])
         ),
         {
             provide: APP_INITIALIZER,

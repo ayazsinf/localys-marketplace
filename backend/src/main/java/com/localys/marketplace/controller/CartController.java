@@ -20,6 +20,9 @@ public class CartController {
 
     @GetMapping
     public ResponseEntity<CartDto> getCart(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
         return ResponseEntity.ok(cartService.getActiveCart(userDetails.getUserId()));
     }
 
@@ -28,6 +31,9 @@ public class CartController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody CartItemRequest request
     ) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
         int quantity = request.quantity() != null ? request.quantity() : 1;
         return ResponseEntity.ok(cartService.addItem(userDetails.getUserId(), request.productId(), quantity));
     }
@@ -38,6 +44,9 @@ public class CartController {
             @PathVariable("productId") Long productId,
             @RequestBody CartItemRequest request
     ) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
         int quantity = request.quantity() != null ? request.quantity() : 1;
         return ResponseEntity.ok(cartService.updateQuantity(userDetails.getUserId(), productId, quantity));
     }
@@ -47,6 +56,9 @@ public class CartController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("productId") Long productId
     ) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
         return ResponseEntity.ok(cartService.removeItem(userDetails.getUserId(), productId));
     }
 }
