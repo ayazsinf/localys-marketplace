@@ -20,6 +20,7 @@ pipeline {
       steps {
         sh '''
           bash -lc 'set -euo pipefail
+          git config --global --add safe.directory "$DEPLOY_DIR"
           cd "$DEPLOY_DIR"
           git fetch --all
           git checkout develop
@@ -35,6 +36,7 @@ pipeline {
       steps {
         sh '''
           bash -lc 'set -euo pipefail
+          git config --global --add safe.directory "$DEPLOY_DIR"
           cd "$DEPLOY_DIR"
           git fetch --all
           git checkout master
