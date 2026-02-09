@@ -18,17 +18,14 @@ pipeline {
         branch 'develop'
       }
       steps {
-        sh(
-          script: '''
-            set -euo pipefail
-            cd "$DEPLOY_DIR"
-            git fetch --all
-            git checkout develop
-            git pull --ff-only
-            docker compose -f "$COMPOSE_FILE" build
-          ''',
-          shell: '/bin/bash'
-        )
+        sh '''
+          bash -lc 'set -euo pipefail
+          cd "$DEPLOY_DIR"
+          git fetch --all
+          git checkout develop
+          git pull --ff-only
+          docker compose -f "$COMPOSE_FILE" build'
+        '''
       }
     }
     stage('Deploy (master)') {
@@ -36,17 +33,14 @@ pipeline {
         branch 'master'
       }
       steps {
-        sh(
-          script: '''
-            set -euo pipefail
-            cd "$DEPLOY_DIR"
-            git fetch --all
-            git checkout master
-            git pull --ff-only
-            docker compose -f "$COMPOSE_FILE" up -d --build
-          ''',
-          shell: '/bin/bash'
-        )
+        sh '''
+          bash -lc 'set -euo pipefail
+          cd "$DEPLOY_DIR"
+          git fetch --all
+          git checkout master
+          git pull --ff-only
+          docker compose -f "$COMPOSE_FILE" up -d --build'
+        '''
       }
     }
   }
