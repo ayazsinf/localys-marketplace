@@ -23,8 +23,8 @@ pipeline {
           git config --global --add safe.directory "$DEPLOY_DIR"
           cd "$DEPLOY_DIR"
           git fetch --all
-          git checkout develop
-          git pull --ff-only
+          git checkout -B develop origin/develop
+          git pull --ff-only origin develop
           docker compose -f "$COMPOSE_FILE" build'
         '''
       }
@@ -39,8 +39,8 @@ pipeline {
           git config --global --add safe.directory "$DEPLOY_DIR"
           cd "$DEPLOY_DIR"
           git fetch --all
-          git checkout master
-          git pull --ff-only
+          git checkout -B master origin/master
+          git pull --ff-only origin master
           docker compose -f "$COMPOSE_FILE" up -d --build'
         '''
       }
