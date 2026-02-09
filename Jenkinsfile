@@ -19,6 +19,7 @@ pipeline {
       }
       steps {
         sh '''
+          #!/usr/bin/env bash
           set -euo pipefail
           cd "$DEPLOY_DIR"
           git fetch --all
@@ -34,6 +35,7 @@ pipeline {
       }
       steps {
         sh '''
+          #!/usr/bin/env bash
           set -euo pipefail
           cd "$DEPLOY_DIR"
           git fetch --all
