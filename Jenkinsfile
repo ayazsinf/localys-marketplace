@@ -35,6 +35,8 @@ pipeline {
           bash -lc 'set -euo pipefail
           DEPLOY_DIR="$DEV_DEPLOY_DIR"
           ENV_FILE="$DEV_ENV_FILE"
+          HTTP_PORT_VALUE="8080"
+          HTTPS_PORT_VALUE="8443"
 
           git config --global --add safe.directory "$DEPLOY_DIR"
           cd "$DEPLOY_DIR"
@@ -44,7 +46,8 @@ pipeline {
           git checkout -B develop origin/develop
           git pull --ff-only origin develop
 
-          docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build'
+          APP_ENV_FILE="$ENV_FILE" HTTP_PORT="$HTTP_PORT_VALUE" HTTPS_PORT="$HTTPS_PORT_VALUE" \
+            docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build'
         '''
       }
     }
@@ -61,6 +64,8 @@ pipeline {
           DEPLOY_DIR="$UAT_DEPLOY_DIR"
           ENV_FILE="$UAT_ENV_FILE"
           TARGET_BRANCH="$BRANCH_NAME"
+          HTTP_PORT_VALUE="8081"
+          HTTPS_PORT_VALUE="8444"
 
           git config --global --add safe.directory "$DEPLOY_DIR"
           cd "$DEPLOY_DIR"
@@ -70,7 +75,8 @@ pipeline {
           git checkout -B "$TARGET_BRANCH" "origin/$TARGET_BRANCH"
           git pull --ff-only origin "$TARGET_BRANCH"
 
-          docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build'
+          APP_ENV_FILE="$ENV_FILE" HTTP_PORT="$HTTP_PORT_VALUE" HTTPS_PORT="$HTTPS_PORT_VALUE" \
+            docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build'
         '''
       }
     }
@@ -95,6 +101,8 @@ pipeline {
           bash -lc 'set -euo pipefail
           DEPLOY_DIR="$PROD_DEPLOY_DIR"
           ENV_FILE="$PROD_ENV_FILE"
+          HTTP_PORT_VALUE="80"
+          HTTPS_PORT_VALUE="443"
 
           git config --global --add safe.directory "$DEPLOY_DIR"
           cd "$DEPLOY_DIR"
@@ -104,7 +112,8 @@ pipeline {
           git checkout -B master origin/master
           git pull --ff-only origin master
 
-          docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build'
+          APP_ENV_FILE="$ENV_FILE" HTTP_PORT="$HTTP_PORT_VALUE" HTTPS_PORT="$HTTPS_PORT_VALUE" \
+            docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build'
         '''
       }
     }
