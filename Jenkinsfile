@@ -35,8 +35,8 @@ pipeline {
           bash -lc 'set -euo pipefail
           DEPLOY_DIR="$DEV_DEPLOY_DIR"
           ENV_FILE="$DEV_ENV_FILE"
-          HTTP_PORT_VALUE="8080"
-          HTTPS_PORT_VALUE="8443"
+          HTTP_PORT_VALUE="18080"
+          HTTPS_PORT_VALUE="18443"
 
           git config --global --add safe.directory "$DEPLOY_DIR"
           cd "$DEPLOY_DIR"
@@ -64,8 +64,8 @@ pipeline {
           DEPLOY_DIR="$UAT_DEPLOY_DIR"
           ENV_FILE="$UAT_ENV_FILE"
           TARGET_BRANCH="$BRANCH_NAME"
-          HTTP_PORT_VALUE="8081"
-          HTTPS_PORT_VALUE="8444"
+          HTTP_PORT_VALUE="28080"
+          HTTPS_PORT_VALUE="28443"
 
           git config --global --add safe.directory "$DEPLOY_DIR"
           cd "$DEPLOY_DIR"
