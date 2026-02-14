@@ -71,16 +71,16 @@ pipeline {
             HTTP_PORT_VALUE="${httpPort}"
             HTTPS_PORT_VALUE="${httpsPort}"
 
-            git config --global --add safe.directory "$DEPLOY_DIR"
-            cd "$DEPLOY_DIR"
+            git config --global --add safe.directory "\$DEPLOY_DIR"
+            cd "\$DEPLOY_DIR"
 
             git fetch --all
             git clean -fd -e .env.dev -e .env.uat -e .env.prod -e certbot -e nginx -e uploads
-            git checkout -B "$TARGET_BRANCH" "origin/$TARGET_BRANCH"
-            git pull --ff-only origin "$TARGET_BRANCH"
+            git checkout -B "\$TARGET_BRANCH" "origin/\$TARGET_BRANCH"
+            git pull --ff-only origin "\$TARGET_BRANCH"
 
-            APP_ENV_FILE="$ENV_FILE" HTTP_PORT="$HTTP_PORT_VALUE" HTTPS_PORT="$HTTPS_PORT_VALUE" \\
-              docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build'
+            APP_ENV_FILE="\$ENV_FILE" HTTP_PORT="\$HTTP_PORT_VALUE" HTTPS_PORT="\$HTTPS_PORT_VALUE" \\
+              docker compose --env-file "\$ENV_FILE" -f "$COMPOSE_FILE" up -d --build'
           """
         }
       }
