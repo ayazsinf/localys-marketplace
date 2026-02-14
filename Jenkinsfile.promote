@@ -1,0 +1,101 @@
+pipeline {
+  agent any
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(numToKeepStr: '30', daysToKeepStr: '14', artifactNumToKeepStr: '10'))
+  }
+
+  parameters {
+    choice(name: 'TARGET_ENV', choices: ['uat', 'prod'], description: 'Deployment target environment')
+    string(name: 'SOURCE_BRANCH', defaultValue: 'release/2026.02.1', description: 'Git branch to deploy')
+  }
+
+  environment {
+    COMPOSE_FILE = 'docker-compose.prod.yml'
+
+    UAT_DEPLOY_DIR = '/opt/localys/localys-marketplace-uat'
+    PROD_DEPLOY_DIR = '/opt/localys/localys-marketplace'
+
+    UAT_ENV_FILE = '.env.uat'
+    PROD_ENV_FILE = '.env.prod'
+  }
+
+  stages {
+    stage('Validate Input') {
+      steps {
+        script {
+          if (!params.SOURCE_BRANCH?.trim()) {
+            error('SOURCE_BRANCH is required.')
+          }
+
+          if (params.TARGET_ENV == 'uat' && !params.SOURCE_BRANCH.startsWith('release/')) {
+            error("UAT deployments only allow release/* branches. Provided: ${params.SOURCE_BRANCH}")
+          }
+
+          if (params.TARGET_ENV == 'prod' && params.SOURCE_BRANCH != 'master') {
+            error("PROD deployments only allow master branch. Provided: ${params.SOURCE_BRANCH}")
+          }
+        }
+      }
+    }
+
+    stage('Approval Gate (prod only)') {
+      when {
+        expression {
+          return params.TARGET_ENV == 'prod'
+        }
+      }
+      steps {
+        timeout(time: 30, unit: 'MINUTES') {
+          input message: "Deploy ${params.SOURCE_BRANCH} to PRODUCTION?", ok: 'Deploy'
+        }
+      }
+    }
+
+    stage('Deploy') {
+      steps {
+        script {
+          def deployDir = params.TARGET_ENV == 'uat' ? env.UAT_DEPLOY_DIR : env.PROD_DEPLOY_DIR
+          def envFile = params.TARGET_ENV == 'uat' ? env.UAT_ENV_FILE : env.PROD_ENV_FILE
+          def httpPort = params.TARGET_ENV == 'uat' ? '28080' : '80'
+          def httpsPort = params.TARGET_ENV == 'uat' ? '28443' : '443'
+          def targetBranch = params.SOURCE_BRANCH.trim()
+
+          sh """
+            bash -lc 'set -euo pipefail
+            DEPLOY_DIR="${deployDir}"
+            ENV_FILE="${envFile}"
+            TARGET_BRANCH="${targetBranch}"
+            HTTP_PORT_VALUE="${httpPort}"
+            HTTPS_PORT_VALUE="${httpsPort}"
+
+            git config --global --add safe.directory "$DEPLOY_DIR"
+            cd "$DEPLOY_DIR"
+
+            git fetch --all
+            git clean -fd -e .env.dev -e .env.uat -e .env.prod -e certbot -e nginx -e uploads
+            git checkout -B "$TARGET_BRANCH" "origin/$TARGET_BRANCH"
+            git pull --ff-only origin "$TARGET_BRANCH"
+
+            APP_ENV_FILE="$ENV_FILE" HTTP_PORT="$HTTP_PORT_VALUE" HTTPS_PORT="$HTTPS_PORT_VALUE" \\
+              docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build'
+          """
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      echo "Manual promotion succeeded: ${params.SOURCE_BRANCH} -> ${params.TARGET_ENV}"
+    }
+    failure {
+      echo "Manual promotion failed: ${params.SOURCE_BRANCH} -> ${params.TARGET_ENV}"
+    }
+    always {
+      echo 'Execution finished.'
+    }
+  }
+}
