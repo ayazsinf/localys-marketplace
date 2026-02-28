@@ -47,7 +47,10 @@ pipeline {
           git pull --ff-only origin develop
 
           APP_ENV_FILE="$ENV_FILE" HTTP_PORT="$HTTP_PORT_VALUE" HTTPS_PORT="$HTTPS_PORT_VALUE" \
-            docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build'
+            docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build
+
+          APP_ENV_FILE="$ENV_FILE" HTTP_PORT="$HTTP_PORT_VALUE" HTTPS_PORT="$HTTPS_PORT_VALUE" \
+            docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" restart nginx'
         '''
       }
     }
@@ -76,7 +79,10 @@ pipeline {
           git pull --ff-only origin "$TARGET_BRANCH"
 
           APP_ENV_FILE="$ENV_FILE" HTTP_PORT="$HTTP_PORT_VALUE" HTTPS_PORT="$HTTPS_PORT_VALUE" \
-            docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build'
+            docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build
+
+          APP_ENV_FILE="$ENV_FILE" HTTP_PORT="$HTTP_PORT_VALUE" HTTPS_PORT="$HTTPS_PORT_VALUE" \
+            docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" restart nginx'
         '''
       }
     }
@@ -113,7 +119,10 @@ pipeline {
           git pull --ff-only origin master
 
           APP_ENV_FILE="$ENV_FILE" HTTP_PORT="$HTTP_PORT_VALUE" HTTPS_PORT="$HTTPS_PORT_VALUE" \
-            docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build'
+            docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --build
+
+          APP_ENV_FILE="$ENV_FILE" HTTP_PORT="$HTTP_PORT_VALUE" HTTPS_PORT="$HTTPS_PORT_VALUE" \
+            docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" restart nginx'
         '''
       }
     }
