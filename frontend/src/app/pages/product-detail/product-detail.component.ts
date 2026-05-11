@@ -5,9 +5,9 @@ import { CartService } from '../../service/cart.service';
 import { CurrentUserService } from '../../service/current-user.service';
 import { MessagingService } from '../../service/messaging.service';
 import { ProductDetail, ProductService } from '../../service/product.service';
-import { environment } from '../../../environments/environment';
 import * as L from 'leaflet';
 import { Product } from '../../modules/product.model';
+import { resolveImageUrl } from '../../utils/image-url';
 
 @Component({
   selector: 'app-product-detail',
@@ -206,18 +206,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   getImageUrl(url?: string): string {
-    if (!url) {
-      return '';
-    }
-    const origin = window.location.origin;
-    if (url.startsWith(origin) && environment.apiUrl.startsWith('http')) {
-      return `${environment.apiUrl}${url.substring(origin.length)}`;
-    }
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
-    }
-    const normalized = url.startsWith('/') ? url : `/${url}`;
-    return `${environment.apiUrl}${normalized}`;
+    return resolveImageUrl(url);
   }
 
   private toCartProduct(product: ProductDetail): Product {
