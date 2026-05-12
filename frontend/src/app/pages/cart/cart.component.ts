@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CartItem, CartService } from '../../service/cart.service';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
+import { resolveImageUrl } from '../../utils/image-url';
 
 @Component({
   selector: 'app-cart',
@@ -107,18 +107,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   getImageUrl(url?: string): string {
-    if (!url) {
-      return '';
-    }
-    const origin = window.location.origin;
-    if (url.startsWith(origin) && environment.apiUrl.startsWith('http')) {
-      return `${environment.apiUrl}${url.substring(origin.length)}`;
-    }
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
-    }
-    const normalized = url.startsWith('/') ? url : `/${url}`;
-    return `${environment.apiUrl}${normalized}`;
+    return resolveImageUrl(url);
   }
 
   private syncSelection(items: CartItem[]): void {

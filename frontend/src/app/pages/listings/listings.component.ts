@@ -2,8 +2,8 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as L from 'leaflet';
 import { Listing, ListingRequest, ListingService } from '../../service/listing.service';
-import { environment } from '../../../environments/environment';
 import { Category, CategoryService } from '../../service/category.service';
+import { resolveImageUrl } from '../../utils/image-url';
 
 @Component({
   selector: 'app-listings',
@@ -345,18 +345,7 @@ export class ListingsComponent implements OnInit {
   }
 
   getImageUrl(url?: string): string {
-    if (!url) {
-      return '';
-    }
-    const origin = window.location.origin;
-    if (url.startsWith(origin) && environment.apiUrl.startsWith('http')) {
-      return `${environment.apiUrl}${url.substring(origin.length)}`;
-    }
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
-    }
-    const normalized = url.startsWith('/') ? url : `/${url}`;
-    return `${environment.apiUrl}${normalized}`;
+    return resolveImageUrl(url);
   }
 
   private clearImages(): void {
