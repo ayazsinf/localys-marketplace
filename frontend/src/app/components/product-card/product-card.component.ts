@@ -3,11 +3,11 @@ import {Product} from "../../modules/product.model";
 import {MatDialog} from "@angular/material/dialog";
 import {ProductQuickViewComponent} from "../product-quick-view/product-quick-view.component";
 import {CartService} from "../../service/cart.service";
-import {environment} from "../../../environments/environment";
 import {FavoritesService} from "../../service/favorites.service";
 import {Router} from "@angular/router";
 import {CurrentUserService} from "../../service/current-user.service";
 import { AuthService } from "../../service/auth.service";
+import { resolveImageUrl } from "../../utils/image-url";
 
 @Component({
   selector: 'app-product-card',
@@ -103,18 +103,7 @@ export class ProductCardComponent implements OnInit {
   }
 
   getImageUrl(url?: string): string {
-    if (!url) {
-      return '';
-    }
-    const origin = window.location.origin;
-    if (url.startsWith(origin) && environment.apiUrl.startsWith('http')) {
-      return `${environment.apiUrl}${url.substring(origin.length)}`;
-    }
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
-    }
-    const normalized = url.startsWith('/') ? url : `/${url}`;
-    return `${environment.apiUrl}${normalized}`;
+    return resolveImageUrl(url);
   }
 
   isOwner(): boolean {

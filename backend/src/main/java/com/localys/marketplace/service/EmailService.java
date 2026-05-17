@@ -4,6 +4,7 @@ import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.UserEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -15,16 +16,16 @@ public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
-    private final JavaMailSender mailSender;
+    private final ObjectProvider<JavaMailSender> mailSenderProvider;
     private final boolean enabled;
     private final String from;
 
     public EmailService(
-            JavaMailSender mailSender,
+            ObjectProvider<JavaMailSender> mailSenderProvider,
             @Value("${app.mail.enabled:false}") boolean enabled,
             @Value("${app.mail.from:no-reply@localys.example}") String from
     ) {
-        this.mailSender = mailSender;
+        this.mailSenderProvider = mailSenderProvider;
         this.enabled = enabled;
         this.from = from;
     }
@@ -70,6 +71,11 @@ public class EmailService {
         message.setSubject(subject);
         message.setText(body);
         try {
+            JavaMailSender mailSender = mailSenderProvider.getIfAvailable();
+            if (mailSender == null) {
+                logger.debug("Mail sender is not configured; skipping email to {}", to);
+                return;
+            }
             mailSender.send(message);
         } catch (MailException ex) {
             logger.warn("Email send failed to {}: {}", to, ex.getMessage());

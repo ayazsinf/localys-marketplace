@@ -1,59 +1,90 @@
 <div class="page-container">
-
   <div class="page-content">
     <div class="container">
       <div class="about-header">
-        <h1>{{ 'ABOUT.TITLE' | translate }}</h1>
-        <p class="subtitle">{{ 'ABOUT.SUBTITLE' | translate }}</p>
+        <h1>{{ "ABOUT.TITLE" | translate }}</h1>
+        <p class="subtitle">{{ "ABOUT.SUBTITLE" | translate }}</p>
+        <p class="hardcoded-test">
+          Hardcoded test: frontend değişikliği başarılı — değişiklik yapıldı.
+        </p>
       </div>
 
       <div class="about-sections">
         <section class="about-section">
           <div class="section-image">
-            <img src="https://images.pexels.com/photos/7915404/pexels-photo-7915404.jpeg" [alt]="'ABOUT.OUR_STORY_ALT' | translate">
+            <img
+              src="https://images.pexels.com/photos/7915404/pexels-photo-7915404.jpeg"
+              [alt]="'ABOUT.OUR_STORY_ALT' | translate"
+            />
           </div>
           <div class="section-content">
-            <h2>{{ 'ABOUT.OUR_STORY_TITLE' | translate }}</h2>
-            <p>{{ 'ABOUT.OUR_STORY_P1' | translate }}</p>
-            <p>{{ 'ABOUT.OUR_STORY_P2' | translate }}</p>
+            <h2>{{ "ABOUT.OUR_STORY_TITLE" | translate }}</h2>
+            <p>{{ "ABOUT.OUR_STORY_P1" | translate }}</p>
+            <p>{{ "ABOUT.OUR_STORY_P2" | translate }}</p>
           </div>
         </section>
 
         <section class="about-section reverse">
           <div class="section-content">
-            <h2>{{ 'ABOUT.OUR_MISSION_TITLE' | translate }}</h2>
-            <p>{{ 'ABOUT.OUR_MISSION_P1' | translate }}</p>
+            <h2>{{ "ABOUT.OUR_MISSION_TITLE" | translate }}</h2>
+            <p>{{ "ABOUT.OUR_MISSION_P1" | translate }}</p>
             <ul class="mission-list">
-              <li><i class="fas fa-check"></i> {{ 'ABOUT.MISSION_ITEM_1' | translate }}</li>
-              <li><i class="fas fa-check"></i> {{ 'ABOUT.MISSION_ITEM_2' | translate }}</li>
-              <li><i class="fas fa-check"></i> {{ 'ABOUT.MISSION_ITEM_3' | translate }}</li>
-              <li><i class="fas fa-check"></i> {{ 'ABOUT.MISSION_ITEM_4' | translate }}</li>
-              <li><i class="fas fa-check"></i> {{ 'ABOUT.MISSION_ITEM_5' | translate }}</li>
+              <li>
+                <i class="fas fa-check"></i>
+                {{ "ABOUT.MISSION_ITEM_1" | translate }}
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                {{ "ABOUT.MISSION_ITEM_2" | translate }}
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                {{ "ABOUT.MISSION_ITEM_3" | translate }}
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                {{ "ABOUT.MISSION_ITEM_4" | translate }}
+              </li>
+              <li>
+                <i class="fas fa-check"></i>
+                {{ "ABOUT.MISSION_ITEM_5" | translate }}
+              </li>
             </ul>
           </div>
           <div class="section-image">
-            <img src="https://images.pexels.com/photos/18966484/pexels-photo-18966484.jpeg" [alt]="'ABOUT.OUR_MISSION_ALT' | translate">
+            <img
+              src="https://images.pexels.com/photos/18966484/pexels-photo-18966484.jpeg"
+              [alt]="'ABOUT.OUR_MISSION_ALT' | translate"
+            />
           </div>
         </section>
 
         <section class="stats-section">
-          <h2>{{ 'ABOUT.BY_THE_NUMBERS' | translate }}</h2>
+          <h2>{{ "ABOUT.BY_THE_NUMBERS" | translate }}</h2>
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-number">10,000+</div>
-              <div class="stat-label">{{ 'ABOUT.STAT_CUSTOMERS' | translate }}</div>
+              <div class="stat-label">
+                {{ "ABOUT.STAT_CUSTOMERS" | translate }}
+              </div>
             </div>
             <div class="stat-card">
               <div class="stat-number">500+</div>
-              <div class="stat-label">{{ 'ABOUT.STAT_PRODUCTS' | translate }}</div>
+              <div class="stat-label">
+                {{ "ABOUT.STAT_PRODUCTS" | translate }}
+              </div>
             </div>
             <div class="stat-card">
               <div class="stat-number">50+</div>
-              <div class="stat-label">{{ 'ABOUT.STAT_BRANDS' | translate }}</div>
+              <div class="stat-label">
+                {{ "ABOUT.STAT_BRANDS" | translate }}
+              </div>
             </div>
             <div class="stat-card">
               <div class="stat-number">24/7</div>
-              <div class="stat-label">{{ 'ABOUT.STAT_SUPPORT' | translate }}</div>
+              <div class="stat-label">
+                {{ "ABOUT.STAT_SUPPORT" | translate }}
+              </div>
             </div>
           </div>
         </section>
