@@ -547,6 +547,23 @@
   background: #fef2f2;
 }
 
+.cart-notice.warning {
+  border-color: #fcd34d;
+  background: #fffbeb;
+}
+
+.cart-notice.warning .cart-notice-title {
+  color: #92400e;
+}
+
+.cart-notice.warning .cart-notice-meta {
+  color: #b45309;
+}
+
+.cart-notice.warning .cart-notice-qty {
+  color: #92400e;
+}
+
 .cart-notice-title {
   font-size: 0.85rem;
   font-weight: 700;

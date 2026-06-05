@@ -30,7 +30,7 @@ export interface CartItem {
 }
 
 export interface CartNotice {
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'warning';
   message: string;
   productName?: string;
   quantity?: number;
@@ -74,18 +74,15 @@ export class CartService {
       this.authService.login().subscribe();
       return EMPTY;
     }
+    const previousQty = this.getQuantity(product.id);
     return this.http.post<CartResponse>('/api/cart/items', {
       productId: product.id,
       quantity
     }).pipe(
       tap(cart => {
-        this.applyCart(cart);
-        this.noticeSubject.next({
-          type: 'success',
-          message: 'Added to cart.',
-          productName: product.name,
-          quantity
-        });
+        const items = this.applyCart(cart);
+        const updatedItem = items.find(item => item.product.id === product.id);
+        this.emitStockNotice(product, previousQty, updatedItem?.quantity ?? 0, updatedItem?.product.stockQty ?? product.stockQty ?? null, quantity);
       }),
       map(() => this.itemsSubject.value),
       catchError(err => {
@@ -104,8 +101,19 @@ export class CartService {
       this.authService.login().subscribe();
       return;
     }
+    const previousQty = this.getQuantity(productId);
     this.http.put<CartResponse>(`/api/cart/items/${productId}`, { quantity }).subscribe({
-      next: cart => this.applyCart(cart),
+      next: cart => {
+        const items = this.applyCart(cart);
+        const updatedItem = items.find(item => item.product.id === productId);
+        const product = updatedItem?.product;
+        if (!product) {
+          return;
+        }
+        if (updatedItem.quantity > previousQty) {
+          this.emitStockNotice(product, previousQty, updatedItem.quantity, product.stockQty ?? null, updatedItem.quantity - previousQty);
+        }
+      },
       error: err => {
         this.noticeSubject.next({
           type: 'error',
@@ -144,12 +152,13 @@ export class CartService {
     return this.itemsSubject.value;
   }
 
-  private applyCart(cart: CartResponse): void {
+  private applyCart(cart: CartResponse): CartItem[] {
     const items = cart.items.map(item => ({
       product: this.toProduct(item),
       quantity: item.quantity
     }));
     this.itemsSubject.next(items);
+    return items;
   }
 
   private toProduct(item: CartItemResponse): Product {
@@ -169,7 +178,10 @@ export class CartService {
   private readCartError(error: any, fallback: string): string {
     const code = error?.error?.code;
     if (code === 'OUT_OF_STOCK') {
-      return 'Out of stock.';
+      return 'Sorry, no items left in stock.';
+    }
+    if (code === 'ALREADY_IN_CART') {
+      return 'Already added to cart.';
     }
     if (code === 'OWN_PRODUCT') {
       return 'You cannot buy your own listing.';
@@ -178,5 +190,65 @@ export class CartService {
       return 'Product not found.';
     }
     return error?.error?.message || fallback;
+  }
+
+  private getQuantity(productId: number): number {
+    return this.itemsSubject.value.find(item => item.product.id === productId)?.quantity ?? 0;
+  }
+
+  private emitStockNotice(
+    product: Product,
+    previousQty: number,
+    currentQty: number,
+    stockQty: number | null,
+    attemptedQuantity: number
+  ): void {
+    if (stockQty == null) {
+      this.noticeSubject.next({
+        type: 'success',
+        message: 'Added to cart.',
+        productName: product.name,
+        quantity: attemptedQuantity
+      });
+      return;
+    }
+
+    if (previousQty >= stockQty && currentQty >= stockQty) {
+      this.noticeSubject.next({
+        type: 'warning',
+        message: 'Already added to cart. No more stock left.',
+        productName: product.name,
+        quantity: currentQty
+      });
+      return;
+    }
+
+    const remaining = Math.max(stockQty - currentQty, 0);
+    if (remaining === 0) {
+      this.noticeSubject.next({
+        type: 'warning',
+        message: 'No items left in stock.',
+        productName: product.name,
+        quantity: currentQty
+      });
+      return;
+    }
+
+    if (remaining === 1) {
+      this.noticeSubject.next({
+        type: 'warning',
+        message: 'Only one item left in stock.',
+        productName: product.name,
+        quantity: currentQty
+      });
+      return;
+    }
+
+    this.noticeSubject.next({
+      type: 'success',
+      message: 'Added to cart.',
+      productName: product.name,
+      quantity: attemptedQuantity
+    });
   }
 }
