@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
-import { Product } from '../modules/product.model';
-import { BehaviorSubject, EMPTY, map, Observable, tap, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
-import { AuthService } from './auth.service';
+import { Injectable } from "@angular/core";
+import { Product } from "../modules/product.model";
+import { BehaviorSubject, EMPTY, map, Observable, tap, throwError } from "rxjs";
+import { catchError } from "rxjs/operators";
+import { HttpClient } from "@angular/common/http";
+import { AuthService } from "./auth.service";
 
 interface CartItemResponse {
   productId: number;
@@ -30,15 +30,14 @@ export interface CartItem {
 }
 
 export interface CartNotice {
-  type: 'success' | 'error' | 'warning';
+  type: "success" | "error" | "warning";
   message: string;
   productName?: string;
   quantity?: number;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class CartService {
-
   private readonly itemsSubject = new BehaviorSubject<CartItem[]>([]);
   readonly items$ = this.itemsSubject.asObservable();
   private readonly noticeSubject = new BehaviorSubject<CartNotice | null>(null);
@@ -46,12 +45,12 @@ export class CartService {
 
   // navbar için toplam adet
   readonly count$ = this.items$.pipe(
-    map(items => items.reduce((sum, item) => sum + item.quantity, 0))
+    map((items) => items.reduce((sum, item) => sum + item.quantity, 0)),
   );
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   refresh(): Observable<CartItem[]> {
@@ -59,9 +58,9 @@ export class CartService {
       this.itemsSubject.next([]);
       return this.items$;
     }
-    return this.http.get<CartResponse>('/api/cart').pipe(
-      tap(cart => this.applyCart(cart)),
-      map(() => this.itemsSubject.value)
+    return this.http.get<CartResponse>("/api/cart").pipe(
+      tap((cart) => this.applyCart(cart)),
+      map(() => this.itemsSubject.value),
     );
   }
 
@@ -75,25 +74,35 @@ export class CartService {
       return EMPTY;
     }
     const previousQty = this.getQuantity(product.id);
-    return this.http.post<CartResponse>('/api/cart/items', {
-      productId: product.id,
-      quantity
-    }).pipe(
-      tap(cart => {
-        const items = this.applyCart(cart);
-        const updatedItem = items.find(item => item.product.id === product.id);
-        this.emitStockNotice(product, previousQty, updatedItem?.quantity ?? 0, updatedItem?.product.stockQty ?? product.stockQty ?? null, quantity);
-      }),
-      map(() => this.itemsSubject.value),
-      catchError(err => {
-        this.noticeSubject.next({
-          type: 'error',
-          message: this.readCartError(err, 'Could not add item.'),
-          productName: product.name
-        });
-        return throwError(() => err);
+    return this.http
+      .post<CartResponse>("/api/cart/items", {
+        productId: product.id,
+        quantity,
       })
-    );
+      .pipe(
+        tap((cart) => {
+          const items = this.applyCart(cart);
+          const updatedItem = items.find(
+            (item) => item.product.id === product.id,
+          );
+          this.emitStockNotice(
+            product,
+            previousQty,
+            updatedItem?.quantity ?? 0,
+            updatedItem?.product.stockQty ?? product.stockQty ?? null,
+            quantity,
+          );
+        }),
+        map(() => this.itemsSubject.value),
+        catchError((err) => {
+          this.noticeSubject.next({
+            type: "error",
+            message: this.readCartError(err, "Could not add item."),
+            productName: product.name,
+          });
+          return throwError(() => err);
+        }),
+      );
   }
 
   updateQuantity(productId: number, quantity: number): void {
@@ -102,25 +111,35 @@ export class CartService {
       return;
     }
     const previousQty = this.getQuantity(productId);
-    this.http.put<CartResponse>(`/api/cart/items/${productId}`, { quantity }).subscribe({
-      next: cart => {
-        const items = this.applyCart(cart);
-        const updatedItem = items.find(item => item.product.id === productId);
-        const product = updatedItem?.product;
-        if (!product) {
-          return;
-        }
-        if (updatedItem.quantity > previousQty) {
-          this.emitStockNotice(product, previousQty, updatedItem.quantity, product.stockQty ?? null, updatedItem.quantity - previousQty);
-        }
-      },
-      error: err => {
-        this.noticeSubject.next({
-          type: 'error',
-          message: this.readCartError(err, 'Could not update quantity.')
-        });
-      }
-    });
+    this.http
+      .put<CartResponse>(`/api/cart/items/${productId}`, { quantity })
+      .subscribe({
+        next: (cart) => {
+          const items = this.applyCart(cart);
+          const updatedItem = items.find(
+            (item) => item.product.id === productId,
+          );
+          const product = updatedItem?.product;
+          if (!product) {
+            return;
+          }
+          if (updatedItem.quantity > previousQty) {
+            this.emitStockNotice(
+              product,
+              previousQty,
+              updatedItem.quantity,
+              product.stockQty ?? null,
+              updatedItem.quantity - previousQty,
+            );
+          }
+        },
+        error: (err) => {
+          this.noticeSubject.next({
+            type: "error",
+            message: this.readCartError(err, "Could not update quantity."),
+          });
+        },
+      });
   }
 
   remove(productId: number): void {
@@ -129,13 +148,13 @@ export class CartService {
       return;
     }
     this.http.delete<CartResponse>(`/api/cart/items/${productId}`).subscribe({
-      next: cart => this.applyCart(cart),
-      error: err => {
+      next: (cart) => this.applyCart(cart),
+      error: (err) => {
         this.noticeSubject.next({
-          type: 'error',
-          message: this.readCartError(err, 'Could not remove item.')
+          type: "error",
+          message: this.readCartError(err, "Could not remove item."),
         });
-      }
+      },
     });
   }
 
@@ -153,9 +172,9 @@ export class CartService {
   }
 
   private applyCart(cart: CartResponse): CartItem[] {
-    const items = cart.items.map(item => ({
+    const items = cart.items.map((item) => ({
       product: this.toProduct(item),
-      quantity: item.quantity
+      quantity: item.quantity,
     }));
     this.itemsSubject.next(items);
     return items;
@@ -165,35 +184,38 @@ export class CartService {
     return {
       id: item.productId,
       name: item.productName,
-      description: '',
+      description: "",
       price: item.unitPrice,
       currency: item.currency,
       imageUrls: item.imageUrl ? [item.imageUrl] : [],
-      categoryName: '',
+      categoryName: "",
       inStock: true,
-      stockQty: item.stockQty ?? undefined
+      stockQty: item.stockQty ?? undefined,
     };
   }
 
   private readCartError(error: any, fallback: string): string {
     const code = error?.error?.code;
-    if (code === 'OUT_OF_STOCK') {
-      return 'Sorry, no items left in stock.';
+    if (code === "OUT_OF_STOCK") {
+      return "Sorry, no items left in stock.";
     }
-    if (code === 'ALREADY_IN_CART') {
-      return 'Already added to cart.';
+    if (code === "ALREADY_IN_CART") {
+      return "Already added to cart.";
     }
-    if (code === 'OWN_PRODUCT') {
-      return 'You cannot buy your own listing.';
+    if (code === "OWN_PRODUCT") {
+      return "You cannot buy your own listing.";
     }
-    if (code === 'PRODUCT_NOT_FOUND') {
-      return 'Product not found.';
+    if (code === "PRODUCT_NOT_FOUND") {
+      return "Product not found.";
     }
     return error?.error?.message || fallback;
   }
 
   private getQuantity(productId: number): number {
-    return this.itemsSubject.value.find(item => item.product.id === productId)?.quantity ?? 0;
+    return (
+      this.itemsSubject.value.find((item) => item.product.id === productId)
+        ?.quantity ?? 0
+    );
   }
 
   private emitStockNotice(
@@ -201,24 +223,24 @@ export class CartService {
     previousQty: number,
     currentQty: number,
     stockQty: number | null,
-    attemptedQuantity: number
+    attemptedQuantity: number,
   ): void {
     if (stockQty == null) {
       this.noticeSubject.next({
-        type: 'success',
-        message: 'Added to cart.',
+        type: "success",
+        message: "Added to cart.",
         productName: product.name,
-        quantity: attemptedQuantity
+        quantity: attemptedQuantity,
       });
       return;
     }
 
     if (previousQty >= stockQty && currentQty >= stockQty) {
       this.noticeSubject.next({
-        type: 'warning',
-        message: 'Already added to cart. No more stock left.',
+        type: "warning",
+        message: "Already added to cart. No more stock left.",
         productName: product.name,
-        quantity: currentQty
+        quantity: currentQty,
       });
       return;
     }
@@ -226,29 +248,29 @@ export class CartService {
     const remaining = Math.max(stockQty - currentQty, 0);
     if (remaining === 0) {
       this.noticeSubject.next({
-        type: 'warning',
-        message: 'No items left in stock.',
+        type: "warning",
+        message: "No items left in stock.",
         productName: product.name,
-        quantity: currentQty
+        quantity: currentQty,
       });
       return;
     }
 
     if (remaining === 1) {
       this.noticeSubject.next({
-        type: 'warning',
-        message: 'Only one item left in stock.',
+        type: "warning",
+        message: "Only one item left in stock.",
         productName: product.name,
-        quantity: currentQty
+        quantity: currentQty,
       });
       return;
     }
 
     this.noticeSubject.next({
-      type: 'success',
-      message: 'Added to cart.',
+      type: "success",
+      message: "Added to cart.",
       productName: product.name,
-      quantity: attemptedQuantity
+      quantity: attemptedQuantity,
     });
   }
 }

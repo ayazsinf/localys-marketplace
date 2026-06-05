@@ -44,11 +44,10 @@
   color: #1976d2;
 }
 
-
 .nav-logo a {
   font-size: 24px;
   font-weight: bold;
-  color: #4A90E2;
+  color: #4a90e2;
   text-decoration: none;
 }
 
@@ -63,11 +62,11 @@
     transition: color 0.3s;
 
     &:hover {
-      color: #4A90E2;
+      color: #4a90e2;
     }
 
     &.active {
-      color: #4A90E2;
+      color: #4a90e2;
       font-weight: 600;
     }
   }
@@ -121,19 +120,19 @@
 @media (max-width: 768px) {
   .nav-menu {
     position: fixed;
-    left: -100%;  // BAŞLANGIÇTA EKRAN DIŞINDA
+    left: -100%; // BAŞLANGIÇTA EKRAN DIŞINDA
     top: 70px;
     flex-direction: column;
     background-color: white;
     width: 100%;
     text-align: center;
-    transition: left 0.3s ease;  // TRANSITION EKLENDİ
+    transition: left 0.3s ease; // TRANSITION EKLENDİ
     box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
     padding: 20px 0;
 
     // .active CLASS'I EKLENDİĞİNDE
     &.active {
-      left: 0;  // EKRANDA GÖSTER
+      left: 0; // EKRANDA GÖSTER
     }
 
     .nav-link {
@@ -148,11 +147,10 @@
 
   .nav-icons {
     gap: 10px;
-
   }
 }
 /* navbar.component.scss */
-.nav-right{
+.nav-right {
   display: inline-flex;
 }
 
@@ -172,7 +170,9 @@
   font-size: 0.85rem;
   cursor: pointer;
   color: #111827;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .lang-trigger:hover {
@@ -198,7 +198,10 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(-6px);
-  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    visibility 0.15s ease;
   z-index: 20;
 }
 
@@ -251,7 +254,9 @@
   justify-content: center;
   color: #111827;
   position: relative;
-  transition: background 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .notification-trigger:hover {
@@ -284,7 +289,10 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(-6px);
-  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    visibility 0.15s ease;
   z-index: 25;
 }
 
@@ -383,7 +391,9 @@
   font: inherit;
   cursor: pointer;
   color: #4b5563; // gri
-  transition: color 0.15s ease, transform 0.1s ease;
+  transition:
+    color 0.15s ease,
+    transform 0.1s ease;
 }
 
 .nav-auth-link:hover {
@@ -421,7 +431,10 @@
   cursor: pointer;
   padding: 0;
   margin-left: 4px;
-  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
 }
 
 .nav-icon-btn i,
@@ -454,7 +467,9 @@
   border-radius: 999px;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .profile-trigger:hover {
@@ -484,7 +499,10 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(-6px);
-  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    visibility 0.15s ease;
   z-index: 20;
 }
 

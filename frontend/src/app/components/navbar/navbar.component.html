@@ -1,173 +1,213 @@
 <nav class="navbar">
-    <div class="trial-banner">
-        {{ 'COMMON.TRIAL_BANNER' | translate }}
+  <div class="trial-banner">
+    {{ "COMMON.TRIAL_BANNER" | translate }}
+  </div>
+  <div class="nav-container">
+    <div class="nav-logo">
+      <a class="nav-logo-link" routerLink="/">
+        <span class="material-icons nav-logo-icon"> storefront </span>
+        <span class="nav-logo-text">Localys</span>
+      </a>
     </div>
-    <div class="nav-container">
-        <div class="nav-logo">
-            <a class="nav-logo-link" routerLink="/">
-                <span class="material-icons nav-logo-icon">
-                  storefront
-                </span>
-                <span class="nav-logo-text">Localys</span>
-            </a>
+
+    <div class="nav-menu" [class.active]="isMenuOpen">
+      <a routerLink="/" routerLinkActive="active" class="nav-link">{{
+        "NAV.HOME" | translate
+      }}</a>
+      <a routerLink="/products" routerLinkActive="active" class="nav-link">{{
+        "NAV.SHOP" | translate
+      }}</a>
+      <a routerLink="/deals" routerLinkActive="active" class="nav-link">{{
+        "NAV.DEALS" | translate
+      }}</a>
+      <a routerLink="/about" routerLinkActive="active" class="nav-link">{{
+        "NAV.ABOUT" | translate
+      }}</a>
+      <a routerLink="/contact" routerLinkActive="active" class="nav-link">{{
+        "NAV.CONTACT" | translate
+      }}</a>
+    </div>
+
+    <div class="nav-right">
+      <div class="nav-icons">
+        <div class="nav-search">
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="onSearch()"
+            [placeholder]="'NAV.SEARCH_PLACEHOLDER' | translate"
+          />
+          <button class="icon-btn" type="button" (click)="onSearch()">
+            <i class="fas fa-search"></i>
+          </button>
         </div>
 
-        <div class="nav-menu" [class.active]="isMenuOpen">
-            <a routerLink="/" routerLinkActive="active" class="nav-link">{{ 'NAV.HOME' | translate }}</a>
-            <a routerLink="/products" routerLinkActive="active" class="nav-link">{{ 'NAV.SHOP' | translate }}</a>
-            <a routerLink="/deals" routerLinkActive="active" class="nav-link">{{ 'NAV.DEALS' | translate }}</a>
-            <a routerLink="/about" routerLinkActive="active" class="nav-link">{{ 'NAV.ABOUT' | translate }}</a>
-            <a routerLink="/contact" routerLinkActive="active" class="nav-link">{{ 'NAV.CONTACT' | translate }}</a>
-        </div>
-
-        <div class="nav-right">
-            <div class="nav-icons">
-                <div class="nav-search">
-                    <input
-                            type="text"
-                            [(ngModel)]="searchTerm"
-                            (keyup.enter)="onSearch()"
-                            [placeholder]="'NAV.SEARCH_PLACEHOLDER' | translate" />
-                    <button class="icon-btn" type="button" (click)="onSearch()">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-
-                <div class="cart-notice-wrap">
-                    <button class="icon-btn cart-btn" type="button" (click)="openCart()">
-                        <span class="material-icons">shopping_cart</span>
-                        <span class="cart-count" *ngIf="cartCount$ | async as count">{{ count }}</span>
-                    </button>
-                    <div
-                        class="cart-notice"
-                        *ngIf="showCartNotice && cartNotice"
-                        [class.error]="cartNotice.type === 'error'"
-                        [class.warning]="cartNotice.type === 'warning'">
-                        <div class="cart-notice-title">{{ cartNotice.message }}</div>
-                        <div class="cart-notice-meta" *ngIf="cartNotice.productName">
-                            <span class="cart-notice-name">{{ cartNotice.productName }}</span>
-                            <span class="cart-notice-qty" *ngIf="cartNotice.quantity">x{{ cartNotice.quantity }}</span>
-                        </div>
-                        <button
-                                type="button"
-                                class="cart-notice-link"
-                                *ngIf="cartNotice.type !== 'error'"
-                                (click)="openCart()">
-                            Go to cart
-                        </button>
-                    </div>
-                </div>
+        <div class="cart-notice-wrap">
+          <button class="icon-btn cart-btn" type="button" (click)="openCart()">
+            <span class="material-icons">shopping_cart</span>
+            <span class="cart-count" *ngIf="cartCount$ | async as count">{{
+              count
+            }}</span>
+          </button>
+          <div
+            class="cart-notice"
+            *ngIf="showCartNotice && cartNotice"
+            [class.error]="cartNotice.type === 'error'"
+            [class.warning]="cartNotice.type === 'warning'"
+          >
+            <div class="cart-notice-title">{{ cartNotice.message }}</div>
+            <div class="cart-notice-meta" *ngIf="cartNotice.productName">
+              <span class="cart-notice-name">{{ cartNotice.productName }}</span>
+              <span class="cart-notice-qty" *ngIf="cartNotice.quantity"
+                >x{{ cartNotice.quantity }}</span
+              >
             </div>
+            <button
+              type="button"
+              class="cart-notice-link"
+              *ngIf="cartNotice.type !== 'error'"
+              (click)="openCart()"
+            >
+              Go to cart
+            </button>
+          </div>
+        </div>
+      </div>
 
-            <div class="lang-menu">
+      <div class="lang-menu">
+        <button
+          type="button"
+          class="lang-trigger"
+          [attr.aria-label]="'LANGUAGE' | translate"
+          [attr.aria-expanded]="isLangMenuOpen"
+          (click)="toggleLangMenu()"
+        >
+          <span class="lang-code">{{ currentLang | uppercase }}</span>
+          <span class="material-icons">language</span>
+        </button>
+        <div class="lang-dropdown" [class.open]="isLangMenuOpen">
+          @for (lang of supportedLangs; track lang) {
+            <button
+              type="button"
+              class="lang-option"
+              [class.active]="lang === currentLang"
+              (click)="setLanguage(lang)"
+            >
+              <span class="lang-label">{{ lang | uppercase }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="nav-auth">
+        @if (!authService.isAuthenticated) {
+          <button type="button" class="nav-auth-link" (click)="login()">
+            {{ "AUTH.SIGN_IN" | translate }}
+          </button>
+
+          <span class="nav-auth-separator">·</span>
+
+          <button
+            type="button"
+            class="nav-auth-link nav-auth-link--primary"
+            (click)="register()"
+          >
+            {{ "AUTH.CREATE_ACCOUNT" | translate }}
+          </button>
+        } @else {
+          <div class="notification-menu">
+            <button
+              type="button"
+              class="notification-trigger"
+              [attr.aria-expanded]="isNotificationsOpen"
+              [attr.aria-label]="'COMMON.NOTIFICATIONS' | translate"
+              (click)="toggleNotificationsMenu()"
+            >
+              <span class="material-icons">notifications</span>
+              <span class="notification-badge" *ngIf="unreadCount > 0">{{
+                unreadCount
+              }}</span>
+            </button>
+            <div
+              class="notification-dropdown"
+              [class.open]="isNotificationsOpen"
+            >
+              <div class="notification-header">
+                <span>{{ "COMMON.NOTIFICATIONS" | translate }}</span>
                 <button
-                        type="button"
-                        class="lang-trigger"
-                        [attr.aria-label]="'LANGUAGE' | translate"
-                        [attr.aria-expanded]="isLangMenuOpen"
-                        (click)="toggleLangMenu()">
-                    <span class="lang-code">{{ currentLang | uppercase }}</span>
-                    <span class="material-icons">language</span>
+                  type="button"
+                  class="notification-mark-all"
+                  (click)="markAllNotificationsRead()"
+                >
+                  {{ "COMMON.MARK_ALL_READ" | translate }}
                 </button>
-                <div class="lang-dropdown" [class.open]="isLangMenuOpen">
-                    @for (lang of supportedLangs; track lang) {
-                        <button
-                                type="button"
-                                class="lang-option"
-                                [class.active]="lang === currentLang"
-                                (click)="setLanguage(lang)">
-                            <span class="lang-label">{{ lang | uppercase }}</span>
-                        </button>
-                    }
-                </div>
-            </div>
-
-            <div class="nav-auth">
-                @if (!authService.isAuthenticated) {
-                    <button
-                            type="button"
-                            class="nav-auth-link"
-                            (click)="login()">
-                        {{ 'AUTH.SIGN_IN' | translate }}
-                    </button>
-
-                    <span class="nav-auth-separator">·</span>
-
-                    <button
-                            type="button"
-                            class="nav-auth-link nav-auth-link--primary"
-                            (click)="register()">
-                        {{ 'AUTH.CREATE_ACCOUNT' | translate }}
-                    </button>
+              </div>
+              <div class="notification-list">
+                @if (notifications.length === 0) {
+                  <div class="notification-empty">
+                    {{ "COMMON.NO_NOTIFICATIONS" | translate }}
+                  </div>
                 } @else {
-                    <div class="notification-menu">
-                        <button
-                                type="button"
-                                class="notification-trigger"
-                                [attr.aria-expanded]="isNotificationsOpen"
-                                [attr.aria-label]="'COMMON.NOTIFICATIONS' | translate"
-                                (click)="toggleNotificationsMenu()">
-                            <span class="material-icons">notifications</span>
-                            <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
-                        </button>
-                        <div class="notification-dropdown" [class.open]="isNotificationsOpen">
-                            <div class="notification-header">
-                                <span>{{ 'COMMON.NOTIFICATIONS' | translate }}</span>
-                                <button type="button" class="notification-mark-all" (click)="markAllNotificationsRead()">
-                                    {{ 'COMMON.MARK_ALL_READ' | translate }}
-                                </button>
-                            </div>
-                            <div class="notification-list">
-                                @if (notifications.length === 0) {
-                                    <div class="notification-empty">{{ 'COMMON.NO_NOTIFICATIONS' | translate }}</div>
-                                } @else {
-                                    @for (item of notifications; track item.id) {
-                                        <button
-                                                type="button"
-                                                class="notification-item"
-                                                [class.unread]="!item.read"
-                                                (click)="openNotification(item)">
-                                            <div class="notification-title">{{ item.title }}</div>
-                                            <div class="notification-message">{{ item.message }}</div>
-                                        </button>
-                                    }
-                                }
-                            </div>
-                            <div class="notification-footer">
-                                <a
-                                        class="notification-view-all"
-                                        routerLink="/notifications"
-                                        (click)="closeNotificationsMenu()">
-                                    {{ 'NOTIFICATIONS.VIEW_ALL' | translate }}
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="profile-menu">
-                        <button
-                                type="button"
-                                class="profile-trigger"
-                                [attr.aria-expanded]="isProfileMenuOpen"
-                                (click)="toggleProfileMenu()">
-                            <span class="profile-name">{{ authService.username }}</span>
-                            <span class="material-icons">expand_more</span>
-                        </button>
-                        <div class="profile-dropdown" [class.open]="isProfileMenuOpen">
-                            <a routerLink="/profile" (click)="closeProfileMenu()">{{ 'MENU.MY_PROFILE' | translate }}</a>
-                            <a routerLink="/listings" (click)="closeProfileMenu()">{{ 'MENU.MY_LISTINGS' | translate }}</a>
-                            <a routerLink="/favorites" (click)="closeProfileMenu()">{{ 'MENU.FAVORITES' | translate }}</a>
-                            <a routerLink="/messages" (click)="closeProfileMenu()">{{ 'MENU.MESSAGES' | translate }}</a>
-                            <button type="button" class="logout" (click)="logout()">{{ 'AUTH.LOGOUT' | translate }}</button>
-                        </div>
-                    </div>
+                  @for (item of notifications; track item.id) {
+                    <button
+                      type="button"
+                      class="notification-item"
+                      [class.unread]="!item.read"
+                      (click)="openNotification(item)"
+                    >
+                      <div class="notification-title">{{ item.title }}</div>
+                      <div class="notification-message">{{ item.message }}</div>
+                    </button>
+                  }
                 }
+              </div>
+              <div class="notification-footer">
+                <a
+                  class="notification-view-all"
+                  routerLink="/notifications"
+                  (click)="closeNotificationsMenu()"
+                >
+                  {{ "NOTIFICATIONS.VIEW_ALL" | translate }}
+                </a>
+              </div>
             </div>
+          </div>
+          <div class="profile-menu">
+            <button
+              type="button"
+              class="profile-trigger"
+              [attr.aria-expanded]="isProfileMenuOpen"
+              (click)="toggleProfileMenu()"
+            >
+              <span class="profile-name">{{ authService.username }}</span>
+              <span class="material-icons">expand_more</span>
+            </button>
+            <div class="profile-dropdown" [class.open]="isProfileMenuOpen">
+              <a routerLink="/profile" (click)="closeProfileMenu()">{{
+                "MENU.MY_PROFILE" | translate
+              }}</a>
+              <a routerLink="/listings" (click)="closeProfileMenu()">{{
+                "MENU.MY_LISTINGS" | translate
+              }}</a>
+              <a routerLink="/favorites" (click)="closeProfileMenu()">{{
+                "MENU.FAVORITES" | translate
+              }}</a>
+              <a routerLink="/messages" (click)="closeProfileMenu()">{{
+                "MENU.MESSAGES" | translate
+              }}</a>
+              <button type="button" class="logout" (click)="logout()">
+                {{ "AUTH.LOGOUT" | translate }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
 
-            <div class="hamburger" (click)="toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
+      <div class="hamburger" (click)="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </div>
+  </div>
 </nav>
