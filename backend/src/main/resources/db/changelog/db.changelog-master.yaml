@@ -186,3 +186,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 016-add-product-country
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V16__add_product_country.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

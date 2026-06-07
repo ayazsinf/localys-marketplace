@@ -8,6 +8,7 @@ public record ListingDto(
         String name,
         String description,
         BigDecimal price,
+        String country,
         String currency,
         int stockQty,
         boolean active,

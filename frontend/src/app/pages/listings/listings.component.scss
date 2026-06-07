@@ -141,6 +141,10 @@
   resize: vertical;
 }
 
+.form-grid input[readonly] {
+  background: #f8fafc;
+}
+
 .form-grid .full {
   grid-column: 1 / -1;
 }

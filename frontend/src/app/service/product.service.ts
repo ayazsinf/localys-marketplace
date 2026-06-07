@@ -8,6 +8,7 @@ export interface ProductDetail {
   name: string;
   description: string;
   price: number;
+  country: string;
   currency: string;
   stockQty: number;
   active: boolean;

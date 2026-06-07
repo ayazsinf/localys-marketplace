@@ -8,6 +8,7 @@ export interface Listing {
   name: string;
   description: string | null;
   price: number;
+  country: string;
   currency: string;
   stockQty: number;
   active: boolean;
@@ -26,6 +27,7 @@ export interface ListingRequest {
   name: string;
   description?: string | null;
   price: number;
+  country?: string | null;
   currency?: string | null;
   stockQty?: number | null;
   active?: boolean | null;

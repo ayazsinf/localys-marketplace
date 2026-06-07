@@ -57,6 +57,7 @@ public class ProductService {
         product.setBrand(productDetails.getBrand());
         product.setStockQty(productDetails.getStockQty());
         product.setActive(productDetails.isActive());
+        product.setCountry(productDetails.getCountry());
         product.setCurrency(productDetails.getCurrency());
         if (productDetails.getSku() != null && !productDetails.getSku().isBlank()) {
             product.setSku(productDetails.getSku());

@@ -37,7 +37,7 @@
       </div>
       <h1>{{ product.name }}</h1>
       <p class="sku">SKU: {{ product.sku }}</p>
-      <p class="price">{{ product.price | currency:product.currency }}</p>
+      <p class="price">{{ product.price | currencyDisplay:product.currency }}</p>
 
       <div class="meta">
         <span>{{ 'PRODUCT.IN_STOCK' | translate }}: {{ product.stockQty }}</span>

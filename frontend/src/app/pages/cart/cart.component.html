@@ -31,7 +31,7 @@
 
         <div class="cart-info">
           <div class="cart-name">{{ item.product.name }}</div>
-          <div class="cart-price">{{ item.product.price | number:'1.2-2' }} {{ item.product.currency }}</div>
+          <div class="cart-price">{{ item.product.price | currencyDisplay:item.product.currency }}</div>
         </div>
 
         <div class="cart-qty" *ngIf="(item.product.stockQty ?? 0) > 1; else singleQty">
@@ -54,7 +54,7 @@
         </ng-template>
 
         <div class="cart-total">
-          {{ getLineTotal(item) | number:'1.2-2' }} {{ item.product.currency }}
+          {{ getLineTotal(item) | currencyDisplay:item.product.currency }}
         </div>
 
         <button type="button" class="cart-remove" (click)="removeItem(item)">Remove</button>
@@ -64,7 +64,7 @@
     <div class="cart-summary">
       <div class="summary-row">
         <span>Selected total</span>
-        <strong>{{ getSelectedTotal() | number:'1.2-2' }} {{ items[0]?.product.currency }}</strong>
+        <strong>{{ getSelectedTotal() | currencyDisplay:items[0]?.product.currency }}</strong>
       </div>
       <button type="button" class="checkout-btn" (click)="checkout()">Proceed to checkout</button>
     </div>

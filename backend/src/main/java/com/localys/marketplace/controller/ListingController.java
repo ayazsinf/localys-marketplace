@@ -11,13 +11,13 @@ import com.localys.marketplace.repository.CategoryRepository;
 import com.localys.marketplace.repository.UserRepository;
 import com.localys.marketplace.repository.VendorRepository;
 import com.localys.marketplace.service.ProductService;
+import com.localys.marketplace.util.MarketCountryResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -129,10 +129,12 @@ public class ListingController {
             throw new IllegalArgumentException("Listing price is required");
         }
         Product product = new Product();
+        String country = MarketCountryResolver.resolveCountry(request.country(), request.currency());
         product.setName(request.name().trim());
         product.setDescription(request.description());
         product.setPrice(request.price());
-        product.setCurrency(resolveCurrency(request.currency()));
+        product.setCountry(country);
+        product.setCurrency(MarketCountryResolver.resolveCurrency(country));
         product.setStockQty(request.stockQty());
         product.setActive(request.active());
         if (request.sku() != null && !request.sku().isBlank()) {
@@ -149,19 +151,13 @@ public class ListingController {
         return product;
     }
 
-    private String resolveCurrency(String currency) {
-        if (currency == null || currency.isBlank()) {
-            return "EUR";
-        }
-        return currency.trim().toUpperCase();
-    }
-
     private ListingDto toDto(Product product) {
         return new ListingDto(
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
+                product.getCountry(),
                 product.getCurrency(),
                 product.getStockQty(),
                 product.isActive(),

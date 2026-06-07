@@ -108,7 +108,7 @@
               [value]="option.id"
               [(ngModel)]="selectedShippingId" />
             <span>{{ option.label }}</span>
-            <strong>{{ option.price | number:'1.2-2' }} {{ getCurrency() }}</strong>
+            <strong>{{ option.price | currencyDisplay:getCurrency() }}</strong>
           </label>
         </div>
       </div>
@@ -148,21 +148,21 @@
             <div class="summary-meta">Qty: {{ item.quantity }}</div>
           </div>
           <div class="summary-price">
-            {{ item.product.price * item.quantity | number:'1.2-2' }} {{ item.product.currency }}
+            {{ item.product.price * item.quantity | currencyDisplay:item.product.currency }}
           </div>
         </div>
 
         <div class="summary-row">
           <span>Subtotal</span>
-          <strong>{{ getSubtotal() | number:'1.2-2' }} {{ getCurrency() }}</strong>
+          <strong>{{ getSubtotal() | currencyDisplay:getCurrency() }}</strong>
         </div>
         <div class="summary-row">
           <span>Shipping</span>
-          <strong>{{ getShippingPrice() | number:'1.2-2' }} {{ getCurrency() }}</strong>
+          <strong>{{ getShippingPrice() | currencyDisplay:getCurrency() }}</strong>
         </div>
         <div class="summary-total">
           <span>Total</span>
-          <strong>{{ getTotal() | number:'1.2-2' }} {{ getCurrency() }}</strong>
+          <strong>{{ getTotal() | currencyDisplay:getCurrency() }}</strong>
         </div>
 
         <button

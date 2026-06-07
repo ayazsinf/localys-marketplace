@@ -32,7 +32,7 @@
       </div>
 
     <div class="product-footer">
-        <span class="product-price">{{ product.price | currency:'USD' }}</span>
+        <span class="product-price">{{ product.price | currencyDisplay:product.currency }}</span>
         <button
         class="add-to-cart-btn"
         (click)="addToCart($event)"

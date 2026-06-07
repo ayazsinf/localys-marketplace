@@ -37,6 +37,9 @@ public class Product extends AuditableEntity {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
+    @Column(name = "country_code", nullable = false, length = 2)
+    private String country = "FR";
+
     @Column(nullable = false, length = 3)
     private String currency = "EUR";
 

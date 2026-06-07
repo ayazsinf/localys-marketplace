@@ -84,6 +84,7 @@ public class FavoriteController {
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
+                product.getCountry(),
                 product.getCurrency(),
                 product.getStockQty() > 0,
                 product.getCategory() != null ? product.getCategory().getName() : null,

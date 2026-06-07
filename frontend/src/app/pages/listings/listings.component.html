@@ -38,8 +38,16 @@
         <input type="number" min="0" step="0.01" [(ngModel)]="form.price" />
       </label>
       <label>
+        <span>{{ 'PROFILE.ADDRESS_COUNTRY' | translate }}</span>
+        <select [ngModel]="form.country" (ngModelChange)="onCountryChange($event)">
+          <option *ngFor="let market of marketOptions" [ngValue]="market.country">
+            {{ market.label }}
+          </option>
+        </select>
+      </label>
+      <label>
         <span>{{ 'LISTINGS.FIELD_CURRENCY' | translate }}</span>
-        <input type="text" maxlength="3" [(ngModel)]="form.currency" />
+        <input type="text" maxlength="3" [ngModel]="form.currency" readonly />
       </label>
       <label>
         <span>{{ 'LISTINGS.FIELD_CATEGORY' | translate }}</span>
@@ -154,7 +162,11 @@
       <div class="listing-meta">
         <div>
           <span>{{ 'LISTINGS.LABEL_PRICE' | translate }}</span>
-          <strong>{{ listing.price }} {{ listing.currency }}</strong>
+          <strong>{{ listing.price | currencyDisplay:listing.currency }}</strong>
+        </div>
+        <div>
+          <span>{{ 'PROFILE.ADDRESS_COUNTRY' | translate }}</span>
+          <strong>{{ listing.country }}</strong>
         </div>
         <div>
           <span>{{ 'LISTINGS.LABEL_STOCK' | translate }}</span>

@@ -8,6 +8,7 @@ public record ProductListDto(
         String name,
         String description,
         BigDecimal price,
+        String country,
         String currency,
         boolean inStock,
         String categoryName,

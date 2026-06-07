@@ -4,6 +4,8 @@ import * as L from 'leaflet';
 import { Listing, ListingRequest, ListingService } from '../../service/listing.service';
 import { environment } from '../../../environments/environment';
 import { Category, CategoryService } from '../../service/category.service';
+import { TranslateService } from '@ngx-translate/core';
+import { getCurrencyForCountry, getDefaultCountryForLanguage, MARKET_OPTIONS } from '../../shared/market';
 
 @Component({
   selector: 'app-listings',
@@ -20,6 +22,7 @@ export class ListingsComponent implements OnInit {
   editingId: number | null = null;
   selectedImages: File[] = [];
   imagePreviews: string[] = [];
+  marketOptions = MARKET_OPTIONS;
   categories: Category[] = [];
   subcategories: Category[] = [];
   selectedParentId: number | null = null;
@@ -42,6 +45,7 @@ export class ListingsComponent implements OnInit {
     name: '',
     description: '',
     price: 0,
+    country: 'FR',
     currency: 'EUR',
     stockQty: 0,
     active: true,
@@ -58,7 +62,8 @@ export class ListingsComponent implements OnInit {
     private listingService: ListingService,
     private cdr: ChangeDetectorRef,
     private categoryService: CategoryService,
-    private http: HttpClient
+    private http: HttpClient,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -90,11 +95,13 @@ export class ListingsComponent implements OnInit {
     this.subcategories = [];
     this.locationQuery = '';
     this.locationResults = [];
+    const defaultCountry = this.getDefaultCountry();
     this.form = {
       name: '',
       description: '',
       price: 0,
-      currency: 'EUR',
+      country: defaultCountry,
+      currency: getCurrencyForCountry(defaultCountry),
       stockQty: 0,
       active: true,
       sku: '',
@@ -109,6 +116,7 @@ export class ListingsComponent implements OnInit {
   }
 
   openEditListing(listing: Listing): void {
+    const country = listing.country || this.getDefaultCountry();
     this.editingId = listing.id;
     this.isFormOpen = true;
     this.clearImages();
@@ -122,7 +130,8 @@ export class ListingsComponent implements OnInit {
       name: listing.name,
       description: listing.description,
       price: listing.price,
-      currency: listing.currency,
+      country,
+      currency: getCurrencyForCountry(country),
       stockQty: listing.stockQty,
       active: listing.active,
       sku: listing.sku,
@@ -137,6 +146,12 @@ export class ListingsComponent implements OnInit {
     this.locationResults = [];
     setTimeout(() => this.initMap(), 0);
     setTimeout(() => this.updateMapLocation(this.form.latitude, this.form.longitude), 0);
+  }
+
+  onCountryChange(value: string): void {
+    const country = value ? value.toUpperCase() : this.getDefaultCountry();
+    this.form.country = country;
+    this.form.currency = getCurrencyForCountry(country);
   }
 
   cancelForm(): void {
@@ -289,9 +304,12 @@ export class ListingsComponent implements OnInit {
 
     this.isSaving = true;
     this.errorMessage = '';
+    const country = this.form.country?.trim().toUpperCase() || this.getDefaultCountry();
     const payload: ListingRequest = {
       ...this.form,
       name: this.form.name.trim(),
+      country,
+      currency: getCurrencyForCountry(country),
       sku: this.form.sku?.trim() || null,
       categoryId: resolvedCategoryId
     };
@@ -372,6 +390,10 @@ export class ListingsComponent implements OnInit {
     this.clearImages();
     this.loadListings();
     this.cdr.detectChanges();
+  }
+
+  private getDefaultCountry(): string {
+    return getDefaultCountryForLanguage(this.translateService.currentLang || this.translateService.getDefaultLang());
   }
 
   private createMarkerIcon(): L.Icon {

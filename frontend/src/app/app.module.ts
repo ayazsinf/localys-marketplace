@@ -20,6 +20,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CartComponent } from './pages/cart/cart.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { CurrencyDisplayPipe } from './pipes/currency-display.pipe';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { NotificationsComponent } from './pages/notifications/notifications.comp
     ProductDetailComponent,
     CartComponent,
     CheckoutComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    CurrencyDisplayPipe
   ],
   imports: [
     CommonModule,
@@ -66,6 +68,7 @@ import { NotificationsComponent } from './pages/notifications/notifications.comp
     CartComponent,
     CheckoutComponent,
     NotificationsComponent,
+    CurrencyDisplayPipe,
     TranslateModule
   ]
 })
