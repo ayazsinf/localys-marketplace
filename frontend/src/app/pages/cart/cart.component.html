@@ -1,14 +1,14 @@
 <section class="cart-page">
   <div class="cart-header">
-    <h1>Cart</h1>
-    <p>Review your items and choose what to purchase.</p>
+    <h1>{{ 'CART.TITLE' | translate }}</h1>
+    <p>{{ 'CART.SUBTITLE' | translate }}</p>
   </div>
 
-  <div class="cart-status" *ngIf="isLoading">Loading cart...</div>
-  <div class="cart-status error" *ngIf="!isLoading && errorMessage">{{ errorMessage }}</div>
+  <div class="cart-status" *ngIf="isLoading">{{ 'CART.LOADING' | translate }}</div>
+  <div class="cart-status error" *ngIf="!isLoading && errorMessage">{{ errorMessage | translate }}</div>
 
   <div class="cart-empty" *ngIf="!isLoading && items.length === 0">
-    Your cart is empty.
+    {{ 'CART.EMPTY' | translate }}
   </div>
 
   <div class="cart-content" *ngIf="!isLoading && items.length > 0">
@@ -16,7 +16,7 @@
       <div class="cart-table-header">
         <label class="cart-checkbox">
           <input type="checkbox" [checked]="isAllSelected()" (change)="toggleAll()" />
-          <span>Select all</span>
+          <span>{{ 'CART.SELECT_ALL' | translate }}</span>
         </label>
       </div>
 
@@ -50,23 +50,23 @@
           </button>
         </div>
         <ng-template #singleQty>
-          <div class="cart-qty-label">Qty: {{ item.quantity }}</div>
+          <div class="cart-qty-label">{{ 'CART.QUANTITY' | translate }}: {{ item.quantity }}</div>
         </ng-template>
 
         <div class="cart-total">
           {{ getLineTotal(item) | currencyDisplay:item.product.currency }}
         </div>
 
-        <button type="button" class="cart-remove" (click)="removeItem(item)">Remove</button>
+        <button type="button" class="cart-remove" (click)="removeItem(item)">{{ 'CART.REMOVE' | translate }}</button>
       </div>
     </div>
 
     <div class="cart-summary">
       <div class="summary-row">
-        <span>Selected total</span>
+        <span>{{ 'CART.SELECTED_TOTAL' | translate }}</span>
         <strong>{{ getSelectedTotal() | currencyDisplay:items[0]?.product.currency }}</strong>
       </div>
-      <button type="button" class="checkout-btn" (click)="checkout()">Proceed to checkout</button>
+      <button type="button" class="checkout-btn" (click)="checkout()">{{ 'CART.CHECKOUT' | translate }}</button>
     </div>
   </div>
 </section>

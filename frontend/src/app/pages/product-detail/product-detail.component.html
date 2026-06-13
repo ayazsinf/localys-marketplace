@@ -36,12 +36,12 @@
         <strong>{{ product.vendorShopName || product.vendorDisplayName || ('PRODUCT.SELLER_UNKNOWN' | translate) }}</strong>
       </div>
       <h1>{{ product.name }}</h1>
-      <p class="sku">SKU: {{ product.sku }}</p>
+      <p class="sku">{{ 'PRODUCT.SKU' | translate }}: {{ product.sku }}</p>
       <p class="price">{{ product.price | currencyDisplay:product.currency }}</p>
 
       <div class="meta">
         <span>{{ 'PRODUCT.IN_STOCK' | translate }}: {{ product.stockQty }}</span>
-        <span *ngIf="product.categoryName">{{ product.categoryName }}</span>
+        <span *ngIf="product.categoryName">{{ product.categoryName | categoryDisplay }}</span>
         <span *ngIf="product.brand">{{ product.brand }}</span>
       </div>
 

@@ -2,6 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NotificationDto, NotificationService } from '../../service/notification.service';
 import { Subscription, timer } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { getLocaleForLanguage } from '../../shared/market';
 
 type NotificationFilter = 'all' | 'unread' | 'read';
 
@@ -19,8 +21,9 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
 
   constructor(
-    private notificationService: NotificationService,
-    private router: Router
+    public notificationService: NotificationService,
+    private router: Router,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -78,7 +81,9 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     if (Number.isNaN(date.getTime())) {
       return '';
     }
-    return date.toLocaleString();
+    return date.toLocaleString(getLocaleForLanguage(
+      this.translateService.currentLang || this.translateService.getDefaultLang()
+    ));
   }
 
   trackByNotification(_: number, notification: NotificationDto): number {

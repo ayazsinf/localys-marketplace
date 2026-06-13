@@ -14,7 +14,9 @@
     "DEALS": "Firsatlar",
     "ABOUT": "Hakkimizda",
     "CONTACT": "Iletisim",
-    "SEARCH_PLACEHOLDER": "Urun, marka veya kategori ara"
+    "SEARCH_PLACEHOLDER": "Urun, marka veya kategori ara",
+    "SEARCH": "Ara",
+    "MENU": "Gezinme menusunu ac"
   },
   "AUTH": {
     "SIGN_IN": "Giris yap",
@@ -36,7 +38,8 @@
     "MY_PROFILE": "Profilim",
     "MY_LISTINGS": "Ilanlarim",
     "FAVORITES": "Favoriler",
-    "MESSAGES": "Mesajlar"
+    "MESSAGES": "Mesajlar",
+    "ACCOUNT_MENU": "Hesap menusunu ac"
   },
   "COMMON": {
     "CANCEL": "Iptal",
@@ -44,8 +47,12 @@
     "SAVE": "Kaydet",
     "TRIAL_BANNER": "Bu site deneme surumudur.",
     "NOTIFICATIONS": "Bildirimler",
-    "MARK_ALL_READ": "Tümünü okundu yap",
-    "NO_NOTIFICATIONS": "Henüz bildirim yok"
+    "MARK_ALL_READ": "TÃ¼mÃ¼nÃ¼ okundu yap",
+    "NO_NOTIFICATIONS": "Henuz bildirim yok",
+    "LOADING": "Yukleniyor",
+    "SEARCHING": "Araniyor...",
+    "UNKNOWN": "Bilinmiyor",
+    "SOMEONE": "Birisi"
   },
   "NOTIFICATIONS": {
     "TITLE": "Bildirimler",
@@ -89,7 +96,9 @@
     "DESCRIPTION": "Aciklama",
     "LOCATION_TITLE": "Konum",
     "LOCATION_NOTE": "Yaklasik konum gosterilir.",
-    "LOCATION_MISSING": "Konum belirtilmemis."
+    "LOCATION_MISSING": "Konum belirtilmemis.",
+    "YOUR_LISTING": "Sizin ilaniniz",
+    "SKU": "SKU"
   },
   "ABOUT": {
     "TITLE": "Localys Hakkinda",
@@ -189,7 +198,9 @@
     "VALUE_SAME_AS_SHIPPING": "Teslimat ile ayni",
     "VALUE_ENABLED": "Etkin",
     "VALUE_DISABLED": "Kapali",
-    "VALUE_NOT_ENABLED": "Etkin degil"
+    "VALUE_NOT_ENABLED": "Etkin degil",
+    "VALUE_PASSWORD_MANAGED": "Hesap saglayiciniz tarafindan yonetiliyor",
+    "VALUE_CURRENT_SESSION": "Mevcut oturum"
   },
   "LISTINGS": {
     "TITLE": "Ilanlarim",
@@ -233,7 +244,22 @@
     "ERROR_IMAGE_TYPE": "Sadece JPG, PNG veya WEBP dosyalari kabul edilir.",
     "ERROR_IMAGE_SIZE": "Her fotograf en fazla 10MB olmali.",
     "ERROR_IMAGE_LIMIT": "En fazla 6 fotograf yukleyebilirsiniz.",
-    "REMOVE_IMAGE": "Kaldir"
+    "REMOVE_IMAGE": "Kaldir",
+    "IMAGE_PREVIEW_ALT": "Ilan onizlemesi",
+    "FIELD_COUNTRY": "Ulke",
+    "LABEL_COUNTRY": "Ulke",
+    "ACTION_CANCEL": "Iptal",
+    "ACTION_SAVE": "Kaydet",
+    "ACTION_EDIT": "Duzenle",
+    "ACTION_DELETE": "Sil",
+    "FORM_NAME": "Ilan basligi",
+    "FORM_DESCRIPTION": "Aciklama",
+    "FORM_PRICE": "Fiyat",
+    "FORM_CURRENCY": "Para birimi",
+    "FORM_STOCK": "Stok",
+    "FORM_SKU": "SKU",
+    "FORM_BRAND": "Marka",
+    "FORM_ACTIVE": "Ilan aktif"
   },
   "FAVORITES": {
     "TITLE": "Favoriler",
@@ -258,7 +284,121 @@
     "OFFLINE": "Cevrimdisi"
   },
   "CATEGORIES": {
-    "PLACEHOLDER": "Kategoriler sayfasi yakinda."
+    "PLACEHOLDER": "Kategoriler sayfasi yakinda.",
+    "NAMES": {
+      "ELECTRONICS": "Elektronik",
+      "HOME_LIVING": "Ev ve Yasam",
+      "FASHION": "Moda",
+      "VEHICLES": "Araclar",
+      "SPORTS_OUTDOORS": "Spor ve Acik Hava",
+      "LAPTOPS": "Dizustu Bilgisayarlar",
+      "DESKTOPS": "Masaustu Bilgisayarlar",
+      "GAMING_CONSOLES": "Oyun Konsollari",
+      "PHONES": "Telefonlar",
+      "TABLETS": "Tabletler",
+      "FURNITURE": "Mobilya",
+      "APPLIANCES": "Ev Aletleri",
+      "DECOR": "Dekorasyon",
+      "WOMEN": "Kadin",
+      "MEN": "Erkek",
+      "KIDS": "Cocuk",
+      "ACCESSORIES": "Aksesuarlar",
+      "CARS": "Otomobiller",
+      "MOTORCYCLES": "Motosikletler",
+      "BICYCLES": "Bisikletler",
+      "FITNESS": "Fitness",
+      "CAMPING": "Kamp",
+      "CYCLING": "Bisiklet Sporu"
+    }
+  },
+  "CART": {
+    "TITLE": "Sepet",
+    "SUBTITLE": "Urunlerinizi gozden gecirin ve satin alacaklarinizi secin.",
+    "LOADING": "Sepet yukleniyor...",
+    "EMPTY": "Sepetiniz bos.",
+    "SELECT_ALL": "Tumunu sec",
+    "QUANTITY": "Adet",
+    "REMOVE": "Kaldir",
+    "SELECTED_TOTAL": "Secilen toplam",
+    "CHECKOUT": "Odemeye gec",
+    "GO_TO_CART": "Sepete git",
+    "ADDED": "Sepete eklendi.",
+    "ERROR_LOAD": "Sepet yuklenemedi.",
+    "ERROR_ADD": "Urun sepete eklenemedi.",
+    "ERROR_UPDATE": "Adet guncellenemedi.",
+    "ERROR_REMOVE": "Urun kaldirilamadi.",
+    "ERROR_OUT_OF_STOCK": "Stokta yok.",
+    "ERROR_OWN_PRODUCT": "Kendi ilaninizdaki urunu satin alamazsiniz.",
+    "ERROR_NOT_FOUND": "Urun bulunamadi."
+  },
+  "CHECKOUT": {
+    "TITLE": "Odeme",
+    "SUBTITLE": "Siparisinizi gozden gecirin, teslimati secin ve guvenle odeme yapin.",
+    "NO_ITEMS": "Secili urun yok.",
+    "SIGN_IN_TITLE": "Devam etmek icin giris yapin",
+    "SIGN_IN_TEXT": "Alisverisi tamamlamak icin giris yapin veya hesap olusturun.",
+    "DELIVERY_ADDRESS": "Teslimat adresi",
+    "DELIVERY_ADDRESS_TEXT": "Kayitli bir adres secin veya yeni adres ekleyin.",
+    "SAVED_ADDRESS": "Kayitli adres",
+    "USE_SAVED_ADDRESS": "Kayitli adres kullan",
+    "ADD_NEW_ADDRESS": "Yeni adres ekle",
+    "SEARCH_ADDRESS": "Adres veya posta kodu ara",
+    "ADDRESS_LABEL_PLACEHOLDER": "Ev, Is, vb.",
+    "FULL_NAME_PLACEHOLDER": "Ad Soyad",
+    "ADDRESS_LINE2_PLACEHOLDER": "Daire, kat, vb.",
+    "SHIPPING_METHOD": "Teslimat yontemi",
+    "SHIPPING_MONDIAL": "Mondial Relay (3-5 gun)",
+    "SHIPPING_CHRONOPOST": "Chronopost (1-2 gun)",
+    "SHIPPING_COLISSIMO": "Colissimo (2-3 gun)",
+    "PAYMENT": "Odeme",
+    "PAYMENT_CARD": "Kredi/Banka Karti (Stripe)",
+    "PAYMENT_PAYPAL": "PayPal",
+    "PAYMENT_APPLE": "Apple Pay",
+    "STRIPE_NOTE": "Odemeyi guvenle tamamlamak icin Stripe Checkout sayfasina yonlendirileceksiniz.",
+    "PAYPAL_NOTE": "PayPal odemesi yakinda kullanilabilir olacak.",
+    "APPLE_PAY_NOTE": "Apple Pay gelecek bir guncellemede kullanilabilir olacak.",
+    "ORDER_SUMMARY": "Siparis ozeti",
+    "SUBTOTAL": "Ara toplam",
+    "SHIPPING": "Teslimat",
+    "TOTAL": "Toplam",
+    "PROCESSING": "Isleniyor...",
+    "PLACE_ORDER": "Siparis ver",
+    "ERROR_PAYMENT_UNAVAILABLE": "Bu odeme yontemi henuz kullanilamiyor. Kartla odemeyi secin.",
+    "ERROR_SAVE_ADDRESS": "Adres kaydedilemedi. Tekrar deneyin.",
+    "REDIRECTING": "Odeme sayfasina yonlendiriliyor...",
+    "ERROR_START_PAYMENT": "Odeme baslatilamadi. Tekrar deneyin.",
+    "ERROR_CREATE_ORDER": "Siparisiniz olusturulamadi. Tekrar deneyin."
+  },
+  "COUNTRIES": {
+    "FR": "Fransa",
+    "DE": "Almanya",
+    "ES": "Ispanya",
+    "IT": "Italya",
+    "BE": "Belcika",
+    "NL": "Hollanda",
+    "PT": "Portekiz",
+    "IE": "Irlanda",
+    "AT": "Avusturya",
+    "TR": "Turkiye",
+    "GB": "Birlesik Krallik",
+    "US": "Amerika Birlesik Devletleri",
+    "CA": "Kanada",
+    "CH": "Isvicre"
+  },
+  "LANGUAGES": {
+    "EN": "Ingilizce",
+    "FR": "Fransizca",
+    "TR": "Turkce"
+  },
+  "NOTIFICATION_CONTENT": {
+    "PRODUCT_CREATED": {
+      "TITLE": "Ilan olusturuldu",
+      "MESSAGE": "\"{{product}}\" ilaniniz yayinda."
+    },
+    "FAVORITE_ADDED": {
+      "TITLE": "Yeni favori",
+      "MESSAGE": "{{actor}}, \"{{product}}\" urununu favorilerine ekledi."
+    }
   }
 }
 

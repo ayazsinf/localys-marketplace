@@ -50,8 +50,8 @@
       [class.unread]="!item.read"
       (click)="openNotification(item)">
       <div class="notification-card__content">
-        <div class="notification-card__title">{{ item.title }}</div>
-        <div class="notification-card__message">{{ item.message }}</div>
+        <div class="notification-card__title">{{ notificationService.getTitle(item) }}</div>
+        <div class="notification-card__message">{{ notificationService.getMessage(item) }}</div>
       </div>
       <div class="notification-card__meta">
         <span class="notification-card__status" *ngIf="!item.read">

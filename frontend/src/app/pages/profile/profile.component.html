@@ -65,7 +65,7 @@
       <div class="info-grid">
         <div class="info-item">
           <span class="label">{{ 'PROFILE.LABEL_DISPLAY_NAME' | translate }}</span>
-          <span class="value">{{ displayName }}</span>
+          <span class="value">{{ displayName || ('PROFILE.VALUE_NOT_SET' | translate) }}</span>
         </div>
         <div class="info-item">
           <span class="label">{{ 'PROFILE.LABEL_USERNAME' | translate }}</span>
@@ -73,7 +73,7 @@
         </div>
         <div class="info-item">
           <span class="label">{{ 'PROFILE.LABEL_EMAIL' | translate }}</span>
-          <span class="value">{{ email }}</span>
+          <span class="value">{{ email || ('PROFILE.VALUE_NOT_SET' | translate) }}</span>
         </div>
         <div class="info-item">
           <span class="label">{{ 'PROFILE.LABEL_PHONE' | translate }}</span>
@@ -153,7 +153,7 @@
       <div class="info-grid">
         <div class="info-item">
           <span class="label">{{ 'PROFILE.LABEL_SHIPPING' | translate }}</span>
-          <span class="value">{{ shippingAddress }}</span>
+          <span class="value">{{ shippingAddress || ('PROFILE.VALUE_NOT_SET' | translate) }}</span>
         </div>
         <div class="info-item">
           <span class="label">{{ 'PROFILE.LABEL_BILLING' | translate }}</span>
@@ -231,7 +231,7 @@
       <div class="info-grid" *ngIf="!isEditingPreferences">
         <div class="info-item">
           <span class="label">{{ 'PROFILE.LABEL_LANGUAGE' | translate }}</span>
-          <span class="value">{{ language }}</span>
+          <span class="value">{{ languageLabel }}</span>
         </div>
         <div class="info-item">
           <span class="label">{{ 'PROFILE.LABEL_CURRENCY' | translate }}</span>
@@ -251,7 +251,7 @@
       <div class="info-grid">
         <div class="info-item">
           <span class="label">{{ 'PROFILE.LABEL_PASSWORD' | translate }}</span>
-          <span class="value">{{ passwordUpdated }}</span>
+          <span class="value">{{ 'PROFILE.VALUE_PASSWORD_MANAGED' | translate }}</span>
         </div>
         <div class="info-item">
           <span class="label">{{ 'PROFILE.LABEL_2FA' | translate }}</span>
@@ -275,11 +275,11 @@
       <div class="info-grid">
         <div class="info-item">
           <span class="label">{{ 'PROFILE.LABEL_MEMBER_SINCE' | translate }}</span>
-          <span class="value">{{ memberSince }}</span>
+          <span class="value">{{ memberSince || ('PROFILE.VALUE_NOT_SET' | translate) }}</span>
         </div>
         <div class="info-item">
           <span class="label">{{ 'PROFILE.LABEL_LAST_LOGIN' | translate }}</span>
-          <span class="value">{{ lastLogin }}</span>
+          <span class="value">{{ 'PROFILE.VALUE_CURRENT_SESSION' | translate }}</span>
         </div>
       </div>
     </div>

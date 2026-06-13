@@ -3,6 +3,8 @@ import { StompSubscription } from '@stomp/stompjs';
 import { MessagingService, ConversationDto, MessageDto } from '../../service/messaging.service';
 import { UserService, UserProfile } from '../../service/user.service';
 import { ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { getLocaleForLanguage } from '../../shared/market';
 
 type MessageItem = {
   id: number;
@@ -40,7 +42,8 @@ export class MessagesComponent implements OnInit, OnDestroy {
   constructor(
     private messagingService: MessagingService,
     private userService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -160,7 +163,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   private toConversation(dto: ConversationDto): Conversation {
-    const displayName = dto.otherDisplayName || dto.otherUsername || 'Unknown';
+    const displayName = dto.otherDisplayName || dto.otherUsername || this.translateService.instant('COMMON.UNKNOWN');
     return {
       id: dto.id,
       otherUserId: dto.otherUserId,
@@ -188,6 +191,8 @@ export class MessagesComponent implements OnInit, OnDestroy {
     if (Number.isNaN(date.getTime())) {
       return '';
     }
-    return date.toLocaleString();
+    return date.toLocaleString(getLocaleForLanguage(
+      this.translateService.currentLang || this.translateService.getDefaultLang()
+    ));
   }
 }

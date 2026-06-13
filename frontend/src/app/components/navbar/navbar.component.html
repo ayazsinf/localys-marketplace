@@ -28,13 +28,13 @@
                             [(ngModel)]="searchTerm"
                             (keyup.enter)="onSearch()"
                             [placeholder]="'NAV.SEARCH_PLACEHOLDER' | translate" />
-                    <button class="icon-btn" type="button" (click)="onSearch()">
+                    <button class="icon-btn" type="button" (click)="onSearch()" [attr.aria-label]="'NAV.SEARCH' | translate">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
 
                 <div class="cart-notice-wrap">
-                    <button class="icon-btn cart-btn" type="button" (click)="openCart()">
+                    <button class="icon-btn cart-btn" type="button" (click)="openCart()" [attr.aria-label]="'CART.TITLE' | translate">
                         <span class="material-icons">shopping_cart</span>
                         <span class="cart-count" *ngIf="cartCount$ | async as count">{{ count }}</span>
                     </button>
@@ -49,7 +49,7 @@
                                 class="cart-notice-link"
                                 *ngIf="cartNotice.type === 'success'"
                                 (click)="openCart()">
-                            Go to cart
+                            {{ 'CART.GO_TO_CART' | translate }}
                         </button>
                     </div>
                 </div>
@@ -123,8 +123,8 @@
                                                 class="notification-item"
                                                 [class.unread]="!item.read"
                                                 (click)="openNotification(item)">
-                                            <div class="notification-title">{{ item.title }}</div>
-                                            <div class="notification-message">{{ item.message }}</div>
+                                            <div class="notification-title">{{ notificationService.getTitle(item) }}</div>
+                                            <div class="notification-message">{{ notificationService.getMessage(item) }}</div>
                                         </button>
                                     }
                                 }
@@ -144,6 +144,7 @@
                                 type="button"
                                 class="profile-trigger"
                                 [attr.aria-expanded]="isProfileMenuOpen"
+                                [attr.aria-label]="'MENU.ACCOUNT_MENU' | translate"
                                 (click)="toggleProfileMenu()">
                             <span class="profile-name">{{ authService.username }}</span>
                             <span class="material-icons">expand_more</span>
@@ -159,11 +160,11 @@
                 }
             </div>
 
-            <div class="hamburger" (click)="toggleMenu()">
+            <button class="hamburger" type="button" (click)="toggleMenu()" [attr.aria-label]="'NAV.MENU' | translate">
                 <span></span>
                 <span></span>
                 <span></span>
-            </div>
+            </button>
         </div>
     </div>
 </nav>

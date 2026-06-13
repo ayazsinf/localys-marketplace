@@ -37,7 +37,7 @@
         class="add-to-cart-btn"
         (click)="addToCart($event)"
         [disabled]="!product.inStock || isOwner()">
-        {{ product.inStock ? (isOwner() ? 'Your listing' : ('PRODUCT.ADD_TO_CART' | translate)) : ('PRODUCT.OUT_OF_STOCK' | translate) }}
+        {{ product.inStock ? (isOwner() ? ('PRODUCT.YOUR_LISTING' | translate) : ('PRODUCT.ADD_TO_CART' | translate)) : ('PRODUCT.OUT_OF_STOCK' | translate) }}
       </button>
     </div>
   </div>

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
 import { UserProfile, UserService } from '../../service/user.service';
+import { TranslateService } from '@ngx-translate/core';
+import { getLocaleForLanguage } from '../../shared/market';
 
 @Component({
   selector: 'app-profile',
@@ -9,17 +11,15 @@ import { UserProfile, UserService } from '../../service/user.service';
   standalone: false
 })
 export class ProfileComponent implements OnInit {
-  displayName = 'Localys User';
-  email = 'you@example.com';
+  displayName = '';
+  email = '';
   phone = '';
-  shippingAddress = 'Karakoy, Istanbul';
+  shippingAddress = '';
   billingAddress = '';
-  language = 'Turkish';
+  language = 'tr';
   currency = 'TRY';
   notificationsEnabled = true;
-  passwordUpdated = '2 months ago';
-  memberSince = 'Jan 2024';
-  lastLogin = 'Today 10:45';
+  memberSince = '';
   twoFactorEnabled = false;
 
   profile: UserProfile | null = null;
@@ -58,7 +58,8 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     public authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -95,6 +96,10 @@ export class ProfileComponent implements OnInit {
     return this.authService.username ?? 'localys-user';
   }
 
+  get languageLabel(): string {
+    return this.translateService.instant(`LANGUAGES.${this.language.toUpperCase()}`);
+  }
+
   get initials(): string {
     const source = (this.displayName || this.username).trim();
     if (!source) {
@@ -109,7 +114,9 @@ export class ProfileComponent implements OnInit {
     if (Number.isNaN(date.getTime())) {
       return this.memberSince;
     }
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    return date.toLocaleDateString(getLocaleForLanguage(
+      this.translateService.currentLang || this.translateService.getDefaultLang()
+    ), { month: 'short', year: 'numeric' });
   }
 
   startEditingBasic(): void {

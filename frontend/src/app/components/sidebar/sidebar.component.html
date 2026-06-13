@@ -9,7 +9,7 @@
     @for (category of categories; track category){
       <li>
         <a href="#" (click)="selectCategory(category); $event.preventDefault()" class="category-link">
-          {{ category }}
+          {{ category | categoryDisplay }}
         </a>
       </li>
     }

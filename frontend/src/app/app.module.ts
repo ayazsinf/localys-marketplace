@@ -21,6 +21,7 @@ import { CartComponent } from './pages/cart/cart.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
 import { CurrencyDisplayPipe } from './pipes/currency-display.pipe';
+import { CategoryDisplayPipe } from './pipes/category-display.pipe';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { CurrencyDisplayPipe } from './pipes/currency-display.pipe';
     CartComponent,
     CheckoutComponent,
     NotificationsComponent,
-    CurrencyDisplayPipe
+    CurrencyDisplayPipe,
+    CategoryDisplayPipe
   ],
   imports: [
     CommonModule,
@@ -69,6 +71,7 @@ import { CurrencyDisplayPipe } from './pipes/currency-display.pipe';
     CheckoutComponent,
     NotificationsComponent,
     CurrencyDisplayPipe,
+    CategoryDisplayPipe,
     TranslateModule
   ]
 })

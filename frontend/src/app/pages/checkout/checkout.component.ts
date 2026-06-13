@@ -6,6 +6,8 @@ import { CartItem, CartService } from '../../service/cart.service';
 import { AuthService } from '../../service/auth.service';
 import { AddressRequest, UserAddress, UserService } from '../../service/user.service';
 import { OrderService } from '../../service/order.service';
+import { TranslateService } from '@ngx-translate/core';
+import { getDefaultCountryForLanguage } from '../../shared/market';
 
 @Component({
   selector: 'app-checkout',
@@ -38,14 +40,14 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }> = [];
   isSearchingLocation = false;
   shippingOptions = [
-    { id: 'mondial', label: 'Mondial Relay (3-5 days)', price: 4.9 },
-    { id: 'chronopost', label: 'Chronopost (1-2 days)', price: 8.9 },
-    { id: 'colissimo', label: 'Colissimo (2-3 days)', price: 6.5 }
+    { id: 'mondial', labelKey: 'CHECKOUT.SHIPPING_MONDIAL', price: 4.9 },
+    { id: 'chronopost', labelKey: 'CHECKOUT.SHIPPING_CHRONOPOST', price: 8.9 },
+    { id: 'colissimo', labelKey: 'CHECKOUT.SHIPPING_COLISSIMO', price: 6.5 }
   ];
   paymentOptions = [
-    { id: 'stripe', label: 'Credit/Debit Card (Stripe)' },
-    { id: 'paypal', label: 'PayPal' },
-    { id: 'apple', label: 'Apple Pay' }
+    { id: 'stripe', labelKey: 'CHECKOUT.PAYMENT_CARD' },
+    { id: 'paypal', labelKey: 'CHECKOUT.PAYMENT_PAYPAL' },
+    { id: 'apple', labelKey: 'CHECKOUT.PAYMENT_APPLE' }
   ];
   selectedShippingId = '';
   selectedPaymentId = '';
@@ -61,8 +63,13 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     public authService: AuthService,
     private userService: UserService,
     private orderService: OrderService,
-    private http: HttpClient
-  ) {}
+    private http: HttpClient,
+    private translateService: TranslateService
+  ) {
+    this.newAddress.country = getDefaultCountryForLanguage(
+      this.translateService.currentLang || this.translateService.getDefaultLang()
+    );
+  }
 
   ngOnInit(): void {
     const paramsSub = this.route.queryParamMap.subscribe(params => {
@@ -216,7 +223,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
     if (!this.canPlaceOrder()) {
       if (this.selectedPaymentId && this.selectedPaymentId !== 'stripe') {
-        this.orderError = 'This payment method is not available yet. Please select card payment.';
+        this.orderError = this.translateService.instant('CHECKOUT.ERROR_PAYMENT_UNAVAILABLE');
       }
       return;
     }
@@ -246,7 +253,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
           this.submitOrder();
         },
         error: () => {
-          this.orderError = 'Unable to save the address. Please try again.';
+          this.orderError = this.translateService.instant('CHECKOUT.ERROR_SAVE_ADDRESS');
           this.isSubmitting = false;
         }
       });
@@ -268,19 +275,19 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       paymentMethod: 'STRIPE'
     }).subscribe({
       next: response => {
-        this.orderStatus = 'Redirecting to payment...';
+        this.orderStatus = this.translateService.instant('CHECKOUT.REDIRECTING');
         this.orderService.createStripeCheckout(response.id).subscribe({
           next: checkout => {
             window.location.href = checkout.checkoutUrl;
           },
           error: () => {
-            this.orderError = 'Unable to start payment. Please try again.';
+            this.orderError = this.translateService.instant('CHECKOUT.ERROR_START_PAYMENT');
             this.isSubmitting = false;
           }
         });
       },
       error: () => {
-        this.orderError = 'Unable to create your order. Please try again.';
+        this.orderError = this.translateService.instant('CHECKOUT.ERROR_CREATE_ORDER');
         this.isSubmitting = false;
       }
     });

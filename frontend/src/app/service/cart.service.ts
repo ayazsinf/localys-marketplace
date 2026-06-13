@@ -4,6 +4,7 @@ import { BehaviorSubject, EMPTY, map, Observable, tap, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
+import { TranslateService } from '@ngx-translate/core';
 
 interface CartItemResponse {
   productId: number;
@@ -51,7 +52,8 @@ export class CartService {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private translateService: TranslateService
   ) {}
 
   refresh(): Observable<CartItem[]> {
@@ -82,7 +84,7 @@ export class CartService {
         this.applyCart(cart);
         this.noticeSubject.next({
           type: 'success',
-          message: 'Added to cart.',
+          message: this.translateService.instant('CART.ADDED'),
           productName: product.name,
           quantity
         });
@@ -91,7 +93,7 @@ export class CartService {
       catchError(err => {
         this.noticeSubject.next({
           type: 'error',
-          message: this.readCartError(err, 'Could not add item.'),
+          message: this.readCartError(err, 'CART.ERROR_ADD'),
           productName: product.name
         });
         return throwError(() => err);
@@ -109,7 +111,7 @@ export class CartService {
       error: err => {
         this.noticeSubject.next({
           type: 'error',
-          message: this.readCartError(err, 'Could not update quantity.')
+          message: this.readCartError(err, 'CART.ERROR_UPDATE')
         });
       }
     });
@@ -125,7 +127,7 @@ export class CartService {
       error: err => {
         this.noticeSubject.next({
           type: 'error',
-          message: this.readCartError(err, 'Could not remove item.')
+          message: this.readCartError(err, 'CART.ERROR_REMOVE')
         });
       }
     });
@@ -166,17 +168,17 @@ export class CartService {
     };
   }
 
-  private readCartError(error: any, fallback: string): string {
+  private readCartError(error: any, fallbackKey: string): string {
     const code = error?.error?.code;
     if (code === 'OUT_OF_STOCK') {
-      return 'Out of stock.';
+      return this.translateService.instant('CART.ERROR_OUT_OF_STOCK');
     }
     if (code === 'OWN_PRODUCT') {
-      return 'You cannot buy your own listing.';
+      return this.translateService.instant('CART.ERROR_OWN_PRODUCT');
     }
     if (code === 'PRODUCT_NOT_FOUND') {
-      return 'Product not found.';
+      return this.translateService.instant('CART.ERROR_NOT_FOUND');
     }
-    return error?.error?.message || fallback;
+    return this.translateService.instant(fallbackKey);
   }
 }

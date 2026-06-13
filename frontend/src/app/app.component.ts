@@ -11,7 +11,7 @@ import { LoadingService } from './service/loading.service';
   template: `
     <app-navbar></app-navbar>
     <div class="global-loader" *ngIf="loading$ | async" aria-live="polite" aria-busy="true">
-      <div class="spinner" role="status" aria-label="Loading"></div>
+      <div class="spinner" role="status" [attr.aria-label]="'COMMON.LOADING' | translate"></div>
     </div>
     <router-outlet></router-outlet>
   `,

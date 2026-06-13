@@ -14,7 +14,9 @@
     "DEALS": "Deals",
     "ABOUT": "About",
     "CONTACT": "Contact",
-    "SEARCH_PLACEHOLDER": "Search products, brands, or categories"
+    "SEARCH_PLACEHOLDER": "Search products, brands, or categories",
+    "SEARCH": "Search",
+    "MENU": "Open navigation menu"
   },
   "AUTH": {
     "SIGN_IN": "Sign in",
@@ -36,7 +38,8 @@
     "MY_PROFILE": "My Profile",
     "MY_LISTINGS": "My Listings",
     "FAVORITES": "Favorites",
-    "MESSAGES": "Messages"
+    "MESSAGES": "Messages",
+    "ACCOUNT_MENU": "Open account menu"
   },
   "COMMON": {
     "CANCEL": "Cancel",
@@ -45,7 +48,11 @@
     "TRIAL_BANNER": "This site is a trial version.",
     "NOTIFICATIONS": "Notifications",
     "MARK_ALL_READ": "Mark all as read",
-    "NO_NOTIFICATIONS": "No notifications yet"
+    "NO_NOTIFICATIONS": "No notifications yet",
+    "LOADING": "Loading",
+    "SEARCHING": "Searching...",
+    "UNKNOWN": "Unknown",
+    "SOMEONE": "Someone"
   },
   "NOTIFICATIONS": {
     "TITLE": "Notifications",
@@ -89,7 +96,9 @@
     "DESCRIPTION": "Description",
     "LOCATION_TITLE": "Location",
     "LOCATION_NOTE": "Approximate location shown.",
-    "LOCATION_MISSING": "Location not provided."
+    "LOCATION_MISSING": "Location not provided.",
+    "YOUR_LISTING": "Your listing",
+    "SKU": "SKU"
   },
   "ABOUT": {
     "TITLE": "About Localys",
@@ -189,7 +198,9 @@
     "VALUE_SAME_AS_SHIPPING": "Same as shipping",
     "VALUE_ENABLED": "Enabled",
     "VALUE_DISABLED": "Disabled",
-    "VALUE_NOT_ENABLED": "Not enabled"
+    "VALUE_NOT_ENABLED": "Not enabled",
+    "VALUE_PASSWORD_MANAGED": "Managed by your account provider",
+    "VALUE_CURRENT_SESSION": "Current session"
   },
   "LISTINGS": {
     "TITLE": "My Listings",
@@ -235,7 +246,20 @@
     "ERROR_IMAGE_TYPE": "Only JPG, PNG, or WEBP files are allowed.",
     "ERROR_IMAGE_SIZE": "Each photo must be 10MB or smaller.",
     "ERROR_IMAGE_LIMIT": "You can upload up to 6 photos.",
-    "REMOVE_IMAGE": "Remove"
+    "REMOVE_IMAGE": "Remove",
+    "IMAGE_PREVIEW_ALT": "Listing preview",
+    "ACTION_CANCEL": "Cancel",
+    "ACTION_SAVE": "Save",
+    "ACTION_EDIT": "Edit",
+    "ACTION_DELETE": "Delete",
+    "FORM_NAME": "Listing title",
+    "FORM_DESCRIPTION": "Description",
+    "FORM_PRICE": "Price",
+    "FORM_CURRENCY": "Currency",
+    "FORM_STOCK": "Stock",
+    "FORM_SKU": "SKU",
+    "FORM_BRAND": "Brand",
+    "FORM_ACTIVE": "Listing is active"
   },
   "FAVORITES": {
     "TITLE": "Favorites",
@@ -260,6 +284,120 @@
     "OFFLINE": "Offline"
   },
   "CATEGORIES": {
-    "PLACEHOLDER": "Categories page is coming soon."
+    "PLACEHOLDER": "Categories page is coming soon.",
+    "NAMES": {
+      "ELECTRONICS": "Electronics",
+      "HOME_LIVING": "Home & Living",
+      "FASHION": "Fashion",
+      "VEHICLES": "Vehicles",
+      "SPORTS_OUTDOORS": "Sports & Outdoors",
+      "LAPTOPS": "Laptops",
+      "DESKTOPS": "Desktops",
+      "GAMING_CONSOLES": "Gaming Consoles",
+      "PHONES": "Phones",
+      "TABLETS": "Tablets",
+      "FURNITURE": "Furniture",
+      "APPLIANCES": "Appliances",
+      "DECOR": "Decor",
+      "WOMEN": "Women",
+      "MEN": "Men",
+      "KIDS": "Kids",
+      "ACCESSORIES": "Accessories",
+      "CARS": "Cars",
+      "MOTORCYCLES": "Motorcycles",
+      "BICYCLES": "Bicycles",
+      "FITNESS": "Fitness",
+      "CAMPING": "Camping",
+      "CYCLING": "Cycling"
+    }
+  },
+  "CART": {
+    "TITLE": "Cart",
+    "SUBTITLE": "Review your items and choose what to purchase.",
+    "LOADING": "Loading cart...",
+    "EMPTY": "Your cart is empty.",
+    "SELECT_ALL": "Select all",
+    "QUANTITY": "Qty",
+    "REMOVE": "Remove",
+    "SELECTED_TOTAL": "Selected total",
+    "CHECKOUT": "Proceed to checkout",
+    "GO_TO_CART": "Go to cart",
+    "ADDED": "Added to cart.",
+    "ERROR_LOAD": "Failed to load cart.",
+    "ERROR_ADD": "Could not add item.",
+    "ERROR_UPDATE": "Could not update quantity.",
+    "ERROR_REMOVE": "Could not remove item.",
+    "ERROR_OUT_OF_STOCK": "Out of stock.",
+    "ERROR_OWN_PRODUCT": "You cannot buy your own listing.",
+    "ERROR_NOT_FOUND": "Product not found."
+  },
+  "CHECKOUT": {
+    "TITLE": "Checkout",
+    "SUBTITLE": "Review your order, choose delivery, and pay securely.",
+    "NO_ITEMS": "No items selected.",
+    "SIGN_IN_TITLE": "Sign in to continue",
+    "SIGN_IN_TEXT": "Log in or create an account to finish your purchase.",
+    "DELIVERY_ADDRESS": "Delivery address",
+    "DELIVERY_ADDRESS_TEXT": "Select a saved address or add a new one.",
+    "SAVED_ADDRESS": "Saved address",
+    "USE_SAVED_ADDRESS": "Use saved address",
+    "ADD_NEW_ADDRESS": "Add new address",
+    "SEARCH_ADDRESS": "Search address or postal code",
+    "ADDRESS_LABEL_PLACEHOLDER": "Home, Office, etc.",
+    "FULL_NAME_PLACEHOLDER": "John Doe",
+    "ADDRESS_LINE2_PLACEHOLDER": "Apartment, floor, etc.",
+    "SHIPPING_METHOD": "Shipping method",
+    "SHIPPING_MONDIAL": "Mondial Relay (3-5 days)",
+    "SHIPPING_CHRONOPOST": "Chronopost (1-2 days)",
+    "SHIPPING_COLISSIMO": "Colissimo (2-3 days)",
+    "PAYMENT": "Payment",
+    "PAYMENT_CARD": "Credit/Debit Card (Stripe)",
+    "PAYMENT_PAYPAL": "PayPal",
+    "PAYMENT_APPLE": "Apple Pay",
+    "STRIPE_NOTE": "You will be redirected to Stripe Checkout to complete the payment securely.",
+    "PAYPAL_NOTE": "PayPal checkout is coming soon.",
+    "APPLE_PAY_NOTE": "Apple Pay will be available in a future update.",
+    "ORDER_SUMMARY": "Order summary",
+    "SUBTOTAL": "Subtotal",
+    "SHIPPING": "Shipping",
+    "TOTAL": "Total",
+    "PROCESSING": "Processing...",
+    "PLACE_ORDER": "Place order",
+    "ERROR_PAYMENT_UNAVAILABLE": "This payment method is not available yet. Please select card payment.",
+    "ERROR_SAVE_ADDRESS": "Unable to save the address. Please try again.",
+    "REDIRECTING": "Redirecting to payment...",
+    "ERROR_START_PAYMENT": "Unable to start payment. Please try again.",
+    "ERROR_CREATE_ORDER": "Unable to create your order. Please try again."
+  },
+  "COUNTRIES": {
+    "FR": "France",
+    "DE": "Germany",
+    "ES": "Spain",
+    "IT": "Italy",
+    "BE": "Belgium",
+    "NL": "Netherlands",
+    "PT": "Portugal",
+    "IE": "Ireland",
+    "AT": "Austria",
+    "TR": "Turkey",
+    "GB": "United Kingdom",
+    "US": "United States",
+    "CA": "Canada",
+    "CH": "Switzerland"
+  },
+  "LANGUAGES": {
+    "EN": "English",
+    "FR": "French",
+    "TR": "Turkish"
+  },
+  "NOTIFICATION_CONTENT": {
+    "PRODUCT_CREATED": {
+      "TITLE": "Listing created",
+      "MESSAGE": "Your listing \"{{product}}\" is now live."
+    },
+    "FAVORITE_ADDED": {
+      "TITLE": "New favorite",
+      "MESSAGE": "{{actor}} added \"{{product}}\" to their favorites."
+    }
   }
 }

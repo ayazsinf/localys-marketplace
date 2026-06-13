@@ -37,7 +37,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private router: Router,
     private currentUserService: CurrentUserService,
-    private notificationService: NotificationService
+    public notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -45,6 +45,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     const initialLang = storedLang || this.translateService.currentLang || this.translateService.getDefaultLang() || 'en';
     this.currentLang = initialLang;
     this.translateService.use(initialLang);
+    this.updateDocumentLanguage(initialLang);
     if (this.authService.isAuthenticated) {
       this.cartService.refresh().subscribe();
       this.currentUserService.load().subscribe();
@@ -133,6 +134,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.currentLang = lang;
     this.translateService.use(lang);
     localStorage.setItem('lang', lang);
+    this.updateDocumentLanguage(lang);
     this.closeLangMenu();
   }
 
@@ -190,6 +192,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private refreshUnreadCount(): void {
     this.notificationService.unreadCount().subscribe(count => {
       this.unreadCount = count;
+    });
+  }
+
+  private updateDocumentLanguage(lang: string): void {
+    document.documentElement.lang = lang;
+    this.translateService.get('APP_TITLE').subscribe(title => {
+      document.title = title;
     });
   }
 

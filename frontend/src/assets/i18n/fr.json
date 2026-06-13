@@ -14,7 +14,9 @@
     "DEALS": "Offres",
     "ABOUT": "A propos",
     "CONTACT": "Contact",
-    "SEARCH_PLACEHOLDER": "Rechercher un produit, une marque ou une categorie"
+    "SEARCH_PLACEHOLDER": "Rechercher un produit, une marque ou une categorie",
+    "SEARCH": "Rechercher",
+    "MENU": "Ouvrir le menu de navigation"
   },
   "AUTH": {
     "SIGN_IN": "Se connecter",
@@ -36,7 +38,8 @@
     "MY_PROFILE": "Mon profil",
     "MY_LISTINGS": "Mes annonces",
     "FAVORITES": "Favoris",
-    "MESSAGES": "Messages"
+    "MESSAGES": "Messages",
+    "ACCOUNT_MENU": "Ouvrir le menu du compte"
   },
   "COMMON": {
     "CANCEL": "Annuler",
@@ -45,7 +48,11 @@
     "TRIAL_BANNER": "Ce site est une version d'essai.",
     "NOTIFICATIONS": "Notifications",
     "MARK_ALL_READ": "Tout marquer comme lu",
-    "NO_NOTIFICATIONS": "Aucune notification pour le moment"
+    "NO_NOTIFICATIONS": "Aucune notification pour le moment",
+    "LOADING": "Chargement",
+    "SEARCHING": "Recherche...",
+    "UNKNOWN": "Inconnu",
+    "SOMEONE": "Quelqu'un"
   },
   "NOTIFICATIONS": {
     "TITLE": "Notifications",
@@ -89,7 +96,9 @@
     "DESCRIPTION": "Description",
     "LOCATION_TITLE": "Localisation",
     "LOCATION_NOTE": "Localisation approximative.",
-    "LOCATION_MISSING": "Localisation non indiquee."
+    "LOCATION_MISSING": "Localisation non indiquee.",
+    "YOUR_LISTING": "Votre annonce",
+    "SKU": "SKU"
   },
   "ABOUT": {
     "TITLE": "A propos de Localys",
@@ -189,7 +198,9 @@
     "VALUE_SAME_AS_SHIPPING": "Identique a la livraison",
     "VALUE_ENABLED": "Active",
     "VALUE_DISABLED": "Desactive",
-    "VALUE_NOT_ENABLED": "Non active"
+    "VALUE_NOT_ENABLED": "Non active",
+    "VALUE_PASSWORD_MANAGED": "Gere par votre fournisseur de compte",
+    "VALUE_CURRENT_SESSION": "Session actuelle"
   },
   "LISTINGS": {
     "TITLE": "Mes annonces",
@@ -234,6 +245,11 @@
     "ACTION_EDIT": "Modifier",
     "ACTION_DELETE": "Supprimer",
     "REMOVE_IMAGE": "Supprimer",
+    "IMAGE_PREVIEW_ALT": "Apercu de l'annonce",
+    "FIELD_COUNTRY": "Pays",
+    "LABEL_COUNTRY": "Pays",
+    "EDIT": "Modifier",
+    "DELETE": "Supprimer",
     "EMPTY": "Aucune annonce pour le moment. Ajoutez votre premiere annonce.",
     "ERROR_LOAD": "Impossible de charger vos annonces.",
     "ERROR_SAVE": "Enregistrement de l'annonce echoue.",
@@ -268,6 +284,120 @@
     "OFFLINE": "Hors ligne"
   },
   "CATEGORIES": {
-    "PLACEHOLDER": "La page des categories arrive bientot."
+    "PLACEHOLDER": "La page des categories arrive bientot.",
+    "NAMES": {
+      "ELECTRONICS": "Electronique",
+      "HOME_LIVING": "Maison et interieur",
+      "FASHION": "Mode",
+      "VEHICLES": "Vehicules",
+      "SPORTS_OUTDOORS": "Sports et plein air",
+      "LAPTOPS": "Ordinateurs portables",
+      "DESKTOPS": "Ordinateurs de bureau",
+      "GAMING_CONSOLES": "Consoles de jeux",
+      "PHONES": "Telephones",
+      "TABLETS": "Tablettes",
+      "FURNITURE": "Meubles",
+      "APPLIANCES": "Electromenager",
+      "DECOR": "Decoration",
+      "WOMEN": "Femmes",
+      "MEN": "Hommes",
+      "KIDS": "Enfants",
+      "ACCESSORIES": "Accessoires",
+      "CARS": "Voitures",
+      "MOTORCYCLES": "Motos",
+      "BICYCLES": "Velos",
+      "FITNESS": "Fitness",
+      "CAMPING": "Camping",
+      "CYCLING": "Cyclisme"
+    }
+  },
+  "CART": {
+    "TITLE": "Panier",
+    "SUBTITLE": "Verifiez vos articles et choisissez ceux a acheter.",
+    "LOADING": "Chargement du panier...",
+    "EMPTY": "Votre panier est vide.",
+    "SELECT_ALL": "Tout selectionner",
+    "QUANTITY": "Qte",
+    "REMOVE": "Supprimer",
+    "SELECTED_TOTAL": "Total selectionne",
+    "CHECKOUT": "Passer au paiement",
+    "GO_TO_CART": "Voir le panier",
+    "ADDED": "Ajoute au panier.",
+    "ERROR_LOAD": "Impossible de charger le panier.",
+    "ERROR_ADD": "Impossible d'ajouter l'article.",
+    "ERROR_UPDATE": "Impossible de modifier la quantite.",
+    "ERROR_REMOVE": "Impossible de supprimer l'article.",
+    "ERROR_OUT_OF_STOCK": "Rupture de stock.",
+    "ERROR_OWN_PRODUCT": "Vous ne pouvez pas acheter votre propre annonce.",
+    "ERROR_NOT_FOUND": "Produit introuvable."
+  },
+  "CHECKOUT": {
+    "TITLE": "Paiement",
+    "SUBTITLE": "Verifiez votre commande, choisissez la livraison et payez en securite.",
+    "NO_ITEMS": "Aucun article selectionne.",
+    "SIGN_IN_TITLE": "Connectez-vous pour continuer",
+    "SIGN_IN_TEXT": "Connectez-vous ou creez un compte pour terminer votre achat.",
+    "DELIVERY_ADDRESS": "Adresse de livraison",
+    "DELIVERY_ADDRESS_TEXT": "Selectionnez une adresse enregistree ou ajoutez-en une.",
+    "SAVED_ADDRESS": "Adresse enregistree",
+    "USE_SAVED_ADDRESS": "Utiliser une adresse enregistree",
+    "ADD_NEW_ADDRESS": "Ajouter une adresse",
+    "SEARCH_ADDRESS": "Rechercher une adresse ou un code postal",
+    "ADDRESS_LABEL_PLACEHOLDER": "Domicile, Bureau, etc.",
+    "FULL_NAME_PLACEHOLDER": "Jean Dupont",
+    "ADDRESS_LINE2_PLACEHOLDER": "Appartement, etage, etc.",
+    "SHIPPING_METHOD": "Mode de livraison",
+    "SHIPPING_MONDIAL": "Mondial Relay (3-5 jours)",
+    "SHIPPING_CHRONOPOST": "Chronopost (1-2 jours)",
+    "SHIPPING_COLISSIMO": "Colissimo (2-3 jours)",
+    "PAYMENT": "Paiement",
+    "PAYMENT_CARD": "Carte bancaire (Stripe)",
+    "PAYMENT_PAYPAL": "PayPal",
+    "PAYMENT_APPLE": "Apple Pay",
+    "STRIPE_NOTE": "Vous serez redirige vers Stripe Checkout pour finaliser le paiement en securite.",
+    "PAYPAL_NOTE": "Le paiement PayPal sera bientot disponible.",
+    "APPLE_PAY_NOTE": "Apple Pay sera disponible dans une prochaine mise a jour.",
+    "ORDER_SUMMARY": "Recapitulatif de la commande",
+    "SUBTOTAL": "Sous-total",
+    "SHIPPING": "Livraison",
+    "TOTAL": "Total",
+    "PROCESSING": "Traitement...",
+    "PLACE_ORDER": "Passer la commande",
+    "ERROR_PAYMENT_UNAVAILABLE": "Ce moyen de paiement n'est pas encore disponible. Selectionnez le paiement par carte.",
+    "ERROR_SAVE_ADDRESS": "Impossible d'enregistrer l'adresse. Reessayez.",
+    "REDIRECTING": "Redirection vers le paiement...",
+    "ERROR_START_PAYMENT": "Impossible de demarrer le paiement. Reessayez.",
+    "ERROR_CREATE_ORDER": "Impossible de creer votre commande. Reessayez."
+  },
+  "COUNTRIES": {
+    "FR": "France",
+    "DE": "Allemagne",
+    "ES": "Espagne",
+    "IT": "Italie",
+    "BE": "Belgique",
+    "NL": "Pays-Bas",
+    "PT": "Portugal",
+    "IE": "Irlande",
+    "AT": "Autriche",
+    "TR": "Turquie",
+    "GB": "Royaume-Uni",
+    "US": "Etats-Unis",
+    "CA": "Canada",
+    "CH": "Suisse"
+  },
+  "LANGUAGES": {
+    "EN": "Anglais",
+    "FR": "Francais",
+    "TR": "Turc"
+  },
+  "NOTIFICATION_CONTENT": {
+    "PRODUCT_CREATED": {
+      "TITLE": "Annonce creee",
+      "MESSAGE": "Votre annonce \"{{product}}\" est maintenant en ligne."
+    },
+    "FAVORITE_ADDED": {
+      "TITLE": "Nouveau favori",
+      "MESSAGE": "{{actor}} a ajoute \"{{product}}\" a ses favoris."
+    }
   }
 }

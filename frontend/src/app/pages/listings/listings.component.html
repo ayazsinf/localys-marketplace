@@ -41,7 +41,7 @@
         <span>{{ 'PROFILE.ADDRESS_COUNTRY' | translate }}</span>
         <select [ngModel]="form.country" (ngModelChange)="onCountryChange($event)">
           <option *ngFor="let market of marketOptions" [ngValue]="market.country">
-            {{ market.label }}
+            {{ market.labelKey | translate }}
           </option>
         </select>
       </label>
@@ -53,7 +53,7 @@
         <span>{{ 'LISTINGS.FIELD_CATEGORY' | translate }}</span>
         <select [(ngModel)]="selectedParentId" (ngModelChange)="onParentCategoryChange($event)">
           <option [ngValue]="null">{{ 'LISTINGS.FIELD_CATEGORY_PLACEHOLDER' | translate }}</option>
-          <option *ngFor="let category of categories" [ngValue]="category.id">{{ category.name }}</option>
+          <option *ngFor="let category of categories" [ngValue]="category.id">{{ category.name | categoryDisplay }}</option>
         </select>
       </label>
 
@@ -61,7 +61,7 @@
         <span>{{ 'LISTINGS.FIELD_SUBCATEGORY' | translate }}</span>
         <select [(ngModel)]="form.categoryId" [disabled]="!selectedParentId">
           <option [ngValue]="null">{{ 'LISTINGS.FIELD_SUBCATEGORY_PLACEHOLDER' | translate }}</option>
-          <option *ngFor="let sub of subcategories" [ngValue]="sub.id">{{ sub.name }}</option>
+          <option *ngFor="let sub of subcategories" [ngValue]="sub.id">{{ sub.name | categoryDisplay }}</option>
         </select>
       </label>
       <label>
@@ -125,7 +125,7 @@
         <p class="hint">{{ 'LISTINGS.FIELD_IMAGES_HINT' | translate }}</p>
         <div class="image-previews" *ngIf="imagePreviews.length > 0">
           <div class="preview" *ngFor="let preview of imagePreviews; let idx = index">
-            <img [src]="preview" alt="Listing preview" />
+            <img [src]="preview" [alt]="'LISTINGS.IMAGE_PREVIEW_ALT' | translate" />
             <button type="button" class="ghost-btn" (click)="removeImage(idx)">
               {{ 'LISTINGS.REMOVE_IMAGE' | translate }}
             </button>

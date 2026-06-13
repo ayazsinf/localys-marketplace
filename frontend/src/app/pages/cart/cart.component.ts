@@ -32,7 +32,7 @@ export class CartComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.isLoading = false;
-        this.errorMessage = 'Failed to load cart.';
+        this.errorMessage = 'CART.ERROR_LOAD';
         this.cdr.detectChanges();
       }
     });
