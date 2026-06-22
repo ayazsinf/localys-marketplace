@@ -202,6 +202,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
   }
 
+  get isAdmin(): boolean {
+    return this.currentUserService.isAdmin;
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement | null;

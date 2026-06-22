@@ -159,6 +159,15 @@
           {{ listing.active ? ('LISTINGS.STATUS_ACTIVE' | translate) : ('LISTINGS.STATUS_INACTIVE' | translate) }}
         </span>
       </div>
+      <div
+        class="moderation-status"
+        [class.moderation-status--approved]="listing.moderationStatus === 'APPROVED'"
+        [class.moderation-status--rejected]="listing.moderationStatus === 'REJECTED'">
+        {{ ('LISTINGS.MODERATION_' + listing.moderationStatus) | translate }}
+      </div>
+      <p class="rejection-reason" *ngIf="listing.moderationStatus === 'REJECTED' && listing.moderationReason">
+        {{ 'LISTINGS.REJECTION_REASON' | translate }}: {{ listing.moderationReason }}
+      </p>
       <div class="listing-meta">
         <div>
           <span>{{ 'LISTINGS.LABEL_PRICE' | translate }}</span>

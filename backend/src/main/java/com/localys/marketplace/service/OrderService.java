@@ -11,6 +11,7 @@ import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.model.enums.CartStatus;
 import com.localys.marketplace.model.enums.OrderStatus;
+import com.localys.marketplace.model.enums.ModerationStatus;
 import com.localys.marketplace.repository.AddressRepository;
 import com.localys.marketplace.repository.CartItemRepository;
 import com.localys.marketplace.repository.CartRepository;
@@ -85,6 +86,12 @@ public class OrderService {
         BigDecimal subtotal = BigDecimal.ZERO;
         for (CartItem cartItem : selectedItems) {
             Product product = cartItem.getProduct();
+            if (!product.isActive() || product.getModerationStatus() != ModerationStatus.APPROVED) {
+                throw new IllegalArgumentException("Product not found");
+            }
+            if (cartItem.getQuantity() > product.getStockQty()) {
+                throw new IllegalArgumentException("Product out of stock");
+            }
             OrderItem item = new OrderItem();
             item.setOrder(order);
             item.setProduct(product);

@@ -8,6 +8,7 @@ import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
 import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.model.enums.CartStatus;
+import com.localys.marketplace.model.enums.ModerationStatus;
 import com.localys.marketplace.repository.CartItemRepository;
 import com.localys.marketplace.repository.CartRepository;
 import com.localys.marketplace.repository.ProductRepository;
@@ -42,6 +43,7 @@ public class CartService {
     @Transactional
     public CartDto getActiveCart(Long userId) {
         Cart cart = getOrCreateActiveCart(userId);
+        removeUnavailableItems(cart);
         return toDto(cart);
     }
 
@@ -51,7 +53,10 @@ public class CartService {
             throw new IllegalArgumentException("Quantity must be positive");
         }
         Cart cart = getOrCreateActiveCart(userId);
-        Product product = productRepository.findById(productId)
+        Product product = productRepository.findByIdAndActiveTrueAndModerationStatus(
+                        productId,
+                        ModerationStatus.APPROVED
+                )
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
         if (product.getVendor() != null
                 && product.getVendor().getUser() != null
@@ -97,6 +102,12 @@ public class CartService {
 
         CartItem item = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart item not found"));
+        if (!item.getProduct().isActive()
+                || item.getProduct().getModerationStatus() != ModerationStatus.APPROVED) {
+            cartItemRepository.delete(item);
+            cart.getItems().remove(item);
+            throw new IllegalArgumentException("Product not found");
+        }
         if (item.getProduct().getVendor() != null
                 && item.getProduct().getVendor().getUser() != null
                 && userId.equals(item.getProduct().getVendor().getUser().getId())) {
@@ -172,5 +183,17 @@ public class CartService {
     private Cart reloadCart(Long userId, Cart fallback) {
         return cartRepository.findByUserIdAndStatus(userId, CartStatus.ACTIVE)
                 .orElse(fallback);
+    }
+
+    private void removeUnavailableItems(Cart cart) {
+        List<CartItem> unavailable = cart.getItems().stream()
+                .filter(item -> !item.getProduct().isActive()
+                        || item.getProduct().getModerationStatus() != ModerationStatus.APPROVED)
+                .toList();
+        if (unavailable.isEmpty()) {
+            return;
+        }
+        cartItemRepository.deleteAll(unavailable);
+        cart.getItems().removeAll(unavailable);
     }
 }

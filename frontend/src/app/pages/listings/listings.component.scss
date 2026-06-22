@@ -256,6 +256,34 @@
   color: #374151;
 }
 
+.moderation-status {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.moderation-status--approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.moderation-status--rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.rejection-reason {
+  margin: 0;
+  padding: 10px;
+  border-left: 3px solid #dc2626;
+  color: #991b1b;
+  background: #fff7f7;
+  font-size: 13px;
+}
+
 .listing-meta {
   display: grid;
   gap: 8px;

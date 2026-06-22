@@ -152,6 +152,9 @@
                         <div class="profile-dropdown" [class.open]="isProfileMenuOpen">
                             <a routerLink="/profile" (click)="closeProfileMenu()">{{ 'MENU.MY_PROFILE' | translate }}</a>
                             <a routerLink="/listings" (click)="closeProfileMenu()">{{ 'MENU.MY_LISTINGS' | translate }}</a>
+                            <a *ngIf="isAdmin" routerLink="/admin/listings" (click)="closeProfileMenu()">
+                                {{ 'MENU.MODERATE_LISTINGS' | translate }}
+                            </a>
                             <a routerLink="/favorites" (click)="closeProfileMenu()">{{ 'MENU.FAVORITES' | translate }}</a>
                             <a routerLink="/messages" (click)="closeProfileMenu()">{{ 'MENU.MESSAGES' | translate }}</a>
                             <button type="button" class="logout" (click)="logout()">{{ 'AUTH.LOGOUT' | translate }}</button>

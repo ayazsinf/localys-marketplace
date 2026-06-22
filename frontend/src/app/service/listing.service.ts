@@ -12,6 +12,8 @@ export interface Listing {
   currency: string;
   stockQty: number;
   active: boolean;
+  moderationStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
+  moderationReason?: string | null;
   sku: string;
   brand: string | null;
   imageUrls?: string[];

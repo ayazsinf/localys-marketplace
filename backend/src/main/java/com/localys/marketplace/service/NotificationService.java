@@ -29,12 +29,32 @@ public class NotificationService {
         Notification notification = new Notification();
         notification.setUser(user);
         notification.setType(NotificationType.PRODUCT_CREATED);
-        notification.setTitle("Listing created");
-        notification.setMessage("Your listing \"" + product.getName() + "\" is now live.");
+        notification.setTitle("Listing submitted");
+        notification.setMessage("Your listing \"" + product.getName() + "\" was submitted for review.");
         notification.setLink("/listings");
         notification.setRead(false);
         notificationRepository.save(notification);
         emailService.sendProductCreatedEmail(user, product);
+    }
+
+    public void createProductApprovedNotification(UserEntity user, Product product) {
+        createModerationNotification(
+                user,
+                product,
+                NotificationType.PRODUCT_APPROVED,
+                "Listing approved",
+                "Your listing \"" + product.getName() + "\" was approved."
+        );
+    }
+
+    public void createProductRejectedNotification(UserEntity user, Product product) {
+        createModerationNotification(
+                user,
+                product,
+                NotificationType.PRODUCT_REJECTED,
+                "Listing rejected",
+                "Your listing \"" + product.getName() + "\" was rejected: " + product.getModerationReason()
+        );
     }
 
     public void createFavoriteAddedNotification(UserEntity recipient, UserEntity actor, Product product) {
@@ -108,5 +128,25 @@ public class NotificationService {
             name = "Someone";
         }
         return name + " \"" + product.getName() + "\" urununu favorilerine ekledi.";
+    }
+
+    private void createModerationNotification(
+            UserEntity user,
+            Product product,
+            NotificationType type,
+            String title,
+            String message
+    ) {
+        if (user == null || product == null) {
+            return;
+        }
+        Notification notification = new Notification();
+        notification.setUser(user);
+        notification.setType(type);
+        notification.setTitle(title);
+        notification.setMessage(message);
+        notification.setLink("/listings");
+        notification.setRead(false);
+        notificationRepository.save(notification);
     }
 }

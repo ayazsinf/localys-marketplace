@@ -37,6 +37,7 @@
   "MENU": {
     "MY_PROFILE": "My Profile",
     "MY_LISTINGS": "My Listings",
+    "MODERATE_LISTINGS": "Moderate Listings",
     "FAVORITES": "Favorites",
     "MESSAGES": "Messages",
     "ACCOUNT_MENU": "Open account menu"
@@ -234,6 +235,10 @@
     "LABEL_BRAND": "Brand",
     "STATUS_ACTIVE": "Active",
     "STATUS_INACTIVE": "Inactive",
+    "MODERATION_PENDING": "Waiting for review",
+    "MODERATION_APPROVED": "Approved",
+    "MODERATION_REJECTED": "Rejected",
+    "REJECTION_REASON": "Reason",
     "EDIT": "Edit",
     "DELETE": "Delete",
     "EMPTY": "You don’t have any listings yet.",
@@ -260,6 +265,20 @@
     "FORM_SKU": "SKU",
     "FORM_BRAND": "Brand",
     "FORM_ACTIVE": "Listing is active"
+  },
+  "ADMIN_LISTINGS": {
+    "TITLE": "Listing moderation",
+    "SUBTITLE": "Review pending listings before they become public.",
+    "LOADING": "Loading pending listings...",
+    "CATEGORY": "Category",
+    "STOCK": "Stock",
+    "REASON_PLACEHOLDER": "Required reason when rejecting",
+    "APPROVE": "Approve",
+    "REJECT": "Reject",
+    "EMPTY": "There are no listings waiting for review.",
+    "ERROR_LOAD": "Could not load pending listings.",
+    "ERROR_ACTION": "The moderation action failed.",
+    "REASON_REQUIRED": "Enter a rejection reason."
   },
   "FAVORITES": {
     "TITLE": "Favorites",
@@ -392,8 +411,16 @@
   },
   "NOTIFICATION_CONTENT": {
     "PRODUCT_CREATED": {
-      "TITLE": "Listing created",
-      "MESSAGE": "Your listing \"{{product}}\" is now live."
+      "TITLE": "Listing submitted",
+      "MESSAGE": "Your listing \"{{product}}\" was submitted for review."
+    },
+    "PRODUCT_APPROVED": {
+      "TITLE": "Listing approved",
+      "MESSAGE": "Your listing \"{{product}}\" was approved."
+    },
+    "PRODUCT_REJECTED": {
+      "TITLE": "Listing rejected",
+      "MESSAGE": "Your listing \"{{product}}\" was rejected."
     },
     "FAVORITE_ADDED": {
       "TITLE": "New favorite",

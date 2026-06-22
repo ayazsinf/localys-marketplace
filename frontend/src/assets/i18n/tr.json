@@ -37,6 +37,7 @@
   "MENU": {
     "MY_PROFILE": "Profilim",
     "MY_LISTINGS": "Ilanlarim",
+    "MODERATE_LISTINGS": "Ilanlari Onayla",
     "FAVORITES": "Favoriler",
     "MESSAGES": "Mesajlar",
     "ACCOUNT_MENU": "Hesap menusunu ac"
@@ -232,6 +233,10 @@
     "LABEL_BRAND": "Marka",
     "STATUS_ACTIVE": "Aktif",
     "STATUS_INACTIVE": "Pasif",
+    "MODERATION_PENDING": "Onay bekliyor",
+    "MODERATION_APPROVED": "Onaylandi",
+    "MODERATION_REJECTED": "Reddedildi",
+    "REJECTION_REASON": "Red nedeni",
     "EDIT": "Duzenle",
     "DELETE": "Sil",
     "EMPTY": "Henuz ilan yok. Ilk ilanini ekle.",
@@ -260,6 +265,20 @@
     "FORM_SKU": "SKU",
     "FORM_BRAND": "Marka",
     "FORM_ACTIVE": "Ilan aktif"
+  },
+  "ADMIN_LISTINGS": {
+    "TITLE": "Ilan onaylama",
+    "SUBTITLE": "Ilanlari herkese acilmadan once inceleyin.",
+    "LOADING": "Bekleyen ilanlar yukleniyor...",
+    "CATEGORY": "Kategori",
+    "STOCK": "Stok",
+    "REASON_PLACEHOLDER": "Reddederken neden yazmak zorunludur",
+    "APPROVE": "Onayla",
+    "REJECT": "Reddet",
+    "EMPTY": "Onay bekleyen ilan yok.",
+    "ERROR_LOAD": "Bekleyen ilanlar yuklenemedi.",
+    "ERROR_ACTION": "Onaylama islemi basarisiz oldu.",
+    "REASON_REQUIRED": "Red nedeni yazin."
   },
   "FAVORITES": {
     "TITLE": "Favoriler",
@@ -392,8 +411,16 @@
   },
   "NOTIFICATION_CONTENT": {
     "PRODUCT_CREATED": {
-      "TITLE": "Ilan olusturuldu",
-      "MESSAGE": "\"{{product}}\" ilaniniz yayinda."
+      "TITLE": "Ilan incelemeye gonderildi",
+      "MESSAGE": "\"{{product}}\" ilaniniz onay icin gonderildi."
+    },
+    "PRODUCT_APPROVED": {
+      "TITLE": "Ilan onaylandi",
+      "MESSAGE": "\"{{product}}\" ilaniniz onaylandi."
+    },
+    "PRODUCT_REJECTED": {
+      "TITLE": "Ilan reddedildi",
+      "MESSAGE": "\"{{product}}\" ilaniniz reddedildi."
     },
     "FAVORITE_ADDED": {
       "TITLE": "Yeni favori",

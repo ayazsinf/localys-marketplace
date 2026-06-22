@@ -1,6 +1,7 @@
 package com.localys.marketplace.repository;
 
 import com.localys.marketplace.model.Product;
+import com.localys.marketplace.model.enums.ModerationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -13,8 +14,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<Product> findByIdAndVendorId(Long id, Long vendorId);
 
+    Optional<Product> findByIdAndActiveTrueAndModerationStatus(Long id, ModerationStatus moderationStatus);
+
     boolean existsBySku(String sku);
 
-    // Ürünleri ada göre artan sırayla listele
-    List<Product> findAllByOrderByNameAsc();
+    List<Product> findByActiveTrueAndModerationStatusOrderByNameAsc(ModerationStatus moderationStatus);
+
+    List<Product> findByModerationStatusOrderByCreatedAtAsc(ModerationStatus moderationStatus);
 }

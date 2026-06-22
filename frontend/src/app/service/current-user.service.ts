@@ -45,4 +45,8 @@ export class CurrentUserService {
   get userId(): number | null {
     return this.profileSubject.value?.id ?? null;
   }
+
+  get isAdmin(): boolean {
+    return this.profileSubject.value?.role === 'ROLE_ADMIN';
+  }
 }

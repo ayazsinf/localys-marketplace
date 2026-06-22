@@ -1,10 +1,12 @@
 package com.localys.marketplace.model;
 
+import com.localys.marketplace.model.enums.ModerationStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +50,20 @@ public class Product extends AuditableEntity {
 
     @Column(nullable = false)
     private boolean active = true;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "moderation_status", nullable = false, length = 20)
+    private ModerationStatus moderationStatus = ModerationStatus.PENDING;
+
+    @Column(name = "moderation_reason", length = 1000)
+    private String moderationReason;
+
+    @Column(name = "reviewed_at")
+    private OffsetDateTime reviewedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reviewed_by")
+    private UserEntity reviewedBy;
 
     @Column(name = "location_text", length = 200)
     private String locationText;

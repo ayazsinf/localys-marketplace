@@ -197,3 +197,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 017-add-listing-moderation
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V17__add_listing_moderation.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

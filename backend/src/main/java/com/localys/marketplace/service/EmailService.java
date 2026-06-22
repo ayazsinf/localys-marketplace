@@ -42,8 +42,8 @@ public class EmailService {
         if (user == null || product == null) {
             return;
         }
-        String subject = "Listing created";
-        String body = "Your listing \"" + product.getName() + "\" is now live.";
+        String subject = "Listing submitted";
+        String body = "Your listing \"" + product.getName() + "\" was submitted for review.";
         sendEmail(user.getEmail(), subject, body);
     }
 

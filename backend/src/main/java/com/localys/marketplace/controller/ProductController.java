@@ -4,6 +4,7 @@ import com.localys.marketplace.dto.ProductDetailDto;
 import com.localys.marketplace.dto.ProductListDto;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
+import com.localys.marketplace.model.enums.ModerationStatus;
 import com.localys.marketplace.repository.ProductRepository;
 import com.localys.marketplace.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class ProductController {
 
     @GetMapping
     public List<ProductListDto> list() {
-        return repo.findAllByOrderByNameAsc().stream()
+        return repo.findByActiveTrueAndModerationStatusOrderByNameAsc(ModerationStatus.APPROVED).stream()
                 .map(this::toDto)
                 .toList();
     }
@@ -62,9 +63,10 @@ public class ProductController {
 
     // Tüm ürünleri listele
     @GetMapping("/all")
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(products);
+    public ResponseEntity<List<ProductListDto>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts().stream()
+                .map(this::toDto)
+                .toList());
     }
 
     // Belirli bir ürünü getir

@@ -1,9 +1,10 @@
 package com.localys.marketplace.dto;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
-public record ListingDto(
+public record AdminListingDto(
         Long id,
         String name,
         String description,
@@ -19,9 +20,11 @@ public record ListingDto(
         List<String> imageUrls,
         Long categoryId,
         String categoryName,
-        Long parentCategoryId,
-        String locationText,
-        Double latitude,
-        Double longitude
+        Long vendorId,
+        Long vendorUserId,
+        String vendorDisplayName,
+        OffsetDateTime createdAt,
+        OffsetDateTime updatedAt,
+        OffsetDateTime reviewedAt
 ) {
 }

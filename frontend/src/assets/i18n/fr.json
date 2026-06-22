@@ -37,6 +37,7 @@
   "MENU": {
     "MY_PROFILE": "Mon profil",
     "MY_LISTINGS": "Mes annonces",
+    "MODERATE_LISTINGS": "Moderation des annonces",
     "FAVORITES": "Favoris",
     "MESSAGES": "Messages",
     "ACCOUNT_MENU": "Ouvrir le menu du compte"
@@ -240,6 +241,10 @@
     "LABEL_BRAND": "Marque",
     "STATUS_ACTIVE": "Active",
     "STATUS_INACTIVE": "Inactive",
+    "MODERATION_PENDING": "En attente de validation",
+    "MODERATION_APPROVED": "Approuvee",
+    "MODERATION_REJECTED": "Rejetee",
+    "REJECTION_REASON": "Motif",
     "ACTION_CANCEL": "Annuler",
     "ACTION_SAVE": "Enregistrer",
     "ACTION_EDIT": "Modifier",
@@ -260,6 +265,20 @@
     "ERROR_IMAGE_TYPE": "Formats autorises : JPG, PNG ou WEBP.",
     "ERROR_IMAGE_SIZE": "Chaque photo doit faire 10MB ou moins.",
     "ERROR_IMAGE_LIMIT": "Vous pouvez televerser jusqu'a 6 photos."
+  },
+  "ADMIN_LISTINGS": {
+    "TITLE": "Moderation des annonces",
+    "SUBTITLE": "Validez les annonces avant leur publication.",
+    "LOADING": "Chargement des annonces en attente...",
+    "CATEGORY": "Categorie",
+    "STOCK": "Stock",
+    "REASON_PLACEHOLDER": "Motif obligatoire en cas de rejet",
+    "APPROVE": "Approuver",
+    "REJECT": "Rejeter",
+    "EMPTY": "Aucune annonce en attente.",
+    "ERROR_LOAD": "Impossible de charger les annonces.",
+    "ERROR_ACTION": "L'action de moderation a echoue.",
+    "REASON_REQUIRED": "Saisissez un motif de rejet."
   },
   "FAVORITES": {
     "TITLE": "Favoris",
@@ -392,8 +411,16 @@
   },
   "NOTIFICATION_CONTENT": {
     "PRODUCT_CREATED": {
-      "TITLE": "Annonce creee",
-      "MESSAGE": "Votre annonce \"{{product}}\" est maintenant en ligne."
+      "TITLE": "Annonce envoyee",
+      "MESSAGE": "Votre annonce \"{{product}}\" a ete envoyee pour validation."
+    },
+    "PRODUCT_APPROVED": {
+      "TITLE": "Annonce approuvee",
+      "MESSAGE": "Votre annonce \"{{product}}\" a ete approuvee."
+    },
+    "PRODUCT_REJECTED": {
+      "TITLE": "Annonce rejetee",
+      "MESSAGE": "Votre annonce \"{{product}}\" a ete rejetee."
     },
     "FAVORITE_ADDED": {
       "TITLE": "Nouveau favori",

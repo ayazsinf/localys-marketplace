@@ -1,0 +1,57 @@
+<section class="admin-page">
+  <header>
+    <h1>{{ 'ADMIN_LISTINGS.TITLE' | translate }}</h1>
+    <p>{{ 'ADMIN_LISTINGS.SUBTITLE' | translate }}</p>
+  </header>
+
+  <p class="status" *ngIf="isLoading">{{ 'ADMIN_LISTINGS.LOADING' | translate }}</p>
+  <p class="status error" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
+
+  <div class="moderation-grid" *ngIf="!isLoading">
+    <article class="moderation-card" *ngFor="let listing of listings">
+      <img
+        *ngIf="listing.imageUrls.length"
+        [src]="getImageUrl(listing.imageUrls[0])"
+        [alt]="listing.name"
+      />
+      <div class="card-body">
+        <div class="heading">
+          <div>
+            <h2>{{ listing.name }}</h2>
+            <p>{{ listing.vendorDisplayName || ('COMMON.UNKNOWN' | translate) }}</p>
+          </div>
+          <strong>{{ listing.price | currencyDisplay:listing.currency }}</strong>
+        </div>
+        <p class="description">{{ listing.description }}</p>
+        <dl>
+          <div><dt>{{ 'ADMIN_LISTINGS.CATEGORY' | translate }}</dt><dd>{{ listing.categoryName || '-' }}</dd></div>
+          <div><dt>SKU</dt><dd>{{ listing.sku }}</dd></div>
+          <div><dt>{{ 'ADMIN_LISTINGS.STOCK' | translate }}</dt><dd>{{ listing.stockQty }}</dd></div>
+        </dl>
+        <textarea
+          rows="3"
+          [(ngModel)]="rejectionReasons[listing.id]"
+          [placeholder]="'ADMIN_LISTINGS.REASON_PLACEHOLDER' | translate">
+        </textarea>
+        <div class="actions">
+          <button
+            class="approve"
+            type="button"
+            [disabled]="processingId === listing.id"
+            (click)="approve(listing)">
+            {{ 'ADMIN_LISTINGS.APPROVE' | translate }}
+          </button>
+          <button
+            class="reject"
+            type="button"
+            [disabled]="processingId === listing.id"
+            (click)="reject(listing)">
+            {{ 'ADMIN_LISTINGS.REJECT' | translate }}
+          </button>
+        </div>
+      </div>
+    </article>
+
+    <p class="empty" *ngIf="listings.length === 0">{{ 'ADMIN_LISTINGS.EMPTY' | translate }}</p>
+  </div>
+</section>

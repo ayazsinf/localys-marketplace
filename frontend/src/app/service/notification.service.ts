@@ -50,6 +50,20 @@ export class NotificationService {
         product: quotedValues[0]
       });
     }
+    if (notification.type === 'PRODUCT_APPROVED' && quotedValues[0]) {
+      return this.translateService.instant('NOTIFICATION_CONTENT.PRODUCT_APPROVED.MESSAGE', {
+        product: quotedValues[0]
+      });
+    }
+    if (notification.type === 'PRODUCT_REJECTED' && quotedValues[0]) {
+      const translated = this.translateService.instant('NOTIFICATION_CONTENT.PRODUCT_REJECTED.MESSAGE', {
+        product: quotedValues[0]
+      });
+      const reasonSeparator = notification.message.indexOf(': ');
+      return reasonSeparator >= 0
+        ? `${translated} ${notification.message.substring(reasonSeparator + 2)}`
+        : translated;
+    }
     if (notification.type === 'FAVORITE_ADDED' && quotedValues[0]) {
       const actor = notification.message.split('"')[0].trim() || this.translateService.instant('COMMON.SOMEONE');
       return this.translateService.instant('NOTIFICATION_CONTENT.FAVORITE_ADDED.MESSAGE', {

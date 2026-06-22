@@ -3,6 +3,7 @@ package com.localys.marketplace.service;
 import com.localys.marketplace.model.Favorite;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.UserEntity;
+import com.localys.marketplace.model.enums.ModerationStatus;
 import com.localys.marketplace.repository.FavoriteRepository;
 import com.localys.marketplace.repository.ProductRepository;
 import com.localys.marketplace.repository.UserRepository;
@@ -35,12 +36,17 @@ public class FavoriteService {
     public List<Product> getFavoriteProducts(Long userId) {
         return favoriteRepository.findByUserId(userId).stream()
                 .map(Favorite::getProduct)
+                .filter(product -> product.isActive()
+                        && product.getModerationStatus() == ModerationStatus.APPROVED)
                 .toList();
     }
 
     public List<Long> getFavoriteProductIds(Long userId) {
         return favoriteRepository.findByUserId(userId).stream()
-                .map(favorite -> favorite.getProduct().getId())
+                .map(Favorite::getProduct)
+                .filter(product -> product.isActive()
+                        && product.getModerationStatus() == ModerationStatus.APPROVED)
+                .map(Product::getId)
                 .toList();
     }
 
@@ -51,7 +57,10 @@ public class FavoriteService {
         }
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Product product = productRepository.findById(productId)
+        Product product = productRepository.findByIdAndActiveTrueAndModerationStatus(
+                        productId,
+                        ModerationStatus.APPROVED
+                )
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
         if (product.getVendor() != null
                 && product.getVendor().getUser() != null
