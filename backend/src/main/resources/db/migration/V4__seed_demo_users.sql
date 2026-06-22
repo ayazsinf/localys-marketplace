@@ -21,7 +21,7 @@ SET role = 'ROLE_USER',
 WHERE username = 'testuser';
 
 UPDATE users
-SET role = 'ROLE_USER',
+SET role = 'ROLE_VENDOR',
     enabled = TRUE,
     password = crypt('Vendor123!', gen_salt('bf'))
 WHERE username IN ('vendor1', 'vendor2');

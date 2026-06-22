@@ -208,3 +208,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 018-normalize-user-roles
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V18__normalize_user_roles.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

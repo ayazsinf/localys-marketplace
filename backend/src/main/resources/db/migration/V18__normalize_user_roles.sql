@@ -1,0 +1,3 @@
+UPDATE users
+SET role = 'ROLE_USER'
+WHERE role IN ('ROLE_VENDOR', 'ROLE_CUSTOMER');
