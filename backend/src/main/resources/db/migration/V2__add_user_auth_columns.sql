@@ -13,6 +13,6 @@ SET role = 'ROLE_ADMIN',
 WHERE username = 'admin';
 
 UPDATE users
-SET role = 'ROLE_VENDOR',
+SET role = 'ROLE_USER',
     password = crypt('Vendor123!', gen_salt('bf'))
 WHERE username IN ('vendor1', 'vendor2');

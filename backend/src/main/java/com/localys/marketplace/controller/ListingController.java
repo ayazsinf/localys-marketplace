@@ -115,7 +115,7 @@ public class ListingController {
         if (user.getUsername() != null && !user.getUsername().isBlank()) {
             return user.getUsername();
         }
-        return "Localys Seller";
+        return "Localys User";
     }
 
     private Product toProduct(ListingDto request) {
@@ -161,6 +161,8 @@ public class ListingController {
                 product.getCurrency(),
                 product.getStockQty(),
                 product.isActive(),
+                product.getModerationStatus().name(),
+                product.getModerationReason(),
                 product.getSku(),
                 product.getBrand(),
                 product.getImages().stream()

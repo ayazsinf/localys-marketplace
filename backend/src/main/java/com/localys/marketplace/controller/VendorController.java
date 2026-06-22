@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @RestController
 @RequestMapping("/api/vendor")
-@PreAuthorize("hasRole('VENDOR')") // Only vendor role can access
+@PreAuthorize("hasRole('USER')")
 public class VendorController {
 
     @Autowired
@@ -98,10 +98,10 @@ public class VendorController {
 
     private Vendor getVendorOrThrow(CustomUserDetails principal) {
         if (principal == null) {
-            throw new ResponseStatusException(FORBIDDEN, "Vendor access required");
+            throw new ResponseStatusException(FORBIDDEN, "User access required");
         }
         return vendorRepository.findByUserId(principal.getUserId())
-                .orElseThrow(() -> new ResponseStatusException(FORBIDDEN, "Vendor access required"));
+                .orElseThrow(() -> new ResponseStatusException(FORBIDDEN, "User listing profile required"));
     }
 
     public static class VendorProfileRequest {

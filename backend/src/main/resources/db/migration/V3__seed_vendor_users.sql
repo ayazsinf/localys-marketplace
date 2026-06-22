@@ -3,13 +3,13 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 INSERT INTO users (keycloak_id, username, email, display_name, password, enabled, role)
 VALUES ('kc_vendor1_sub', 'vendor1', 'vendor1@example.com', 'Vendor One',
-        crypt('Vendor123!', gen_salt('bf')), TRUE, 'ROLE_VENDOR'),
+        crypt('Vendor123!', gen_salt('bf')), TRUE, 'ROLE_USER'),
        ('kc_vendor2_sub', 'vendor2', 'vendor2@example.com', 'Vendor Two',
-        crypt('Vendor123!', gen_salt('bf')), TRUE, 'ROLE_VENDOR')
+        crypt('Vendor123!', gen_salt('bf')), TRUE, 'ROLE_USER')
 ON CONFLICT (keycloak_id) DO NOTHING;
 
 UPDATE users
-SET role = 'ROLE_VENDOR',
+SET role = 'ROLE_USER',
     enabled = TRUE,
     password = crypt('Vendor123!', gen_salt('bf'))
 WHERE username IN ('vendor1', 'vendor2');
