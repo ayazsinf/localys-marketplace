@@ -38,7 +38,9 @@ public class CorsConfig {
                         "http://localhost:4200",
                         "https://localys.shop",
                         "https://www.localys.shop",
-                        "https://app.localys.shop"
+                        "https://app.localys.shop",
+                        "http://dev.localys.shop:18080",
+                        "http://uat.localys.shop:28080"
                 )
                 .allowedMethods("*")
                 .allowedHeaders("*")
