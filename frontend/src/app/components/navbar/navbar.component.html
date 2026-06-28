@@ -55,7 +55,9 @@
             [class.error]="cartNotice.type === 'error'"
             [class.warning]="cartNotice.type === 'warning'"
           >
-            <div class="cart-notice-title">{{ cartNotice.message }}</div>
+            <div class="cart-notice-title">
+              {{ cartNotice.messageKey | translate }}
+            </div>
             <div class="cart-notice-meta" *ngIf="cartNotice.productName">
               <span class="cart-notice-name">{{ cartNotice.productName }}</span>
               <span class="cart-notice-qty" *ngIf="cartNotice.quantity"
@@ -68,7 +70,7 @@
               *ngIf="cartNotice.type !== 'error'"
               (click)="openCart()"
             >
-              Go to cart
+              {{ 'CART.GO_TO_CART' | translate }}
             </button>
           </div>
         </div>

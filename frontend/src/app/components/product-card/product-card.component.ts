@@ -31,8 +31,7 @@ export class ProductCardComponent implements OnInit {
     }
   ngOnInit() {
     this.product.rating=Math.floor(Math.random() * 5) + 1;
-    this.favoritesService.ensureFavoriteIds();
-    if (this.authService.isAuthenticated) {
+    if (this.authService.isAuthenticated && !!this.authService.token) {
       this.currentUserService.ensureLoaded();
     }
   }

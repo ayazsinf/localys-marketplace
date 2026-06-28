@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, map, switchMap, tap, throwError } from 'rxjs';
 import { Product } from '../modules/product.model';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,7 @@ export class FavoritesService {
   }
 
   loadFavoriteIds(): Observable<number[]> {
-    return this.http.get<number[]>('/api/favorites/ids').pipe(
+    return this.http.get<number[]>(`${environment.apiUrl}/favorites/ids`).pipe(
       tap(ids => {
         this.favoriteIdsSubject.next(ids);
         this.favoriteIdsLoaded = true;
@@ -47,15 +48,15 @@ export class FavoritesService {
   }
 
   loadFavorites(): Observable<Product[]> {
-    return this.http.get<Product[]>('/api/favorites');
+    return this.http.get<Product[]>(`${environment.apiUrl}/favorites`);
   }
 
   toggleFavorite(productId: number): Observable<void> {
     const current = this.favoriteIdsSubject.value;
     const isFav = current.includes(productId);
     const request$ = isFav
-      ? this.http.delete<void>(`/api/favorites/${productId}`)
-      : this.http.post<void>(`/api/favorites/${productId}`, null);
+      ? this.http.delete<void>(`${environment.apiUrl}/favorites/${productId}`)
+      : this.http.post<void>(`${environment.apiUrl}/favorites/${productId}`, null);
 
     return request$.pipe(
       tap(() => {

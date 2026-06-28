@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {environment} from '../../environments/environment';
 
 export interface OrderCreatePayload {
   productIds: number[];
@@ -29,10 +30,10 @@ export class OrderService {
   constructor(private http: HttpClient) {}
 
   createOrder(payload: OrderCreatePayload): Observable<OrderResponse> {
-    return this.http.post<OrderResponse>('/api/orders', payload);
+    return this.http.post<OrderResponse>(`${environment.apiUrl}/orders`, payload);
   }
 
   createStripeCheckout(orderId: number): Observable<StripeCheckoutResponse> {
-    return this.http.post<StripeCheckoutResponse>(`/api/payments/stripe/checkout/${orderId}`, {});
+    return this.http.post<StripeCheckoutResponse>(`${environment.apiUrl}/payments/stripe/checkout/${orderId}`, {});
   }
 }

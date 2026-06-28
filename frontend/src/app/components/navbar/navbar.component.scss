@@ -116,23 +116,23 @@
   }
 }
 
-/* MOBILE STYLES - BUNLAR ÇOK ÖNEMLİ */
+/* Mobile styles */
 @media (max-width: 768px) {
   .nav-menu {
     position: fixed;
-    left: -100%; // BAŞLANGIÇTA EKRAN DIŞINDA
+    left: -100%; // Start off-screen
     top: 70px;
     flex-direction: column;
     background-color: white;
     width: 100%;
     text-align: center;
-    transition: left 0.3s ease; // TRANSITION EKLENDİ
+    transition: left 0.3s ease; // Smooth slide-in
     box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
     padding: 20px 0;
 
-    // .active CLASS'I EKLENDİĞİNDE
+    // When the active class is applied
     &.active {
-      left: 0; // EKRANDA GÖSTER
+      left: 0; // Show on screen
     }
 
     .nav-link {
@@ -149,7 +149,7 @@
     gap: 10px;
   }
 }
-/* navbar.component.scss */
+/* Navbar component styles */
 .nav-right {
   display: inline-flex;
 }

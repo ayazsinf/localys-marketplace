@@ -4,6 +4,7 @@ import { BehaviorSubject, EMPTY, map, Observable, tap, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from "./auth.service";
+import { environment } from "../../environments/environment";
 
 interface CartItemResponse {
   productId: number;
@@ -31,7 +32,7 @@ export interface CartItem {
 
 export interface CartNotice {
   type: "success" | "error" | "warning";
-  message: string;
+  messageKey: string;
   productName?: string;
   quantity?: number;
 }
@@ -58,7 +59,7 @@ export class CartService {
       this.itemsSubject.next([]);
       return this.items$;
     }
-    return this.http.get<CartResponse>("/api/cart").pipe(
+    return this.http.get<CartResponse>(`${environment.apiUrl}/cart`).pipe(
       tap((cart) => this.applyCart(cart)),
       map(() => this.itemsSubject.value),
     );
@@ -75,7 +76,7 @@ export class CartService {
     }
     const previousQty = this.getQuantity(product.id);
     return this.http
-      .post<CartResponse>("/api/cart/items", {
+      .post<CartResponse>(`${environment.apiUrl}/cart/items`, {
         productId: product.id,
         quantity,
       })
@@ -97,7 +98,7 @@ export class CartService {
         catchError((err) => {
           this.noticeSubject.next({
             type: "error",
-            message: this.readCartError(err, "Could not add item."),
+            messageKey: this.readCartError(err, "CART.ADD_FAILED"),
             productName: product.name,
           });
           return throwError(() => err);
@@ -112,7 +113,9 @@ export class CartService {
     }
     const previousQty = this.getQuantity(productId);
     this.http
-      .put<CartResponse>(`/api/cart/items/${productId}`, { quantity })
+      .put<CartResponse>(`${environment.apiUrl}/cart/items/${productId}`, {
+        quantity,
+      })
       .subscribe({
         next: (cart) => {
           const items = this.applyCart(cart);
@@ -120,7 +123,7 @@ export class CartService {
             (item) => item.product.id === productId,
           );
           const product = updatedItem?.product;
-          if (!product) {
+          if (!product || !updatedItem) {
             return;
           }
           if (updatedItem.quantity > previousQty) {
@@ -136,7 +139,7 @@ export class CartService {
         error: (err) => {
           this.noticeSubject.next({
             type: "error",
-            message: this.readCartError(err, "Could not update quantity."),
+            messageKey: this.readCartError(err, "CART.UPDATE_FAILED"),
           });
         },
       });
@@ -147,15 +150,17 @@ export class CartService {
       this.authService.login().subscribe();
       return;
     }
-    this.http.delete<CartResponse>(`/api/cart/items/${productId}`).subscribe({
-      next: (cart) => this.applyCart(cart),
-      error: (err) => {
-        this.noticeSubject.next({
-          type: "error",
-          message: this.readCartError(err, "Could not remove item."),
-        });
-      },
-    });
+    this.http
+      .delete<CartResponse>(`${environment.apiUrl}/cart/items/${productId}`)
+      .subscribe({
+        next: (cart) => this.applyCart(cart),
+        error: (err) => {
+          this.noticeSubject.next({
+            type: "error",
+            messageKey: this.readCartError(err, "CART.REMOVE_FAILED"),
+          });
+        },
+      });
   }
 
   clear(): void {
@@ -166,7 +171,7 @@ export class CartService {
     this.noticeSubject.next(null);
   }
 
-  // ileride lazım olur
+  // Kept for future use.
   getSnapshot(): CartItem[] {
     return this.itemsSubject.value;
   }
@@ -197,16 +202,16 @@ export class CartService {
   private readCartError(error: any, fallback: string): string {
     const code = error?.error?.code;
     if (code === "OUT_OF_STOCK") {
-      return "Sorry, no items left in stock.";
+      return "CART.OUT_OF_STOCK";
     }
     if (code === "ALREADY_IN_CART") {
-      return "Already added to cart.";
+      return "CART.ALREADY_IN_CART";
     }
     if (code === "OWN_PRODUCT") {
-      return "You cannot buy your own listing.";
+      return "CART.OWN_PRODUCT";
     }
     if (code === "PRODUCT_NOT_FOUND") {
-      return "Product not found.";
+      return "CART.PRODUCT_NOT_FOUND";
     }
     return error?.error?.message || fallback;
   }
@@ -228,7 +233,7 @@ export class CartService {
     if (stockQty == null) {
       this.noticeSubject.next({
         type: "success",
-        message: "Added to cart.",
+        messageKey: "CART.ADDED_TO_CART",
         productName: product.name,
         quantity: attemptedQuantity,
       });
@@ -238,7 +243,7 @@ export class CartService {
     if (previousQty >= stockQty && currentQty >= stockQty) {
       this.noticeSubject.next({
         type: "warning",
-        message: "Already added to cart. No more stock left.",
+        messageKey: "CART.ALREADY_IN_CART_NO_MORE_STOCK",
         productName: product.name,
         quantity: currentQty,
       });
@@ -249,7 +254,7 @@ export class CartService {
     if (remaining === 0) {
       this.noticeSubject.next({
         type: "warning",
-        message: "No items left in stock.",
+        messageKey: "CART.NO_ITEMS_LEFT_IN_STOCK",
         productName: product.name,
         quantity: currentQty,
       });
@@ -259,7 +264,7 @@ export class CartService {
     if (remaining === 1) {
       this.noticeSubject.next({
         type: "warning",
-        message: "Only one item left in stock.",
+        messageKey: "CART.ONLY_ONE_ITEM_LEFT_IN_STOCK",
         productName: product.name,
         quantity: currentQty,
       });
@@ -268,7 +273,7 @@ export class CartService {
 
     this.noticeSubject.next({
       type: "success",
-      message: "Added to cart.",
+      messageKey: "CART.ADDED_TO_CART",
       productName: product.name,
       quantity: attemptedQuantity,
     });

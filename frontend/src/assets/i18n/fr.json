@@ -47,6 +47,20 @@
     "MARK_ALL_READ": "Tout marquer comme lu",
     "NO_NOTIFICATIONS": "Aucune notification pour le moment"
   },
+  "CART": {
+    "ADDED_TO_CART": "Ajoute au panier.",
+    "ADD_FAILED": "Impossible d'ajouter l'article.",
+    "UPDATE_FAILED": "Impossible de mettre a jour la quantite.",
+    "REMOVE_FAILED": "Impossible de supprimer l'article.",
+    "OUT_OF_STOCK": "Rupture de stock.",
+    "ALREADY_IN_CART": "Deja ajoute au panier.",
+    "ALREADY_IN_CART_NO_MORE_STOCK": "Deja ajoute au panier. Plus de stock disponible.",
+    "NO_ITEMS_LEFT_IN_STOCK": "Il ne reste plus d'article en stock.",
+    "ONLY_ONE_ITEM_LEFT_IN_STOCK": "Il ne reste qu'un seul article en stock.",
+    "OWN_PRODUCT": "Vous ne pouvez pas acheter votre propre annonce.",
+    "PRODUCT_NOT_FOUND": "Produit introuvable.",
+    "GO_TO_CART": "Aller au panier"
+  },
   "NOTIFICATIONS": {
     "TITLE": "Notifications",
     "SUBTITLE": "Suivez l'activite et les mises a jour.",
@@ -81,6 +95,7 @@
     "IN_STOCK": "En stock",
     "OUT_OF_STOCK": "Rupture de stock",
     "ADD_TO_CART": "Ajouter au panier",
+    "YOUR_LISTING": "Votre annonce",
     "MESSAGE_SELLER": "Contacter le vendeur",
     "BUY_NOW": "Acheter",
     "SELLER": "Vendeur",
