@@ -2,6 +2,7 @@ import {Product} from '../modules/product.model';
 import {computed, Injectable, signal} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {tap} from "rxjs";
+import {environment} from '../../environments/environment';
 
 export interface ProductDetail {
   id: number;
@@ -40,7 +41,7 @@ export class ProductService {
   }
 
   loadProducts() {
-    return this.http.get<Product[]>('/api/products').pipe(
+    return this.http.get<Product[]>(`${environment.apiUrl}/products`).pipe(
         tap(list => {
           console.log('HTTP arrived', list.length);
           this._products.set(list);
@@ -61,7 +62,7 @@ export class ProductService {
   }
 
   getProductDetail(id: number) {
-    return this.http.get<ProductDetail>(`/api/products/${id}`);
+    return this.http.get<ProductDetail>(`${environment.apiUrl}/products/${id}`);
   }
 
   getProducts(): Product[] {

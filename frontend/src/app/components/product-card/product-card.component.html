@@ -1,24 +1,39 @@
 <div class="product-card" (click)="openDetails()">
   <div class="product-image">
-    <img [alt]="product.name" [src]="getImageUrl(product.imageUrls[0])">
+    <img [alt]="product.name" [src]="getImageUrl(product.imageUrls[0])" />
     <button
       class="favorite-btn"
       type="button"
       [class.is-active]="isFavorite()"
       [class.is-disabled]="isOwner()"
       [disabled]="isOwner()"
-      [attr.aria-label]="isFavorite() ? ('FAVORITES.SAVED' | translate) : ('FAVORITES.ADD' | translate)"
-      (click)="toggleFavorite($event)">
-      <span aria-hidden="true">{{ isFavorite() ? '♥' : '♡' }}</span>
+      [attr.aria-label]="
+        isFavorite()
+          ? ('FAVORITES.SAVED' | translate)
+          : ('FAVORITES.ADD' | translate)
+      "
+      (click)="toggleFavorite($event)"
+    >
+      <span aria-hidden="true">{{ isFavorite() ? "♥" : "♡" }}</span>
       <span class="sr-only">
-        {{ isFavorite() ? ('FAVORITES.SAVED' | translate) : ('FAVORITES.ADD' | translate) }}
+        {{
+          isFavorite()
+            ? ("FAVORITES.SAVED" | translate)
+            : ("FAVORITES.ADD" | translate)
+        }}
       </span>
     </button>
-      <div class="product-overlay">
-          <button class="quick-view-btn" (click)="openQuickView(product, $event)">{{ 'PRODUCT.QUICK_VIEW' | translate }}</button>
+    <div class="product-overlay">
+      <button class="quick-view-btn" (click)="openQuickView(product, $event)">
+        {{ "PRODUCT.QUICK_VIEW" | translate }}
+      </button>
     </div>
     <div class="stock-badge" [class.out-of-stock]="!product.inStock">
-      {{ product.inStock ? ('PRODUCT.IN_STOCK' | translate) : ('PRODUCT.OUT_OF_STOCK' | translate) }}
+      {{
+        product.inStock
+          ? ("PRODUCT.IN_STOCK" | translate)
+          : ("PRODUCT.OUT_OF_STOCK" | translate)
+      }}
     </div>
   </div>
 
@@ -26,18 +41,25 @@
     <h3 class="product-name">{{ product.name }}</h3>
     <p class="product-description">{{ product.description }}</p>
 
-      <div class="product-rating">
-          <span class="stars">{{ generateStars(product?.rating) }}</span>
-          <span class="rating-value">({{ product?.rating }})</span>
-      </div>
+    <div class="product-rating">
+      <span class="stars">{{ generateStars(product?.rating) }}</span>
+      <span class="rating-value">({{ product?.rating }})</span>
+    </div>
 
     <div class="product-footer">
-        <span class="product-price">{{ product.price | currency:'USD' }}</span>
-        <button
+      <span class="product-price">{{ product.price | currency: "USD" }}</span>
+      <button
         class="add-to-cart-btn"
         (click)="addToCart($event)"
-        [disabled]="!product.inStock || isOwner()">
-        {{ product.inStock ? (isOwner() ? 'Your listing' : ('PRODUCT.ADD_TO_CART' | translate)) : ('PRODUCT.OUT_OF_STOCK' | translate) }}
+        [disabled]="!product.inStock || isOwner()"
+      >
+        {{
+          product.inStock
+            ? isOwner()
+              ? ("PRODUCT.YOUR_LISTING" | translate)
+              : ("PRODUCT.ADD_TO_CART" | translate)
+            : ("PRODUCT.OUT_OF_STOCK" | translate)
+        }}
       </button>
     </div>
   </div>

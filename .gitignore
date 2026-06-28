@@ -6,7 +6,7 @@
 
 # Env / secrets
 .env
-
+.yml
 # Java / Maven
 backend/target/
 backend/build/

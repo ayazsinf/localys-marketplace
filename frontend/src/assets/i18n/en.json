@@ -47,6 +47,20 @@
     "MARK_ALL_READ": "Mark all as read",
     "NO_NOTIFICATIONS": "No notifications yet"
   },
+  "CART": {
+    "ADDED_TO_CART": "Added to cart.",
+    "ADD_FAILED": "Could not add item.",
+    "UPDATE_FAILED": "Could not update quantity.",
+    "REMOVE_FAILED": "Could not remove item.",
+    "OUT_OF_STOCK": "Out of stock.",
+    "ALREADY_IN_CART": "Already added to cart.",
+    "ALREADY_IN_CART_NO_MORE_STOCK": "Already added to cart. No more stock left.",
+    "NO_ITEMS_LEFT_IN_STOCK": "No items left in stock.",
+    "ONLY_ONE_ITEM_LEFT_IN_STOCK": "Only one item left in stock.",
+    "OWN_PRODUCT": "You cannot buy your own listing.",
+    "PRODUCT_NOT_FOUND": "Product not found.",
+    "GO_TO_CART": "Go to cart"
+  },
   "NOTIFICATIONS": {
     "TITLE": "Notifications",
     "SUBTITLE": "Keep track of activity and updates.",
@@ -81,6 +95,7 @@
     "IN_STOCK": "In Stock",
     "OUT_OF_STOCK": "Out of Stock",
     "ADD_TO_CART": "Add to Cart",
+    "YOUR_LISTING": "Your listing",
     "MESSAGE_SELLER": "Message seller",
     "BUY_NOW": "Buy now",
     "SELLER": "Seller",

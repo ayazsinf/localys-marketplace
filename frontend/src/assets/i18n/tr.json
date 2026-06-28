@@ -44,8 +44,22 @@
     "SAVE": "Kaydet",
     "TRIAL_BANNER": "Bu site deneme surumudur.",
     "NOTIFICATIONS": "Bildirimler",
-    "MARK_ALL_READ": "Tümünü okundu yap",
-    "NO_NOTIFICATIONS": "Henüz bildirim yok"
+    "MARK_ALL_READ": "Tï¿½mï¿½nï¿½ okundu yap",
+    "NO_NOTIFICATIONS": "Henï¿½z bildirim yok"
+  },
+  "CART": {
+    "ADDED_TO_CART": "Sepete eklendi.",
+    "ADD_FAILED": "Urun sepete eklenemedi.",
+    "UPDATE_FAILED": "Adet guncellenemedi.",
+    "REMOVE_FAILED": "Urun kaldirilamadi.",
+    "OUT_OF_STOCK": "Stokta yok.",
+    "ALREADY_IN_CART": "Sepete zaten eklendi.",
+    "ALREADY_IN_CART_NO_MORE_STOCK": "Sepete zaten eklendi. Artik stok yok.",
+    "NO_ITEMS_LEFT_IN_STOCK": "Stokta urun kalmadi.",
+    "ONLY_ONE_ITEM_LEFT_IN_STOCK": "Stokta sadece bir urun kaldi.",
+    "OWN_PRODUCT": "Kendi ilaninizi satinalamazsiniz.",
+    "PRODUCT_NOT_FOUND": "Urun bulunamadi.",
+    "GO_TO_CART": "Sepete git"
   },
   "NOTIFICATIONS": {
     "TITLE": "Bildirimler",
@@ -81,6 +95,7 @@
     "IN_STOCK": "Stokta",
     "OUT_OF_STOCK": "Stokta yok",
     "ADD_TO_CART": "Sepete ekle",
+    "YOUR_LISTING": "Sizin ilaniniz",
     "MESSAGE_SELLER": "Saticiya mesaj",
     "BUY_NOW": "Hemen al",
     "SELLER": "Satici",
@@ -261,4 +276,3 @@
     "PLACEHOLDER": "Kategoriler sayfasi yakinda."
   }
 }
-

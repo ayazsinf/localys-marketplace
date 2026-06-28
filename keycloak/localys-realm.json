@@ -24,6 +24,7 @@
       "publicClient": true,
       "protocol": "openid-connect",
       "redirectUris": [
+        "http://localhost:4200",
         "http://localhost:4200/*"
       ],
       "webOrigins": [
