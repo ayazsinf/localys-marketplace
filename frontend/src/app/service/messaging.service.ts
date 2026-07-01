@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Client, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { environment } from '../../environments/environment';
-import { keycloak } from '../keycloak.service';
 
 export interface ConversationDto {
   id: number;
@@ -72,17 +71,8 @@ export class MessagingService {
 
     this.connectPromise = new Promise(async (resolve, reject) => {
       try {
-        if (keycloak.token) {
-          await keycloak.updateToken(30);
-        }
-        const token = keycloak.token;
-        if (!token) {
-          reject(new Error('Missing access token for WebSocket connection.'));
-          return;
-        }
-
         this.stompClient = new Client({
-          webSocketFactory: () => new SockJS(`${resolveWsBase()}/ws?access_token=${token}`),
+          webSocketFactory: () => new SockJS(`${resolveWsBase()}/ws`),
           reconnectDelay: 5000,
           onConnect: () => {
             this.connected = true;

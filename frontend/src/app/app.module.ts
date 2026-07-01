@@ -23,6 +23,7 @@ import { NotificationsComponent } from './pages/notifications/notifications.comp
 import { CurrencyDisplayPipe } from './pipes/currency-display.pipe';
 import { CategoryDisplayPipe } from './pipes/category-display.pipe';
 import { AdminListingsComponent } from './pages/admin-listings/admin-listings.component';
+import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { AdminListingsComponent } from './pages/admin-listings/admin-listings.co
     CheckoutComponent,
     NotificationsComponent,
     AdminListingsComponent,
+    AuthDialogComponent,
     CurrencyDisplayPipe,
     CategoryDisplayPipe
   ],

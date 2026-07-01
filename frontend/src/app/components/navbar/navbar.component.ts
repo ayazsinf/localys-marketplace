@@ -7,6 +7,7 @@ import { Subscription, timer } from "rxjs";
 import { Router } from "@angular/router";
 import { CurrentUserService } from "../../service/current-user.service";
 import { NotificationDto, NotificationService } from "../../service/notification.service";
+import { AuthDialogService } from "../../service/auth-dialog.service";
 
 @Component({
   selector: 'app-navbar',
@@ -37,7 +38,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private router: Router,
     private currentUserService: CurrentUserService,
-    public notificationService: NotificationService
+    public notificationService: NotificationService,
+    private authDialogService: AuthDialogService
   ) {}
 
   ngOnInit() {
@@ -88,11 +90,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   login() {
-    this.authService.login().subscribe();
+    this.authDialogService.openLogin().subscribe(authenticated => {
+      if (authenticated) {
+        this.afterAuthentication();
+      }
+    });
   }
 
   register() {
-    this.authService.register().subscribe();
+    this.authDialogService.openRegister().subscribe(authenticated => {
+      if (authenticated) {
+        this.afterAuthentication();
+      }
+    });
   }
 
   toggleMenu() {
@@ -193,6 +203,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.notificationService.unreadCount().subscribe(count => {
       this.unreadCount = count;
     });
+  }
+
+  private afterAuthentication(): void {
+    this.cartService.refresh().subscribe();
+    this.currentUserService.load().subscribe();
+    this.refreshUnreadCount();
   }
 
   private updateDocumentLanguage(lang: string): void {

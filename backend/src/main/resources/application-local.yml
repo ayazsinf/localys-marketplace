@@ -21,12 +21,6 @@ spring:
   application:
     name: localys-marketplace
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8081/realms/localys-realm
-
   servlet:
     multipart:
       max-file-size: 10MB

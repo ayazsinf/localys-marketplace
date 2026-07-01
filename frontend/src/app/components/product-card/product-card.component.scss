@@ -126,22 +126,6 @@
     line-height: 1.4;
   }
 
-  .product-rating {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-
-    .stars {
-      color: #ffc107;
-      margin-right: 5px;
-    }
-
-    .rating-value {
-      color: #666;
-      font-size: 14px;
-    }
-  }
-
   .product-footer {
     display: flex;
     justify-content: space-between;

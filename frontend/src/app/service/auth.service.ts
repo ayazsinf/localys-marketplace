@@ -1,6 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
-import { keycloak } from '../keycloak.service';
+import { BehaviorSubject, Observable, catchError, map, of, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface LoginRequest {
   username: string;
@@ -8,7 +9,6 @@ export interface LoginRequest {
 }
 
 export interface AuthResponse {
-  token: string;
   username?: string;
 }
 
@@ -18,40 +18,84 @@ export interface RegisterRequest {
   password: string;
 }
 
+interface SessionUser {
+  username: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private readonly authBaseUrl = resolveAuthBaseUrl();
+  private readonly authenticatedSubject = new BehaviorSubject<boolean>(false);
+  private readonly usernameSubject = new BehaviorSubject<string | null>(null);
 
-  constructor() {}
+  readonly authState$ = this.authenticatedSubject.asObservable();
 
-  /** GiriY */
-  login(): Observable<void> {
-    return from(keycloak.login());
+  constructor(private readonly http: HttpClient) {}
+
+  initialize(): Observable<boolean> {
+    return this.refreshSession();
   }
 
-  /** KayŽñt */
-  register(): Observable<void> {
-    return from(keycloak.register());
+  login(payload: LoginRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.authBaseUrl}/login`, payload).pipe(
+      tap(response => this.setAuthenticated(response.username ?? payload.username))
+    );
   }
 
-  /** AØŽñkŽñY */
+  register(payload: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.authBaseUrl}/register`, payload).pipe(
+      tap(response => this.setAuthenticated(response.username ?? payload.username))
+    );
+  }
+
   logout(): void {
-    keycloak.logout({ redirectUri: window.location.origin });
+    this.clearSession();
+    this.http.post<void>(`${this.authBaseUrl}/logout`, {}).subscribe({
+      error: () => {}
+    });
   }
 
-  /** Token getter */
-  get token(): string | null {
-    return keycloak.token ?? null;
+  refreshAccess(): Observable<boolean> {
+    return this.http.post<void>(`${this.authBaseUrl}/refresh`, {}).pipe(
+      map(() => true)
+    );
   }
 
-  /** KullanŽñcŽñ adŽñ getter */
+  clearSession(): void {
+    this.authenticatedSubject.next(false);
+    this.usernameSubject.next(null);
+  }
+
+  refreshSession(): Observable<boolean> {
+    return this.http.get<SessionUser>(`${environment.apiUrl}/users/me`).pipe(
+      tap(user => this.setAuthenticated(user.username)),
+      map(() => true),
+      catchError(() => {
+        this.clearSession();
+        return of(false);
+      })
+    );
+  }
+
   get username(): string | null {
-    return keycloak.tokenParsed?.['preferred_username'] ?? null;
+    return this.usernameSubject.value;
   }
 
-  /** Auth durumu */
   get isAuthenticated(): boolean {
-    return !!keycloak.authenticated;
+    return this.authenticatedSubject.value;
   }
+
+  private setAuthenticated(username: string | null | undefined): void {
+    this.usernameSubject.next(username ?? null);
+    this.authenticatedSubject.next(true);
+  }
+}
+
+function resolveAuthBaseUrl(): string {
+  if (environment.apiUrl.endsWith('/api')) {
+    return `${environment.apiUrl.slice(0, -4)}/auth`;
+  }
+  return `${environment.apiUrl}/auth`;
 }

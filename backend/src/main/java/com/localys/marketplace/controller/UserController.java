@@ -38,6 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
+    @Transactional(readOnly = true)
     public ResponseEntity<UserProfileResponse> me(
             @AuthenticationPrincipal CustomUserDetails principal
     ) {
@@ -45,7 +46,8 @@ public class UserController {
             return ResponseEntity.status(401).build();
         }
 
-        UserEntity user = principal.getUser();
+        UserEntity user = userRepository.findById(principal.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "User not found"));
         return ResponseEntity.ok(UserProfileResponse.from(user));
     }
 

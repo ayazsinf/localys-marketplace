@@ -1,0 +1,70 @@
+<div class="auth-dialog">
+  <div class="auth-tabs" role="tablist">
+    <button
+      type="button"
+      [class.active]="!isRegisterMode"
+      (click)="switchMode('login')">
+      {{ 'AUTH.SIGN_IN' | translate }}
+    </button>
+    <button
+      type="button"
+      [class.active]="isRegisterMode"
+      (click)="switchMode('register')">
+      {{ 'AUTH.CREATE_ACCOUNT' | translate }}
+    </button>
+  </div>
+
+  <h2>{{ (isRegisterMode ? 'AUTH.CREATE_ACCOUNT_TITLE' : 'AUTH.LOGIN_TITLE') | translate }}</h2>
+
+  <form (ngSubmit)="submit()">
+    <label>
+      {{ 'AUTH.USERNAME' | translate }}
+      <input
+        type="text"
+        name="username"
+        autocomplete="username"
+        [(ngModel)]="username"
+        required />
+    </label>
+
+    <label *ngIf="isRegisterMode">
+      {{ 'AUTH.EMAIL' | translate }}
+      <input
+        type="email"
+        name="email"
+        autocomplete="email"
+        [(ngModel)]="email"
+        required />
+    </label>
+
+    <label>
+      {{ 'AUTH.PASSWORD' | translate }}
+      <input
+        type="password"
+        name="password"
+        [autocomplete]="isRegisterMode ? 'new-password' : 'current-password'"
+        [(ngModel)]="password"
+        required />
+    </label>
+
+    <div class="password-rules" *ngIf="isRegisterMode">
+      <div
+        class="password-rule"
+        *ngFor="let rule of passwordRules"
+        [class.valid]="rule.valid">
+        <span>{{ rule.valid ? 'OK' : '-' }}</span>
+        {{ rule.label }}
+      </div>
+    </div>
+
+    <div class="auth-error" *ngIf="error">{{ error }}</div>
+
+    <button type="submit" class="submit" [disabled]="isSubmitting || (isRegisterMode && !isPasswordValid)">
+      {{
+        isSubmitting
+          ? ((isRegisterMode ? 'AUTH.REGISTERING' : 'COMMON.LOADING') | translate)
+          : ((isRegisterMode ? 'AUTH.REGISTER' : 'AUTH.LOGIN') | translate)
+      }}
+    </button>
+  </form>
+</div>

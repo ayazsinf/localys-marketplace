@@ -8,6 +8,7 @@ import { ProductDetail, ProductService } from '../../service/product.service';
 import { environment } from '../../../environments/environment';
 import * as L from 'leaflet';
 import { Product } from '../../modules/product.model';
+import { AuthDialogService } from '../../service/auth-dialog.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -28,6 +29,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
     private productService: ProductService,
     private messagingService: MessagingService,
     private authService: AuthService,
+    private authDialogService: AuthDialogService,
     private cartService: CartService,
     private currentUserService: CurrentUserService,
     private cdr: ChangeDetectorRef
@@ -74,7 +76,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
       return;
     }
     if (!this.authService.isAuthenticated) {
-      this.authService.login().subscribe();
+      this.authDialogService.openLogin().subscribe();
       return;
     }
     this.messagingService.createConversationWith(this.product.vendorUserId).subscribe({
@@ -110,7 +112,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
       return;
     }
     if (!this.authService.isAuthenticated) {
-      this.authService.login().subscribe();
+      this.authDialogService.openLogin().subscribe();
       return;
     }
     this.cartService.addToCart(this.toCartProduct(this.product)).subscribe({

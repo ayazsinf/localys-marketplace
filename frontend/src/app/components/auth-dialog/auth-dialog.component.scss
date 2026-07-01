@@ -1,0 +1,121 @@
+.auth-dialog {
+  padding: 24px;
+  color: #1f2933;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 4px;
+  margin-bottom: 18px;
+  background: #f2f4f7;
+  border-radius: 8px;
+}
+
+.auth-tabs button {
+  border: 0;
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: transparent;
+  color: #52606d;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.auth-tabs button.active {
+  background: #ffffff;
+  color: #102a43;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+}
+
+h2 {
+  margin: 0 0 18px;
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+
+form,
+label {
+  display: grid;
+  gap: 8px;
+}
+
+form {
+  gap: 14px;
+}
+
+label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #334e68;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #cbd2d9;
+  border-radius: 8px;
+  padding: 11px 12px;
+  font: inherit;
+  color: #102a43;
+  background: #ffffff;
+}
+
+input:focus {
+  outline: none;
+  border-color: #2f80ed;
+  box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.16);
+}
+
+.auth-error {
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #fff1f0;
+  color: #b42318;
+  font-size: 0.9rem;
+}
+
+.password-rules {
+  display: grid;
+  gap: 6px;
+  margin-top: -4px;
+  color: #627d98;
+  font-size: 0.84rem;
+}
+
+.password-rule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.password-rule span {
+  width: 16px;
+  color: #9fb3c8;
+  font-weight: 800;
+}
+
+.password-rule.valid {
+  color: #207227;
+}
+
+.password-rule.valid span {
+  color: #207227;
+}
+
+.submit {
+  border: 0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #102a43;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.submit:disabled {
+  cursor: default;
+  opacity: 0.65;
+}

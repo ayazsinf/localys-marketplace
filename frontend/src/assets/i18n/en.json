@@ -69,7 +69,6 @@
     "PRODUCTS_TITLE": "Our Products",
     "SORT_LOW_HIGH": "Price: Low to High",
     "SORT_HIGH_LOW": "Price: High to Low",
-    "SORT_RATING": "Rating: High to Low",
     "SORT_NAME": "Name: A-Z",
     "LOAD_MORE": "Load More Products"
   },
@@ -78,9 +77,7 @@
     "ALL_PRODUCTS": "All Products",
     "PRICE_RANGE": "Price Range",
     "PRICE_MIN": "$0",
-    "UP_TO": "Up to",
-    "RATING": "Rating",
-    "AND_UP": "& up"
+    "UP_TO": "Up to"
   },
   "PRODUCT": {
     "QUICK_VIEW": "Quick View",

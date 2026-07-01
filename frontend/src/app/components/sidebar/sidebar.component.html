@@ -16,8 +16,6 @@
 
   </ul>
 
-
-    <!-- PRICE RANGE -->
     <div class="filter-section">
         <h3>{{ 'FILTERS.PRICE_RANGE' | translate }}</h3>
         <div class="price-filter">
@@ -35,27 +33,4 @@
             </div>
         </div>
     </div>
-
-    <!-- RATING -->
-    <div class="filter-section">
-        <h3>{{ 'FILTERS.RATING' | translate }}</h3>
-        <div class="rating-filter">
-            @for (rating of [5, 4, 3, 2, 1]; track rating) {
-                <label>
-                    <input
-                            type="radio"
-                            name="ratingFilter"
-                            [value]="rating"
-                            [checked]="selectedRating === rating"
-                            (change)="onRatingChange(rating)">
-
-                    <span class="stars">
-          {{ generateStars(rating) }}
-        </span>
-                    <span class="rating-text">{{ 'FILTERS.AND_UP' | translate }}</span>
-                </label>
-            }
-        </div>
-    </div>
-
 </div>

@@ -8,6 +8,7 @@ import { AddressRequest, UserAddress, UserService } from '../../service/user.ser
 import { OrderService } from '../../service/order.service';
 import { TranslateService } from '@ngx-translate/core';
 import { getDefaultCountryForLanguage } from '../../shared/market';
+import { AuthDialogService } from '../../service/auth-dialog.service';
 
 @Component({
   selector: 'app-checkout',
@@ -64,7 +65,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private orderService: OrderService,
     private http: HttpClient,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private authDialogService: AuthDialogService
   ) {
     this.newAddress.country = getDefaultCountryForLanguage(
       this.translateService.currentLang || this.translateService.getDefaultLang()
@@ -129,11 +131,19 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   login(): void {
-    this.authService.login().subscribe();
+    this.authDialogService.openLogin().subscribe(authenticated => {
+      if (authenticated) {
+        this.loadAddresses();
+      }
+    });
   }
 
   register(): void {
-    this.authService.register().subscribe();
+    this.authDialogService.openRegister().subscribe(authenticated => {
+      if (authenticated) {
+        this.loadAddresses();
+      }
+    });
   }
 
   selectExistingAddress(id: number): void {
@@ -300,5 +310,19 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       && this.newAddress.city
       && this.newAddress.postalCode
       && this.newAddress.country);
+  }
+
+  private loadAddresses(): void {
+    const profileSub = this.userService.getMe().subscribe({
+      next: profile => {
+        this.addresses = profile.addresses || [];
+        const defaultAddress = this.addresses.find(address => address.defaultShipping)
+          || this.addresses[0]
+          || null;
+        this.selectedAddressId = defaultAddress ? defaultAddress.id : null;
+        this.cdr.detectChanges();
+      }
+    });
+    this.subscriptions.add(profileSub);
   }
 }

@@ -1,6 +1,5 @@
 package com.localys.marketplace.config;
 
-import com.localys.marketplace.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -11,18 +10,18 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @Order(1)
 @EnableMethodSecurity
 public class SecurityConfig {
 
-  private final CustomUserDetailsService userDetailsService;
+  private final JwtFilter jwtFilter;
 
-  public SecurityConfig(CustomUserDetailsService userDetailsService) {
-    this.userDetailsService = userDetailsService;
+  public SecurityConfig(JwtFilter jwtFilter) {
+    this.jwtFilter = jwtFilter;
   }
 
   @Bean
@@ -48,13 +47,7 @@ public class SecurityConfig {
               .requestMatchers("/api/**").authenticated()
               .anyRequest().authenticated()
             )
-            .oauth2ResourceServer(oauth2 -> oauth2
-                    .jwt(jwt -> jwt.jwtAuthenticationConverter(
-                            new KeycloakJwtAuthConverter(userDetailsService)
-                    ))
-            );
-
-    // http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }

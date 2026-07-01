@@ -69,7 +69,6 @@
     "PRODUCTS_TITLE": "Ilanlar",
     "SORT_LOW_HIGH": "Fiyat: Dusukten Yuksege",
     "SORT_HIGH_LOW": "Fiyat: Yuksekten Dusuge",
-    "SORT_RATING": "Puan: Yuksekten Dusuge",
     "SORT_NAME": "Isim: A-Z",
     "LOAD_MORE": "Daha fazla ilan yukle"
   },
@@ -78,9 +77,7 @@
     "ALL_PRODUCTS": "Tum ilanlar",
     "PRICE_RANGE": "Fiyat araligi",
     "PRICE_MIN": "$0",
-    "UP_TO": "En fazla",
-    "RATING": "Puan",
-    "AND_UP": "ve uzeri"
+    "UP_TO": "En fazla"
   },
   "PRODUCT": {
     "QUICK_VIEW": "Hizli gorunum",

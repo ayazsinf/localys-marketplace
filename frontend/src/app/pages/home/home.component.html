@@ -5,7 +5,6 @@
       <div class="content-wrapper">
         <aside class="sidebar-container">
           <app-sidebar (categorySelected)="onCategorySelected($event)"
-                       (ratingSelected)="onRatingSelected($event)"
                        (maxPriceSelected)="onPriceChange($event)"></app-sidebar>
         </aside>
 
@@ -20,7 +19,6 @@
                         (ngModelChange)="onSortChange($event)">
                     <option value="priceLowHigh">{{ 'HOME.SORT_LOW_HIGH' | translate }}</option>
                     <option value="priceHighLow">{{ 'HOME.SORT_HIGH_LOW' | translate }}</option>
-                    <option value="ratingHighLow">{{ 'HOME.SORT_RATING' | translate }}</option>
                     <option value="nameAZ">{{ 'HOME.SORT_NAME' | translate }}</option>
                 </select>
             </div>

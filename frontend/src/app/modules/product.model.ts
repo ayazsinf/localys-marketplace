@@ -10,7 +10,4 @@ export interface Product {
   inStock: boolean;
   stockQty?: number;
   vendorUserId?: number | null;
-
-  // UI-only opsiyonel:
-  rating?: number;
 }

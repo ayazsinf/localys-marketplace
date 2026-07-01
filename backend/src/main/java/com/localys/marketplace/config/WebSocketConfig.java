@@ -1,9 +1,9 @@
 package com.localys.marketplace.config;
 
 import com.localys.marketplace.service.CustomUserDetailsService;
+import com.localys.marketplace.util.JwtUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -12,11 +12,11 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final JwtDecoder jwtDecoder;
+    private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
 
-    public WebSocketConfig(JwtDecoder jwtDecoder, CustomUserDetailsService userDetailsService) {
-        this.jwtDecoder = jwtDecoder;
+    public WebSocketConfig(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
+        this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
     }
 
@@ -25,10 +25,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws")
                 .setAllowedOrigins("http://localhost:4200", "http://localhost:4300")
                 .setHandshakeHandler(new JwtHandshakeHandler())
-                .addInterceptors(new JwtHandshakeInterceptor(
-                        jwtDecoder,
-                        new KeycloakJwtAuthConverter(userDetailsService)
-                ))
+                .addInterceptors(new JwtHandshakeInterceptor(jwtUtil, userDetailsService))
                 .withSockJS();
     }
 

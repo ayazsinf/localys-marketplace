@@ -5,6 +5,18 @@
     "changeOrigin": true,
     "logLevel": "debug"
   },
+  "/auth": {
+    "target": "http://localhost:8082",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/ws": {
+    "target": "http://localhost:8082",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
   "/actuator": {
     "target": "http://localhost:8082",
     "secure": false,

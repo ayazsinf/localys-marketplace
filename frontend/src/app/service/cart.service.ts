@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Product } from '../modules/product.model';
+import { HttpClient } from '@angular/common/http';
+import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, EMPTY, map, Observable, tap, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
+import { Product } from '../modules/product.model';
 import { AuthService } from './auth.service';
-import { TranslateService } from '@ngx-translate/core';
+import { AuthDialogService } from './auth-dialog.service';
 
 interface CartItemResponse {
   productId: number;
@@ -39,13 +40,10 @@ export interface CartNotice {
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-
   private readonly itemsSubject = new BehaviorSubject<CartItem[]>([]);
   readonly items$ = this.itemsSubject.asObservable();
   private readonly noticeSubject = new BehaviorSubject<CartNotice | null>(null);
   readonly notice$ = this.noticeSubject.asObservable();
-
-  // navbar için toplam adet
   readonly count$ = this.items$.pipe(
     map(items => items.reduce((sum, item) => sum + item.quantity, 0))
   );
@@ -53,7 +51,8 @@ export class CartService {
   constructor(
     private http: HttpClient,
     private authService: AuthService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private authDialogService: AuthDialogService
   ) {}
 
   refresh(): Observable<CartItem[]> {
@@ -73,7 +72,7 @@ export class CartService {
 
   addToCart(product: Product, quantity: number = 1): Observable<CartItem[]> {
     if (!this.authService.isAuthenticated) {
-      this.authService.login().subscribe();
+      this.authDialogService.openLogin().subscribe();
       return EMPTY;
     }
     return this.http.post<CartResponse>('/api/cart/items', {
@@ -103,7 +102,7 @@ export class CartService {
 
   updateQuantity(productId: number, quantity: number): void {
     if (!this.authService.isAuthenticated) {
-      this.authService.login().subscribe();
+      this.authDialogService.openLogin().subscribe();
       return;
     }
     this.http.put<CartResponse>(`/api/cart/items/${productId}`, { quantity }).subscribe({
@@ -119,7 +118,7 @@ export class CartService {
 
   remove(productId: number): void {
     if (!this.authService.isAuthenticated) {
-      this.authService.login().subscribe();
+      this.authDialogService.openLogin().subscribe();
       return;
     }
     this.http.delete<CartResponse>(`/api/cart/items/${productId}`).subscribe({
@@ -141,7 +140,6 @@ export class CartService {
     this.noticeSubject.next(null);
   }
 
-  // ileride lazım olur
   getSnapshot(): CartItem[] {
     return this.itemsSubject.value;
   }

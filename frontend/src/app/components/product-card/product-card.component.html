@@ -26,11 +26,6 @@
     <h3 class="product-name">{{ product.name }}</h3>
     <p class="product-description">{{ product.description }}</p>
 
-      <div class="product-rating">
-          <span class="stars">{{ generateStars(product?.rating) }}</span>
-          <span class="rating-value">({{ product?.rating }})</span>
-      </div>
-
     <div class="product-footer">
         <span class="product-price">{{ product.price | currencyDisplay:product.currency }}</span>
         <button

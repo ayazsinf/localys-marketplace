@@ -49,29 +49,6 @@
       color: #666;
     }
   }
-
-  .rating-filter {
-    label {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
-      cursor: pointer;
-
-      input {
-        margin-right: 10px;
-      }
-
-      .stars {
-        color: #ffc107;
-        margin-right: 5px;
-      }
-
-      .rating-text {
-        color: #666;
-        font-size: 14px;
-      }
-    }
-  }
 }
 
 @media (max-width: 768px) {

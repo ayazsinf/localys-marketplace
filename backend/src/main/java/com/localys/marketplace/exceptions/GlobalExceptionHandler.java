@@ -3,6 +3,8 @@ package com.localys.marketplace.exceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -14,6 +16,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleUserAlreadyExists(UserAlreadyExistsException ex) {
         ApiError error = new ApiError("USER_ALREADY_EXISTS", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiError> handleBadCredentials(BadCredentialsException ex) {
+        ApiError error = new ApiError("BAD_CREDENTIALS", "Invalid credentials.");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -29,6 +37,16 @@ public class GlobalExceptionHandler {
         }
         ApiError error = new ApiError("DATA_INTEGRITY_VIOLATION", "Request could not be saved.");
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(error -> error.getDefaultMessage() == null ? "Request is invalid." : error.getDefaultMessage())
+                .orElse("Request is invalid.");
+        ApiError error = new ApiError("VALIDATION_ERROR", message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

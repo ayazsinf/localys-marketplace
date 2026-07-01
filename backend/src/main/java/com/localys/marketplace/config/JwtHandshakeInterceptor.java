@@ -1,10 +1,11 @@
 package com.localys.marketplace.config;
 
+import com.localys.marketplace.service.CustomUserDetailsService;
+import com.localys.marketplace.util.JwtUtil;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
@@ -14,13 +15,14 @@ import java.util.List;
 import java.util.Map;
 
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
+    private static final String ACCESS_COOKIE = "localys_access";
 
-    private final JwtDecoder jwtDecoder;
-    private final KeycloakJwtAuthConverter authConverter;
+    private final JwtUtil jwtUtil;
+    private final CustomUserDetailsService userDetailsService;
 
-    public JwtHandshakeInterceptor(JwtDecoder jwtDecoder, KeycloakJwtAuthConverter authConverter) {
-        this.jwtDecoder = jwtDecoder;
-        this.authConverter = authConverter;
+    public JwtHandshakeInterceptor(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -31,11 +33,17 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
             Map<String, Object> attributes
     ) {
         String token = resolveToken(request);
-        if (token == null) {
+        if (token == null || !jwtUtil.isAccessTokenValid(token)) {
             return false;
         }
-        Jwt jwt = jwtDecoder.decode(token);
-        AbstractAuthenticationToken authentication = authConverter.convert(jwt);
+
+        String username = jwtUtil.extractUsername(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities()
+        );
         attributes.put("auth", authentication);
         return true;
     }
@@ -65,6 +73,29 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
         String accessToken = params.getFirst("access_token");
         if (accessToken != null && !accessToken.isBlank()) {
             return accessToken;
+        }
+        List<String> cookieHeaders = request.getHeaders().get("Cookie");
+        if (cookieHeaders != null) {
+            for (String cookieHeader : cookieHeaders) {
+                String sessionToken = resolveCookieValue(cookieHeader);
+                if (sessionToken != null) {
+                    return sessionToken;
+                }
+            }
+        }
+        return null;
+    }
+
+    private String resolveCookieValue(String cookieHeader) {
+        if (cookieHeader == null || cookieHeader.isBlank()) {
+            return null;
+        }
+        String[] cookies = cookieHeader.split(";");
+        for (String cookie : cookies) {
+            String[] parts = cookie.trim().split("=", 2);
+            if (parts.length == 2 && ACCESS_COOKIE.equals(parts[0]) && !parts[1].isBlank()) {
+                return parts[1];
+            }
         }
         return null;
     }

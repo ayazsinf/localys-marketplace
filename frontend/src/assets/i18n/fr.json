@@ -69,7 +69,6 @@
     "PRODUCTS_TITLE": "Annonces",
     "SORT_LOW_HIGH": "Prix : croissant",
     "SORT_HIGH_LOW": "Prix : decroissant",
-    "SORT_RATING": "Note : decroissante",
     "SORT_NAME": "Nom : A-Z",
     "LOAD_MORE": "Charger plus d'annonces"
   },
@@ -78,9 +77,7 @@
     "ALL_PRODUCTS": "Toutes les annonces",
     "PRICE_RANGE": "Fourchette de prix",
     "PRICE_MIN": "$0",
-    "UP_TO": "Jusqu'a",
-    "RATING": "Note",
-    "AND_UP": "et plus"
+    "UP_TO": "Jusqu'a"
   },
   "PRODUCT": {
     "QUICK_VIEW": "Apercu rapide",

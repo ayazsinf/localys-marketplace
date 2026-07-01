@@ -1,14 +1,19 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from "../service/auth.service";
-import { keycloak } from '../keycloak.service';
+import { AuthDialogService } from '../service/auth-dialog.service';
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = (_route, state) => {
     const router = inject(Router);
     const auth = inject(AuthService);
+    const authDialog = inject(AuthDialogService);
 
     if (!auth.isAuthenticated) {
-        keycloak.login();
+        authDialog.openLogin().subscribe(authenticated => {
+            if (authenticated) {
+                router.navigateByUrl(state.url);
+            }
+        });
         return false;
     }
 

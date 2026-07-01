@@ -42,11 +42,7 @@ export class ProductService {
 
   loadProducts() {
     return this.http.get<Product[]>('/api/products').pipe(
-        tap(list => {
-          console.log('HTTP arrived', list.length);
-          this._products.set(list);
-          console.log('signal after set', this._products().length);
-        })
+        tap(list => this._products.set(list))
     );
   }
 
@@ -72,10 +68,6 @@ export class ProductService {
   getProductsByCategory(category: string): Product[] {
     return this._products().filter(product => product.categoryName === category);
   }
-
- getProductsByRating(rating: number): Product[] {
-   return this._products().filter(p => (p.rating ?? 0) >= rating);
- }
 
   getCategories(): string[] {
     return [...new Set(this._products().map(product => product.categoryName))];
