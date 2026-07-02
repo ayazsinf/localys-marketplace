@@ -33,9 +33,11 @@
   text-decoration: none;
 }
 
-.nav-logo-icon {
-  font-size: 1.8rem;
-  color: #1976d2;
+.nav-logo-image {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  display: block;
 }
 
 .nav-logo-text {

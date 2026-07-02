@@ -1,21 +1,35 @@
 services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    env_file: ${APP_ENV_FILE:-.env.dev}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-appdb}
+      POSTGRES_USER: ${POSTGRES_USER:-appuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-apppass}
+    volumes:
+      - dev_dbdata:/var/lib/postgresql/data
+
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.5
     restart: unless-stopped
     command:
-      - start
+      - start-dev
+      - --import-realm
     env_file: ${APP_ENV_FILE:-.env.dev}
     environment:
       KC_DB: postgres
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KC_DB_URL: ${KC_DB_URL}
-      KC_DB_USERNAME: ${KC_DB_USERNAME}
-      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
-      KC_HOSTNAME: ${KC_HOSTNAME}
-      KC_PROXY: edge
+      KC_DB_URL: ${KC_DB_URL:-jdbc:postgresql://db:5432/keycloak_db}
+      KC_DB_USERNAME: ${KC_DB_USERNAME:-appuser}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:-apppass}
+      KC_HOSTNAME_STRICT: false
       KC_HTTP_ENABLED: true
-      KC_PROXY_HEADERS: xforwarded
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro
+    depends_on:
+      - db
 
   backend:
     build: ./backend
@@ -26,6 +40,7 @@ services:
     volumes:
       - dev_media_uploads:/app/uploads
     depends_on:
+      - db
       - keycloak
 
   frontend:
@@ -51,4 +66,5 @@ services:
       - keycloak
 
 volumes:
+  dev_dbdata:
   dev_media_uploads:
