@@ -20,6 +20,8 @@ export interface Listing {
   categoryId?: number | null;
   categoryName?: string | null;
   parentCategoryId?: number | null;
+  categoryPathIds?: number[];
+  categoryPathNames?: string[];
   locationText?: string | null;
   latitude?: number | null;
   longitude?: number | null;
@@ -36,7 +38,6 @@ export interface ListingRequest {
   sku?: string | null;
   brand?: string | null;
   categoryId?: number | null;
-  subcategoryId?: number | null;
   locationText?: string | null;
   latitude?: number | null;
   longitude?: number | null;

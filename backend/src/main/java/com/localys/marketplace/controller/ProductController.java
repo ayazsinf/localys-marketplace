@@ -2,6 +2,7 @@ package com.localys.marketplace.controller;
 
 import com.localys.marketplace.dto.ProductDetailDto;
 import com.localys.marketplace.dto.ProductListDto;
+import com.localys.marketplace.model.Category;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
 import com.localys.marketplace.model.enums.ModerationStatus;
@@ -9,9 +10,11 @@ import com.localys.marketplace.repository.ProductRepository;
 import com.localys.marketplace.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +31,7 @@ public class ProductController {
     }
 
     @GetMapping
+    @Transactional(readOnly = true)
     public List<ProductListDto> list() {
         return repo.findByActiveTrueAndModerationStatusOrderByNameAsc(ModerationStatus.APPROVED).stream()
                 .map(this::toDto)
@@ -55,7 +59,10 @@ public class ProductController {
                 p.getCountry(),
                 p.getCurrency(),
                 p.getStockQty() > 0,
+                p.getCategory() != null ? p.getCategory().getId() : null,
                 p.getCategory() != null ? p.getCategory().getName() : null,
+                categoryPathIds(p.getCategory()),
+                categoryPathNames(p.getCategory()),
                 vendorUserId,
                 imageUrls
         );
@@ -63,6 +70,7 @@ public class ProductController {
 
     // Tüm ürünleri listele
     @GetMapping("/all")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<ProductListDto>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts().stream()
                 .map(this::toDto)
@@ -71,6 +79,7 @@ public class ProductController {
 
     // Belirli bir ürünü getir
     @GetMapping("/{id}")
+    @Transactional(readOnly = true)
     public ResponseEntity<ProductDetailDto> getProductById(@PathVariable("id") Long id) {
         Product product = productService.getProductById(id);
         return ResponseEntity.ok(toDetailDto(product));
@@ -122,6 +131,26 @@ public class ProductController {
                 product.getLatitude(),
                 product.getLongitude()
         );
+    }
+
+    private List<Long> categoryPathIds(Category category) {
+        LinkedList<Long> ids = new LinkedList<>();
+        Category current = category;
+        while (current != null) {
+            ids.addFirst(current.getId());
+            current = current.getParent();
+        }
+        return ids;
+    }
+
+    private List<String> categoryPathNames(Category category) {
+        LinkedList<String> names = new LinkedList<>();
+        Category current = category;
+        while (current != null) {
+            names.addFirst(current.getName());
+            current = current.getParent();
+        }
+        return names;
     }
 }
 

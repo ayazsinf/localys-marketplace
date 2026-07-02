@@ -10,14 +10,21 @@ import java.util.List;
 public class CustomUserDetails implements UserDetails {
 
     private final UserEntity user;
+    private final Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(UserEntity user) {
         this.user = user;
+        this.authorities = List.of(new SimpleGrantedAuthority(user.getRole().toString()));
+    }
+
+    public CustomUserDetails(UserEntity user, Collection<? extends GrantedAuthority> authorities) {
+        this.user = user;
+        this.authorities = authorities;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getRole().toString()));
+        return authorities;
     }
 
     public Long getUserId() {

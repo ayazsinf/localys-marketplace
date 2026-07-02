@@ -17,7 +17,7 @@
   margin-bottom: 30px;
 
   li {
-    margin-bottom: 10px;
+    margin-bottom: 6px;
   }
 
   .category-link {
@@ -25,6 +25,8 @@
     text-decoration: none;
     transition: color 0.3s;
     display: block;
+    flex: 1;
+    min-width: 0;
     padding: 8px 0;
 
     &:hover {
@@ -33,13 +35,118 @@
   }
 }
 
+.category-list--nested {
+  margin: 0;
+}
+
+.category-row {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: #eef4fb;
+  }
+}
+
+.category-row--expandable .category-link {
+  font-weight: 600;
+}
+
 .filter-section {
   margin-bottom: 30px;
 
   .price-filter {
+    .price-inputs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+
+      label {
+        display: grid;
+        gap: 4px;
+        font-size: 13px;
+        color: #555;
+      }
+
+      input {
+        width: 100%;
+        border: 1px solid #d7dce2;
+        border-radius: 6px;
+        padding: 8px;
+        font: inherit;
+      }
+    }
+
+    .range-control {
+      position: relative;
+      height: 34px;
+      margin: 8px 0;
+    }
+
+    .range-track {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 5px;
+      transform: translateY(-50%);
+      border-radius: 999px;
+      background: #d7dce2;
+    }
+
+    .range-track--selected {
+      background: #4A90E2;
+    }
+
     .price-slider {
+      appearance: none;
+      -webkit-appearance: none;
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      margin: 10px 0;
+      height: 34px;
+      margin: 0;
+      background: transparent;
+      pointer-events: none;
+
+      &::-webkit-slider-runnable-track {
+        height: 5px;
+        background: transparent;
+      }
+
+      &::-webkit-slider-thumb {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        margin-top: -6px;
+        border: 2px solid #4A90E2;
+        border-radius: 50%;
+        background: #fff;
+        cursor: pointer;
+        pointer-events: auto;
+      }
+
+      &::-moz-range-track {
+        height: 5px;
+        background: transparent;
+      }
+
+      &::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border: 2px solid #4A90E2;
+        border-radius: 50%;
+        background: #fff;
+        cursor: pointer;
+        pointer-events: auto;
+      }
     }
 
     .price-values {

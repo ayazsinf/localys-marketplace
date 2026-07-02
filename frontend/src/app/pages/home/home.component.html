@@ -5,12 +5,11 @@
       <div class="content-wrapper">
         <aside class="sidebar-container">
           <app-sidebar (categorySelected)="onCategorySelected($event)"
-                       (maxPriceSelected)="onPriceChange($event)"></app-sidebar>
+                       (priceRangeSelected)="onPriceRangeChange($event)"></app-sidebar>
         </aside>
 
         <section class="products-section">
           <div class="section-header">
-            <h1>{{ 'HOME.PRODUCTS_TITLE' | translate }}</h1>
             <div class="sort-options">
                 <select
                         id="sortSelect"
@@ -25,7 +24,7 @@
           </div>
 
           <div class="products-grid">
-            @for (product of filteredProducts(); track product){
+            @for (product of visibleProducts(); track product.id){
               <app-product-card
                       [product]="product"
                      >
@@ -34,8 +33,10 @@
 
           </div>
 
-          <div class="load-more">
-            <button class="load-more-btn">{{ 'HOME.LOAD_MORE' | translate }}</button>
+          <div class="load-more" *ngIf="hasMoreProducts()">
+            <button class="load-more-btn" type="button" (click)="loadMoreProducts()">
+              {{ 'HOME.LOAD_MORE' | translate }}
+            </button>
           </div>
         </section>
       </div>

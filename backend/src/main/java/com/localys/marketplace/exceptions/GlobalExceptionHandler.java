@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -22,6 +24,26 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleBadCredentials(BadCredentialsException ex) {
         ApiError error = new ApiError("BAD_CREDENTIALS", "Invalid credentials.");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+    @ExceptionHandler(RestClientResponseException.class)
+    public ResponseEntity<ApiError> handleRestClientResponse(RestClientResponseException ex) {
+        if (ex.getStatusCode() == HttpStatus.CONFLICT) {
+            ApiError error = new ApiError("USER_ALREADY_EXISTS", "Username or email already exists.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
+        if (ex.getStatusCode().is4xxClientError()) {
+            ApiError error = new ApiError("AUTH_PROVIDER_REJECTED", "Authentication provider rejected the request.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+        ApiError error = new ApiError("AUTH_PROVIDER_UNAVAILABLE", "Authentication provider is unavailable.");
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(error);
+    }
+
+    @ExceptionHandler(RestClientException.class)
+    public ResponseEntity<ApiError> handleRestClient(RestClientException ex) {
+        ApiError error = new ApiError("AUTH_PROVIDER_UNAVAILABLE", "Authentication provider is unavailable.");
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(error);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)

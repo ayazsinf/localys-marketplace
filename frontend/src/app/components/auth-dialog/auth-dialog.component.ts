@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AuthService } from '../../service/auth.service';
+import { finalize } from 'rxjs';
 
 export interface AuthDialogData {
   mode: 'login' | 'register';
@@ -18,6 +19,7 @@ export class AuthDialogComponent {
   private readonly data = inject<AuthDialogData>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject<MatDialogRef<AuthDialogComponent, AuthDialogResult>>(MatDialogRef);
   private readonly authService = inject(AuthService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   mode: AuthDialogData['mode'];
   username = '';
@@ -79,14 +81,36 @@ export class AuthDialogComponent {
           password: this.password
         });
 
-    request$.subscribe({
+    request$.pipe(
+      finalize(() => {
+        this.isSubmitting = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
       next: () => this.dialogRef.close('authenticated'),
       error: error => {
-        this.error = error?.error?.message || (this.isRegisterMode
-          ? 'Account could not be created.'
-          : 'Invalid username or password.');
-        this.isSubmitting = false;
+        this.error = this.resolveErrorMessage(error);
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  private resolveErrorMessage(error: any): string {
+    const code = error?.error?.code;
+    if (code === 'USER_ALREADY_EXISTS') {
+      return 'Username or email already exists.';
+    }
+    if (code === 'BAD_CREDENTIALS') {
+      return 'Invalid username or password.';
+    }
+    if (code === 'AUTH_PROVIDER_UNAVAILABLE') {
+      return 'Authentication service is unavailable. Please try again.';
+    }
+    if (error?.name === 'TimeoutError') {
+      return 'Authentication service did not respond. Please try again.';
+    }
+    return error?.error?.message || (this.isRegisterMode
+      ? 'Account could not be created.'
+      : 'Invalid username or password.');
   }
 }

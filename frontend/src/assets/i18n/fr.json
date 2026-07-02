@@ -76,7 +76,8 @@
     "CATEGORIES": "Categories",
     "ALL_PRODUCTS": "Toutes les annonces",
     "PRICE_RANGE": "Fourchette de prix",
-    "PRICE_MIN": "$0",
+    "PRICE_MIN": "Min",
+    "PRICE_MAX": "Max",
     "UP_TO": "Jusqu'a"
   },
   "PRODUCT": {

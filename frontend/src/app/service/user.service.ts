@@ -25,6 +25,7 @@ export interface UserProfile {
   displayName: string | null;
   phone: string | null;
   role: string | null;
+  roles?: string[];
   createdAt: string | null;
   updatedAt: string | null;
   addresses: UserAddress[];

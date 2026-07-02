@@ -23,7 +23,8 @@
                 <div class="nav-search">
                     <input
                             type="text"
-                            [(ngModel)]="searchTerm"
+                            [ngModel]="searchTerm"
+                            (ngModelChange)="onSearchTermChange($event)"
                             (keyup.enter)="onSearch()"
                             [placeholder]="'NAV.SEARCH_PLACEHOLDER' | translate" />
                     <button class="icon-btn" type="button" (click)="onSearch()" [attr.aria-label]="'NAV.SEARCH' | translate">

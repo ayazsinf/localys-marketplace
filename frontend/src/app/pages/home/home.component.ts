@@ -3,7 +3,6 @@ import {
   Component,
   DestroyRef,
   computed,
-  effect,
   inject,
   signal,
 } from '@angular/core';
@@ -27,42 +26,27 @@ export class HomeComponent {
   constructor(
       private readonly productService: ProductService,
       private readonly searchService: SearchService
-  ) {
-    effect(() => {
-      const list = this.products();
-      if (list.length > 0 && this.selectedMaxPrice() == null) {
-        const max = Math.ceil(Math.max(...list.map(p => p.price ?? 0)));
-        this.selectedMaxPrice.set(max);
-      }
-    });
-  }
+  ) {}
 
   readonly products = this.productService.products;
 
   readonly sortOption = signal<SortOption>('priceLowHigh');
-  readonly selectedMaxPrice = signal<number | null>(null);
-  readonly selectedCategory = signal<string>('all');
+  readonly selectedMinPrice = signal(0);
+  readonly selectedMaxPrice = signal(10000);
+  readonly selectedCategoryId = signal<number | null>(null);
+  readonly visibleProductCount = signal(9);
 
   private readonly searchTerm = toSignal(
       this.searchService.searchTerm$,
       { initialValue: '' }
   );
 
-  readonly categories = computed(() => {
-    const list = this.products();
-    const names = list
-        .map(p => p.categoryName)
-        .filter((x): x is string => !!x && x.trim().length > 0);
-
-    return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
-  });
-
   readonly filteredProducts = computed(() => {
     let result = [...this.products()];
 
-    const cat = this.selectedCategory();
-    if (cat && cat !== 'all') {
-      result = result.filter(p => p.categoryName === cat);
+    const categoryId = this.selectedCategoryId();
+    if (categoryId) {
+      result = result.filter(p => (p.categoryPathIds ?? []).includes(categoryId));
     }
 
     const term = (this.searchTerm() ?? '').trim().toLowerCase();
@@ -73,10 +57,12 @@ export class HomeComponent {
       );
     }
 
+    const minPrice = this.selectedMinPrice();
     const maxPrice = this.selectedMaxPrice();
-    if (maxPrice != null) {
-      result = result.filter(p => (p.price ?? 0) <= maxPrice);
-    }
+    result = result.filter(p => {
+      const price = p.price ?? 0;
+      return price >= minPrice && price <= maxPrice;
+    });
 
     switch (this.sortOption()) {
       case 'priceLowHigh':
@@ -93,6 +79,14 @@ export class HomeComponent {
     return result;
   });
 
+  readonly visibleProducts = computed(() =>
+      this.filteredProducts().slice(0, this.visibleProductCount())
+  );
+
+  readonly hasMoreProducts = computed(() =>
+      this.visibleProductCount() < this.filteredProducts().length
+  );
+
   ngOnInit() {
     this.productService
         .loadProducts()
@@ -100,18 +94,34 @@ export class HomeComponent {
         .subscribe({
           error: err => console.error('loadProducts error', err),
         });
+
+    this.searchService.searchTerm$
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => this.resetVisibleProducts());
   }
 
-  onCategorySelected(category: string) {
-    this.selectedCategory.set(category ?? 'all');
+  onCategorySelected(categoryId: number | null) {
+    this.selectedCategoryId.set(categoryId ?? null);
+    this.resetVisibleProducts();
   }
 
-  onPriceChange(maxPrice: number) {
-    this.selectedMaxPrice.set(maxPrice);
+  onPriceRangeChange(range: { min: number; max: number }) {
+    this.selectedMinPrice.set(range.min);
+    this.selectedMaxPrice.set(range.max);
+    this.resetVisibleProducts();
   }
 
   onSortChange(option: SortOption) {
     this.sortOption.set(option);
+    this.resetVisibleProducts();
+  }
+
+  loadMoreProducts(): void {
+    this.visibleProductCount.update(count => count + 9);
+  }
+
+  private resetVisibleProducts(): void {
+    this.visibleProductCount.set(9);
   }
 
   trackById = (_: number, p: Product) => p.id;

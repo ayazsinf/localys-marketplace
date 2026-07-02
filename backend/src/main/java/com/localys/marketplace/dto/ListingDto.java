@@ -20,6 +20,8 @@ public record ListingDto(
         Long categoryId,
         String categoryName,
         Long parentCategoryId,
+        List<Long> categoryPathIds,
+        List<String> categoryPathNames,
         String locationText,
         Double latitude,
         Double longitude

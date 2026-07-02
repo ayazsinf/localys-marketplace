@@ -66,8 +66,9 @@ public class AuthController {
         if (refreshToken == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String accessToken = authService.refreshAccessToken(refreshToken);
-        response.addHeader(HttpHeaders.SET_COOKIE, buildCookie(ACCESS_COOKIE, accessToken, ACCESS_TTL, request).toString());
+        AuthService.AuthTokens tokens = authService.refreshTokens(refreshToken);
+        response.addHeader(HttpHeaders.SET_COOKIE, buildCookie(ACCESS_COOKIE, tokens.accessToken(), ACCESS_TTL, request).toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, buildCookie(REFRESH_COOKIE, tokens.refreshToken(), REFRESH_TTL, request).toString());
         response.addHeader(HttpHeaders.SET_COOKIE, buildCookie(LEGACY_SESSION_COOKIE, "", Duration.ZERO, request).toString());
         return ResponseEntity.noContent().build();
     }

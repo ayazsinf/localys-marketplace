@@ -47,6 +47,7 @@ export class CurrentUserService {
   }
 
   get isAdmin(): boolean {
-    return this.profileSubject.value?.role === 'ROLE_ADMIN';
+    const profile = this.profileSubject.value;
+    return profile?.role === 'ROLE_ADMIN' || (profile?.roles ?? []).includes('ROLE_ADMIN');
   }
 }

@@ -6,30 +6,79 @@
         {{ 'FILTERS.ALL_PRODUCTS' | translate }}
       </a>
     </li>
-    @for (category of categories; track category){
+    <ng-container *ngTemplateOutlet="categoryTree; context: { nodes: categories, depth: 0 }"></ng-container>
+  </ul>
+
+  <ng-template #categoryTree let-nodes="nodes" let-depth="depth">
+    @for (category of nodes; track category.id) {
       <li>
-        <a href="#" (click)="selectCategory(category); $event.preventDefault()" class="category-link">
-          {{ category | categoryDisplay }}
-        </a>
+        <div
+          class="category-row"
+          [class.category-row--expandable]="hasChildren(category)"
+          [style.padding-left.px]="depth * 14"
+          (click)="selectCategoryRow(category)"
+          [attr.aria-expanded]="hasChildren(category) ? isExpanded(category.id) : null">
+          <a href="#" (click)="$event.preventDefault()" class="category-link">
+            {{ category.name | categoryDisplay }}
+          </a>
+        </div>
+        @if (hasChildren(category) && isExpanded(category.id)) {
+          <ul class="category-list category-list--nested">
+            <ng-container *ngTemplateOutlet="categoryTree; context: { nodes: category.children, depth: depth + 1 }"></ng-container>
+          </ul>
+        }
       </li>
     }
-
-  </ul>
+  </ng-template>
 
     <div class="filter-section">
         <h3>{{ 'FILTERS.PRICE_RANGE' | translate }}</h3>
         <div class="price-filter">
-            <input
-                    type="range"
-                    min="0"
-                    [max]="maxPrice"
-                    [(ngModel)]="selectedMaxPrice"
-                    (ngModelChange)="onPriceChange($event)"
-                    class="price-slider">
+            <div class="price-inputs">
+                <label>
+                    <span>{{ 'FILTERS.PRICE_MIN' | translate }}</span>
+                    <input
+                            type="number"
+                            min="0"
+                            [max]="selectedMaxPrice"
+                            [ngModel]="selectedMinPrice"
+                            (ngModelChange)="onMinPriceChange($event)">
+                </label>
+                <label>
+                    <span>{{ 'FILTERS.PRICE_MAX' | translate }}</span>
+                    <input
+                            type="number"
+                            [min]="selectedMinPrice"
+                            [max]="maxPrice"
+                            [ngModel]="selectedMaxPrice"
+                            (ngModelChange)="onMaxPriceChange($event)">
+                </label>
+            </div>
+            <div class="range-control">
+                <div class="range-track"></div>
+                <div
+                        class="range-track range-track--selected"
+                        [style.left.%]="minPercent()"
+                        [style.right.%]="100 - maxPercent()"></div>
+                <input
+                        type="range"
+                        min="0"
+                        [max]="maxPrice"
+                        [ngModel]="selectedMinPrice"
+                        (ngModelChange)="onMinPriceChange($event)"
+                        class="price-slider">
+                <input
+                        type="range"
+                        min="0"
+                        [max]="maxPrice"
+                        [ngModel]="selectedMaxPrice"
+                        (ngModelChange)="onMaxPriceChange($event)"
+                        class="price-slider">
+            </div>
 
             <div class="price-values">
-                <span>{{ 'FILTERS.PRICE_MIN' | translate }}</span>
-                <span>{{ 'FILTERS.UP_TO' | translate }} ${{ selectedMaxPrice }}</span>
+                <span>${{ selectedMinPrice }}</span>
+                <span>${{ selectedMaxPrice }}</span>
             </div>
         </div>
     </div>

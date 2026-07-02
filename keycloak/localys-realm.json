@@ -34,16 +34,44 @@
       },
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": false,
+      "directAccessGrantsEnabled": true,
       "rootUrl": "http://localhost:4200"
+    },
+    {
+      "clientId": "localys-backend",
+      "name": "Localys Backend Admin Client",
+      "enabled": true,
+      "publicClient": false,
+      "bearerOnly": false,
+      "protocol": "openid-connect",
+      "secret": "localys-backend-secret",
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false
     }
   ],
   "users": [
+    {
+      "username": "service-account-localys-backend",
+      "enabled": true,
+      "serviceAccountClientId": "localys-backend",
+      "clientRoles": {
+        "realm-management": [
+          "manage-users",
+          "view-users",
+          "query-users",
+          "view-realm"
+        ]
+      }
+    },
     {
       "username": "testuser",
       "enabled": true,
       "emailVerified": true,
       "email": "testuser@example.com",
+      "firstName": "testuser",
+      "lastName": "Localys",
       "credentials": [
         {
           "type": "password",
@@ -60,6 +88,8 @@
       "enabled": true,
       "emailVerified": true,
       "email": "admin@example.com",
+      "firstName": "admin",
+      "lastName": "Localys",
       "credentials": [
         {
           "type": "password",

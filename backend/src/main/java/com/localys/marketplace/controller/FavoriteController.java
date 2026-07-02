@@ -1,6 +1,7 @@
 package com.localys.marketplace.controller;
 
 import com.localys.marketplace.dto.ProductListDto;
+import com.localys.marketplace.model.Category;
 import com.localys.marketplace.model.CustomUserDetails;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
@@ -8,9 +9,11 @@ import com.localys.marketplace.service.FavoriteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +28,7 @@ public class FavoriteController {
     }
 
     @GetMapping
+    @Transactional(readOnly = true)
     public List<ProductListDto> listFavorites(@AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null) {
             return List.of();
@@ -87,9 +91,32 @@ public class FavoriteController {
                 product.getCountry(),
                 product.getCurrency(),
                 product.getStockQty() > 0,
+                product.getCategory() != null ? product.getCategory().getId() : null,
                 product.getCategory() != null ? product.getCategory().getName() : null,
+                categoryPathIds(product.getCategory()),
+                categoryPathNames(product.getCategory()),
                 vendorUserId,
                 imageUrls
         );
+    }
+
+    private List<Long> categoryPathIds(Category category) {
+        LinkedList<Long> ids = new LinkedList<>();
+        Category current = category;
+        while (current != null) {
+            ids.addFirst(current.getId());
+            current = current.getParent();
+        }
+        return ids;
+    }
+
+    private List<String> categoryPathNames(Category category) {
+        LinkedList<String> names = new LinkedList<>();
+        Category current = category;
+        while (current != null) {
+            names.addFirst(current.getName());
+            current = current.getParent();
+        }
+        return names;
     }
 }

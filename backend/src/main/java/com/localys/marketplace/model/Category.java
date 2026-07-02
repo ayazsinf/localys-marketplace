@@ -19,6 +19,12 @@ public class Category {
     @Column(nullable = false, length = 120)
     private String name;
 
+    @Column(nullable = false, length = 140)
+    private String slug;
+
+    @Column(name = "sort_order", nullable = false)
+    private int sortOrder = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;

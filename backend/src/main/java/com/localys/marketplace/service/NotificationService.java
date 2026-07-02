@@ -16,10 +16,16 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final EmailService emailService;
+    private final LocalizationService localizationService;
 
-    public NotificationService(NotificationRepository notificationRepository, EmailService emailService) {
+    public NotificationService(
+            NotificationRepository notificationRepository,
+            EmailService emailService,
+            LocalizationService localizationService
+    ) {
         this.notificationRepository = notificationRepository;
         this.emailService = emailService;
+        this.localizationService = localizationService;
     }
 
     public void createProductCreatedNotification(UserEntity user, Product product) {
@@ -29,12 +35,27 @@ public class NotificationService {
         Notification notification = new Notification();
         notification.setUser(user);
         notification.setType(NotificationType.PRODUCT_CREATED);
-        notification.setTitle("Listing submitted");
-        notification.setMessage("Your listing \"" + product.getName() + "\" was submitted for review.");
+        notification.setTitle(localizationService.message("notification.product.submitted.title"));
+        notification.setMessage(localizationService.message("notification.product.submitted.message", product.getName()));
         notification.setLink("/listings");
         notification.setRead(false);
         notificationRepository.save(notification);
         emailService.sendProductCreatedEmail(user, product);
+    }
+
+    public void createProductPendingReviewNotification(UserEntity admin, Product product) {
+        if (admin == null || product == null) {
+            return;
+        }
+        Notification notification = new Notification();
+        notification.setUser(admin);
+        notification.setType(NotificationType.PRODUCT_PENDING_REVIEW);
+        notification.setTitle(localizationService.message("notification.product.pending-admin.title"));
+        notification.setMessage(localizationService.message("notification.product.pending-admin.message", product.getName()));
+        notification.setLink("/admin/listings");
+        notification.setRead(false);
+        notificationRepository.save(notification);
+        emailService.sendAdminProductPendingEmail(admin, product);
     }
 
     public void createProductApprovedNotification(UserEntity user, Product product) {
@@ -42,8 +63,9 @@ public class NotificationService {
                 user,
                 product,
                 NotificationType.PRODUCT_APPROVED,
-                "Listing approved",
-                "Your listing \"" + product.getName() + "\" was approved."
+                localizationService.message("notification.product.approved.title"),
+                localizationService.message("notification.product.approved.message", product.getName()),
+                true
         );
     }
 
@@ -52,8 +74,13 @@ public class NotificationService {
                 user,
                 product,
                 NotificationType.PRODUCT_REJECTED,
-                "Listing rejected",
-                "Your listing \"" + product.getName() + "\" was rejected: " + product.getModerationReason()
+                localizationService.message("notification.product.rejected.title"),
+                localizationService.message(
+                        "notification.product.rejected.message",
+                        product.getName(),
+                        product.getModerationReason()
+                ),
+                false
         );
     }
 
@@ -64,7 +91,7 @@ public class NotificationService {
         Notification notification = new Notification();
         notification.setUser(recipient);
         notification.setType(NotificationType.FAVORITE_ADDED);
-        notification.setTitle("Favori eklendi");
+        notification.setTitle(localizationService.message("notification.favorite.title"));
         notification.setMessage(formatFavoriteMessage(actor, product));
         notification.setLink("/products/" + product.getId());
         notification.setRead(false);
@@ -127,7 +154,7 @@ public class NotificationService {
         if (name == null || name.isBlank()) {
             name = "Someone";
         }
-        return name + " \"" + product.getName() + "\" urununu favorilerine ekledi.";
+        return localizationService.message("notification.favorite.message", name, product.getName());
     }
 
     private void createModerationNotification(
@@ -135,7 +162,8 @@ public class NotificationService {
             Product product,
             NotificationType type,
             String title,
-            String message
+            String message,
+            boolean approved
     ) {
         if (user == null || product == null) {
             return;
@@ -148,5 +176,10 @@ public class NotificationService {
         notification.setLink("/listings");
         notification.setRead(false);
         notificationRepository.save(notification);
+        if (approved) {
+            emailService.sendProductApprovedEmail(user, product);
+        } else {
+            emailService.sendProductRejectedEmail(user, product);
+        }
     }
 }

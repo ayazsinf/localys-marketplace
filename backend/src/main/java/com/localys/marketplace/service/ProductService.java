@@ -1,12 +1,15 @@
 package com.localys.marketplace.service;
 
+import com.localys.marketplace.event.ProductModerationEvent;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
 import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.model.Vendor;
 import com.localys.marketplace.model.enums.ModerationStatus;
+import com.localys.marketplace.model.enums.ProductModerationEventType;
 import com.localys.marketplace.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,7 +28,10 @@ public class ProductService {
     private MediaStorageService mediaStorageService;
 
     @Autowired
-    private NotificationService notificationService;
+    private ProductModerationPolicyService moderationPolicyService;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     public List<Product> getProductsByVendor(Long vendorId) {
         return productRepository.findByVendorId(vendorId);
@@ -46,14 +52,12 @@ public class ProductService {
 
     public Product addProductForVendor(Product product, Vendor vendor) {
         product.setVendor(vendor);
-        markPending(product);
         if (product.getSku() == null || product.getSku().isBlank()) {
             product.setSku(generateSku());
         }
+        ProductModerationEventType eventType = applyInitialModeration(product);
         Product saved = productRepository.save(product);
-        if (vendor != null && vendor.getUser() != null) {
-            notificationService.createProductCreatedNotification(vendor.getUser(), saved);
-        }
+        publishModerationEvent(saved, eventType);
         return saved;
     }
 
@@ -76,10 +80,13 @@ public class ProductService {
         product.setLocationText(productDetails.getLocationText());
         product.setLatitude(productDetails.getLatitude());
         product.setLongitude(productDetails.getLongitude());
+        ProductModerationEventType eventType = null;
         if (moderatedContentChanged) {
-            markPending(product);
+            eventType = applyModerationPolicy(product);
         }
-        return productRepository.save(product);
+        Product saved = productRepository.save(product);
+        publishModerationEvent(saved, eventType);
+        return saved;
     }
 
     public void deleteProductForVendor(Long id, Vendor vendor) {
@@ -103,8 +110,9 @@ public class ProductService {
             image.setSortOrder(sortOrderStart + i);
             product.getImages().add(image);
         }
-        markPending(product);
-        productRepository.save(product);
+        ProductModerationEventType eventType = applyModerationPolicy(product);
+        Product saved = productRepository.save(product);
+        publishModerationEvent(saved, eventType);
         return urls;
     }
 
@@ -116,7 +124,7 @@ public class ProductService {
         product.setReviewedAt(OffsetDateTime.now());
         product.setReviewedBy(reviewer);
         Product saved = productRepository.save(product);
-        notificationService.createProductApprovedNotification(product.getVendor().getUser(), saved);
+        publishModerationEvent(saved, ProductModerationEventType.APPROVED);
         return saved;
     }
 
@@ -134,8 +142,28 @@ public class ProductService {
         product.setReviewedAt(OffsetDateTime.now());
         product.setReviewedBy(reviewer);
         Product saved = productRepository.save(product);
-        notificationService.createProductRejectedNotification(product.getVendor().getUser(), saved);
+        publishModerationEvent(saved, ProductModerationEventType.REJECTED);
         return saved;
+    }
+
+    private ProductModerationEventType applyInitialModeration(Product product) {
+        if (moderationPolicyService.shouldAutoApprove(product)) {
+            markAutoApproved(product);
+            return ProductModerationEventType.APPROVED;
+        }
+        markPending(product);
+        return ProductModerationEventType.SUBMITTED;
+    }
+
+    private ProductModerationEventType applyModerationPolicy(Product product) {
+        ModerationStatus previousStatus = product.getModerationStatus();
+        if (moderationPolicyService.shouldAutoApprove(product)) {
+            markAutoApproved(product);
+            return previousStatus == ModerationStatus.APPROVED ? null : ProductModerationEventType.APPROVED;
+        }
+        boolean becamePending = previousStatus != ModerationStatus.PENDING;
+        markPending(product);
+        return becamePending ? ProductModerationEventType.SUBMITTED : null;
     }
 
     private void markPending(Product product) {
@@ -143,6 +171,20 @@ public class ProductService {
         product.setModerationReason(null);
         product.setReviewedAt(null);
         product.setReviewedBy(null);
+    }
+
+    private void markAutoApproved(Product product) {
+        product.setModerationStatus(ModerationStatus.APPROVED);
+        product.setModerationReason(null);
+        product.setReviewedAt(OffsetDateTime.now());
+        product.setReviewedBy(null);
+    }
+
+    private void publishModerationEvent(Product product, ProductModerationEventType eventType) {
+        if (product == null || product.getId() == null || eventType == null) {
+            return;
+        }
+        eventPublisher.publishEvent(new ProductModerationEvent(product.getId(), eventType));
     }
 
     private boolean hasModeratedContentChanged(Product current, Product updated) {

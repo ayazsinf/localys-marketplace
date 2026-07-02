@@ -1,7 +1,7 @@
 package com.localys.marketplace.config;
 
 import com.localys.marketplace.service.CustomUserDetailsService;
-import com.localys.marketplace.util.JwtUtil;
+import com.localys.marketplace.service.KeycloakPrincipalService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -21,12 +21,13 @@ import java.util.Arrays;
 public class JwtFilter extends OncePerRequestFilter {
     private static final String ACCESS_COOKIE = "localys_access";
 
-    private final JwtUtil jwtUtil;
-    private final CustomUserDetailsService userDetailsService;
+    private final KeycloakPrincipalService keycloakPrincipalService;
 
-    public JwtFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
+    public JwtFilter(
+            CustomUserDetailsService userDetailsService,
+            KeycloakPrincipalService keycloakPrincipalService
+    ) {
+        this.keycloakPrincipalService = keycloakPrincipalService;
     }
 
     @Override
@@ -56,29 +57,30 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (!jwtUtil.isAccessTokenValid(token)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = resolveUserDetails(token);
+            if (userDetails != null) {
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
 
-        final String username = jwtUtil.extractUsername(token);
-
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-            UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
-
-            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private UserDetails resolveUserDetails(String token) {
+        try {
+            return keycloakPrincipalService.authenticate(token);
+        } catch (RuntimeException ex) {
+            return null;
+        }
     }
 
     private String resolveToken(HttpServletRequest request) {

@@ -1,6 +1,7 @@
 package com.localys.marketplace.controller;
 
 import com.localys.marketplace.dto.ListingDto;
+import com.localys.marketplace.model.Category;
 import com.localys.marketplace.model.CustomUserDetails;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
@@ -15,10 +16,12 @@ import com.localys.marketplace.util.MarketCountryResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.LinkedList;
 
 @RestController
 @RequestMapping("/api/listings")
@@ -42,6 +45,7 @@ public class ListingController {
     }
 
     @GetMapping
+    @Transactional(readOnly = true)
     public List<ListingDto> listMyListings(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Vendor vendor = vendorRepository.findByUserId(userDetails.getUserId()).orElse(null);
         if (vendor == null) {
@@ -173,9 +177,31 @@ public class ListingController {
                 product.getCategory() != null && product.getCategory().getParent() != null
                         ? product.getCategory().getParent().getId()
                         : null,
+                categoryPathIds(product.getCategory()),
+                categoryPathNames(product.getCategory()),
                 product.getLocationText(),
                 product.getLatitude(),
                 product.getLongitude()
         );
+    }
+
+    private List<Long> categoryPathIds(Category category) {
+        LinkedList<Long> ids = new LinkedList<>();
+        Category current = category;
+        while (current != null) {
+            ids.addFirst(current.getId());
+            current = current.getParent();
+        }
+        return ids;
+    }
+
+    private List<String> categoryPathNames(Category category) {
+        LinkedList<String> names = new LinkedList<>();
+        Category current = category;
+        while (current != null) {
+            names.addFirst(current.getName());
+            current = current.getParent();
+        }
+        return names;
     }
 }

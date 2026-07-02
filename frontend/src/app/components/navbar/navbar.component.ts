@@ -166,6 +166,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.searchService.setSearchTerm(term);
   }
 
+  onSearchTermChange(term: string): void {
+    this.searchTerm = term;
+    this.searchService.setSearchTerm(term.trim());
+  }
+
   openNotification(notification: NotificationDto): void {
     if (!notification.read) {
       this.notificationService.markRead(notification.id).subscribe(() => {

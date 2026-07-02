@@ -46,9 +46,13 @@ public class UserController {
             return ResponseEntity.status(401).build();
         }
 
-        UserEntity user = userRepository.findById(principal.getUserId())
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "User not found"));
-        return ResponseEntity.ok(UserProfileResponse.from(user));
+        List<String> roles = principal.getAuthorities().stream()
+                .map(authority -> authority.getAuthority())
+                .toList();
+        List<AddressResponse> addresses = addressRepository.findByUser_Id(principal.getUserId()).stream()
+                .map(AddressResponse::from)
+                .toList();
+        return ResponseEntity.ok(UserProfileResponse.from(principal.getUser(), roles, addresses));
     }
 
     @PutMapping("/me")
@@ -251,15 +255,24 @@ public class UserController {
             String displayName,
             String phone,
             String role,
+            List<String> roles,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt,
             List<AddressResponse> addresses
     ) {
         public static UserProfileResponse from(UserEntity user) {
+            String role = user.getRole() != null ? user.getRole().name() : null;
+            return from(user, role == null ? List.of() : List.of(role));
+        }
+
+        public static UserProfileResponse from(UserEntity user, List<String> roles) {
             List<AddressResponse> addresses = user.getAddresses() == null
                     ? List.of()
                     : user.getAddresses().stream().map(AddressResponse::from).toList();
+            return from(user, roles, addresses);
+        }
 
+        public static UserProfileResponse from(UserEntity user, List<String> roles, List<AddressResponse> addresses) {
             return new UserProfileResponse(
                     user.getId(),
                     user.getUsername(),
@@ -267,6 +280,7 @@ public class UserController {
                     user.getDisplayName(),
                     user.getPhone(),
                     user.getRole() != null ? user.getRole().name() : null,
+                    roles,
                     user.getCreatedAt(),
                     user.getUpdatedAt(),
                     addresses

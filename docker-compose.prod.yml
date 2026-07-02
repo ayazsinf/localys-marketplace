@@ -35,11 +35,13 @@ services:
     restart: unless-stopped
     env_file: ${APP_ENV_FILE:-.env.prod}
     environment:
-      SPRING_PROFILES_ACTIVE: docker
+      SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       OIDC_ISSUER_URI: https://keycloak.localys.shop/realms/localys-realm
+      KEYCLOAK_ADMIN_CLIENT_ID: ${KEYCLOAK_ADMIN_CLIENT_ID}
+      KEYCLOAK_ADMIN_CLIENT_SECRET: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
       APP_MEDIA_UPLOAD_DIR: /app/uploads
     volumes:
       - media_uploads:/app/uploads
