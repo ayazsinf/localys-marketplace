@@ -1,0 +1,47 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  flyway:
+    enabled: false
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 30MB
+
+app:
+  keycloak:
+    issuer-uri: ${OIDC_ISSUER_URI}
+    client-id: ${OIDC_CLIENT_ID:localys-frontend}
+    admin-client-id: ${KEYCLOAK_ADMIN_CLIENT_ID:localys-backend}
+    admin-client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
+  media:
+    upload-dir: ${APP_MEDIA_UPLOAD_DIR:/app/uploads}
+  payment:
+    stripe:
+      secret-key: ${STRIPE_SECRET_KEY:}
+      success-url: ${STRIPE_SUCCESS_URL}
+      cancel-url: ${STRIPE_CANCEL_URL}
+
+logging:
+  level:
+    org.springframework: INFO
+    org.springframework.security: DEBUG
+    sql: INFO
