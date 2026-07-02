@@ -33,7 +33,13 @@ app:
     admin-client-id: ${KEYCLOAK_ADMIN_CLIENT_ID:localys-backend}
     admin-client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET:localys-backend-secret}
   media:
-    upload-dir: uploads
+    storage: ${APP_MEDIA_STORAGE:r2}
+    r2:
+      bucket: ${R2_BUCKET}
+      endpoint: ${R2_ENDPOINT}
+      access-key-id: ${R2_ACCESS_KEY_ID}
+      secret-access-key: ${R2_SECRET_ACCESS_KEY}
+      public-base-url: ${R2_PUBLIC_BASE_URL}
   payment:
     stripe:
       secret-key: ${STRIPE_SECRET_KEY:}
