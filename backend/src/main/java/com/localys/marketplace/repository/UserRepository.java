@@ -1,9 +1,11 @@
 package com.localys.marketplace.repository;
 
 import com.localys.marketplace.model.UserEntity;
+import com.localys.marketplace.model.enums.USER_ROLE;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -13,4 +15,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     boolean existsByEmail(String email);
 
     Optional<UserEntity> findByUsername(String username);
+    Optional<UserEntity> findByKeycloakId(String keycloakId);
+    List<UserEntity> findByRoleAndEnabledTrue(USER_ROLE role);
 }

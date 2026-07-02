@@ -3,9 +3,23 @@ import { HttpClient } from '@angular/common/http';
 import * as L from 'leaflet';
 import { Listing, ListingRequest, ListingService } from '../../service/listing.service';
 import { environment } from '../../../environments/environment';
-import { Category, CategoryService } from '../../service/category.service';
+import { CategoryNode, CategoryService } from '../../service/category.service';
 import { TranslateService } from '@ngx-translate/core';
 import { getCurrencyForCountry, getDefaultCountryForLanguage, MARKET_OPTIONS } from '../../shared/market';
+
+interface CategoryOption {
+  id: number;
+  label: string;
+  selectable: boolean;
+}
+
+interface LocationResult {
+  label: string;
+  latitude: number;
+  longitude: number;
+  postalCode: string | null;
+  city: string | null;
+}
 
 @Component({
   selector: 'app-listings',
@@ -23,15 +37,9 @@ export class ListingsComponent implements OnInit {
   selectedImages: File[] = [];
   imagePreviews: string[] = [];
   marketOptions = MARKET_OPTIONS;
-  categories: Category[] = [];
-  subcategories: Category[] = [];
-  selectedParentId: number | null = null;
+  categories: CategoryOption[] = [];
   locationQuery = '';
-  locationResults: Array<{
-    label: string;
-    latitude: number;
-    longitude: number;
-  }> = [];
+  locationResults: LocationResult[] = [];
   isSearchingLocation = false;
   private map: L.Map | null = null;
   private marker: L.Marker | null = null;
@@ -52,7 +60,6 @@ export class ListingsComponent implements OnInit {
     sku: '',
     brand: '',
     categoryId: null,
-    subcategoryId: null,
     locationText: '',
     latitude: null,
     longitude: null
@@ -91,8 +98,6 @@ export class ListingsComponent implements OnInit {
     this.editingId = null;
     this.isFormOpen = true;
     this.clearImages();
-    this.selectedParentId = null;
-    this.subcategories = [];
     this.locationQuery = '';
     this.locationResults = [];
     const defaultCountry = this.getDefaultCountry();
@@ -107,7 +112,6 @@ export class ListingsComponent implements OnInit {
       sku: '',
       brand: '',
       categoryId: null,
-      subcategoryId: null as number | null,
       locationText: '',
       latitude: null,
       longitude: null
@@ -120,12 +124,6 @@ export class ListingsComponent implements OnInit {
     this.editingId = listing.id;
     this.isFormOpen = true;
     this.clearImages();
-    this.selectedParentId = listing.parentCategoryId ?? null;
-    if (this.selectedParentId) {
-      this.loadSubcategories(this.selectedParentId, listing.categoryId ?? null);
-    } else {
-      this.subcategories = [];
-    }
     this.form = {
       name: listing.name,
       description: listing.description,
@@ -137,7 +135,6 @@ export class ListingsComponent implements OnInit {
       sku: listing.sku,
       brand: listing.brand,
       categoryId: listing.categoryId ?? null,
-      subcategoryId: null as number | null,
       locationText: listing.locationText ?? '',
       latitude: listing.latitude ?? null,
       longitude: listing.longitude ?? null
@@ -158,45 +155,18 @@ export class ListingsComponent implements OnInit {
     this.isFormOpen = false;
     this.editingId = null;
     this.clearImages();
-    this.selectedParentId = null;
-    this.subcategories = [];
     this.locationQuery = '';
     this.locationResults = [];
     this.destroyMap();
   }
 
   loadCategories(): void {
-    this.categoryService.loadRootCategories().subscribe({
-      next: categories => {
-        this.categories = categories;
+    this.categoryService.loadTree().subscribe({
+      next: tree => {
+        this.categories = this.flattenCategoryOptions(tree);
       },
       error: () => {
         this.categories = [];
-      }
-    });
-  }
-
-  onParentCategoryChange(value: string): void {
-    const parentId = value ? Number(value) : null;
-    this.selectedParentId = Number.isFinite(parentId) ? parentId : null;
-    this.form.categoryId = null;
-    if (this.selectedParentId) {
-      this.loadSubcategories(this.selectedParentId, null);
-    } else {
-      this.subcategories = [];
-    }
-  }
-
-  private loadSubcategories(parentId: number, selectedId: number | null): void {
-    this.categoryService.loadChildren(parentId).subscribe({
-      next: categories => {
-        this.subcategories = categories;
-        if (selectedId) {
-          this.form.categoryId = selectedId;
-        }
-      },
-      error: () => {
-        this.subcategories = [];
       }
     });
   }
@@ -238,25 +208,13 @@ export class ListingsComponent implements OnInit {
       return;
     }
 
-    const encoded = encodeURIComponent(query.trim());
-    const url = `https://api-adresse.data.gouv.fr/search/?q=${encoded}&limit=5`;
     this.isSearchingLocation = true;
-    this.http.get<{ features?: Array<{ properties?: { label?: string }; geometry?: { coordinates?: number[] } }> }>(url)
+    this.http.get<{ results?: LocationResult[] }>(`${environment.apiUrl}/locations/search`, {
+      params: { q: query.trim() }
+    })
       .subscribe({
         next: response => {
-          const features = response.features ?? [];
-          this.locationResults = features
-            .map(feature => {
-              const label = feature.properties?.label ?? '';
-              const coords = feature.geometry?.coordinates ?? [];
-              const longitude = coords[0];
-              const latitude = coords[1];
-              if (!label || typeof latitude !== 'number' || typeof longitude !== 'number') {
-                return null;
-              }
-              return { label, latitude, longitude };
-            })
-            .filter((item): item is { label: string; latitude: number; longitude: number } => !!item);
+          this.locationResults = response.results ?? [];
           this.isSearchingLocation = false;
         },
         error: () => {
@@ -266,7 +224,7 @@ export class ListingsComponent implements OnInit {
       });
   }
 
-  selectLocation(result: { label: string; latitude: number; longitude: number }): void {
+  selectLocation(result: LocationResult): void {
     this.form.locationText = result.label;
     this.form.latitude = result.latitude;
     this.form.longitude = result.longitude;
@@ -296,7 +254,7 @@ export class ListingsComponent implements OnInit {
   }
 
   saveListing(): void {
-    const resolvedCategoryId = this.form.categoryId ?? (this.subcategories.length === 0 ? this.selectedParentId : null);
+    const resolvedCategoryId = this.form.categoryId ?? null;
     if (!this.form.name?.trim() || !resolvedCategoryId) {
       this.errorMessage = 'LISTINGS.ERROR_REQUIRED';
       return;
@@ -394,6 +352,17 @@ export class ListingsComponent implements OnInit {
 
   private getDefaultCountry(): string {
     return getDefaultCountryForLanguage(this.translateService.currentLang || this.translateService.getDefaultLang());
+  }
+
+  private flattenCategoryOptions(nodes: CategoryNode[], depth = 0): CategoryOption[] {
+    return nodes.flatMap(node => {
+      const children = node.children ?? [];
+      const label = `${'  '.repeat(depth)}${node.pathNames.join(' / ')}`;
+      return [
+        { id: node.id, label, selectable: children.length === 0 },
+        ...this.flattenCategoryOptions(children, depth + 1)
+      ];
+    });
   }
 
   private createMarkerIcon(): L.Icon {

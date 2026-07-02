@@ -1,7 +1,7 @@
 package com.localys.marketplace.config;
 
 import com.localys.marketplace.service.CustomUserDetailsService;
-import com.localys.marketplace.util.JwtUtil;
+import com.localys.marketplace.service.KeycloakPrincipalService;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,12 +17,10 @@ import java.util.Map;
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
     private static final String ACCESS_COOKIE = "localys_access";
 
-    private final JwtUtil jwtUtil;
-    private final CustomUserDetailsService userDetailsService;
+    private final KeycloakPrincipalService keycloakPrincipalService;
 
-    public JwtHandshakeInterceptor(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
+    public JwtHandshakeInterceptor(KeycloakPrincipalService keycloakPrincipalService) {
+        this.keycloakPrincipalService = keycloakPrincipalService;
     }
 
     @Override
@@ -33,12 +31,14 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
             Map<String, Object> attributes
     ) {
         String token = resolveToken(request);
-        if (token == null || !jwtUtil.isAccessTokenValid(token)) {
+        if (token == null) {
             return false;
         }
 
-        String username = jwtUtil.extractUsername(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        UserDetails userDetails = resolveUserDetails(token);
+        if (userDetails == null) {
+            return false;
+        }
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userDetails,
                 null,
@@ -46,6 +46,14 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
         );
         attributes.put("auth", authentication);
         return true;
+    }
+
+    private UserDetails resolveUserDetails(String token) {
+        try {
+            return keycloakPrincipalService.authenticate(token);
+        } catch (RuntimeException ex) {
+            return null;
+        }
     }
 
     @Override

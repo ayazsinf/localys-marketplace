@@ -9,6 +9,7 @@ import com.localys.marketplace.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +34,7 @@ public class AdminListingController {
     }
 
     @GetMapping
+    @Transactional(readOnly = true)
     public List<AdminListingDto> list(
             @RequestParam(name = "status", defaultValue = "PENDING") ModerationStatus status
     ) {
@@ -42,6 +44,7 @@ public class AdminListingController {
     }
 
     @PostMapping("/{id}/approve")
+    @Transactional
     public ResponseEntity<AdminListingDto> approve(
             @AuthenticationPrincipal CustomUserDetails reviewer,
             @PathVariable("id") Long id
@@ -50,6 +53,7 @@ public class AdminListingController {
     }
 
     @PostMapping("/{id}/reject")
+    @Transactional
     public ResponseEntity<AdminListingDto> reject(
             @AuthenticationPrincipal CustomUserDetails reviewer,
             @PathVariable("id") Long id,

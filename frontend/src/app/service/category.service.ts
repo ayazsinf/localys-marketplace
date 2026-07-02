@@ -2,10 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface Category {
+export interface CategoryNode {
   id: number;
   name: string;
+  slug: string;
   parentId?: number | null;
+  pathIds: number[];
+  pathNames: string[];
+  children: CategoryNode[];
 }
 
 @Injectable({
@@ -14,11 +18,7 @@ export interface Category {
 export class CategoryService {
   constructor(private http: HttpClient) {}
 
-  loadRootCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>('/api/categories');
-  }
-
-  loadChildren(parentId: number): Observable<Category[]> {
-    return this.http.get<Category[]>(`/api/categories/${parentId}/children`);
+  loadTree(): Observable<CategoryNode[]> {
+    return this.http.get<CategoryNode[]>('/api/categories/tree');
   }
 }

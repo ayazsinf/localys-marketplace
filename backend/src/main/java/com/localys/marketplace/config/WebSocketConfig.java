@@ -1,7 +1,6 @@
 package com.localys.marketplace.config;
 
-import com.localys.marketplace.service.CustomUserDetailsService;
-import com.localys.marketplace.util.JwtUtil;
+import com.localys.marketplace.service.KeycloakPrincipalService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -12,12 +11,10 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final JwtUtil jwtUtil;
-    private final CustomUserDetailsService userDetailsService;
+    private final KeycloakPrincipalService keycloakPrincipalService;
 
-    public WebSocketConfig(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
+    public WebSocketConfig(KeycloakPrincipalService keycloakPrincipalService) {
+        this.keycloakPrincipalService = keycloakPrincipalService;
     }
 
     @Override
@@ -25,7 +22,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws")
                 .setAllowedOrigins("http://localhost:4200", "http://localhost:4300")
                 .setHandshakeHandler(new JwtHandshakeHandler())
-                .addInterceptors(new JwtHandshakeInterceptor(jwtUtil, userDetailsService))
+                .addInterceptors(new JwtHandshakeInterceptor(keycloakPrincipalService))
                 .withSockJS();
     }
 

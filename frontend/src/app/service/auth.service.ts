@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, map, of, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, map, of, tap, timeout } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface LoginRequest {
@@ -40,12 +40,14 @@ export class AuthService {
 
   login(payload: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.authBaseUrl}/login`, payload).pipe(
+      timeout(12000),
       tap(response => this.setAuthenticated(response.username ?? payload.username))
     );
   }
 
   register(payload: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.authBaseUrl}/register`, payload).pipe(
+      timeout(12000),
       tap(response => this.setAuthenticated(response.username ?? payload.username))
     );
   }

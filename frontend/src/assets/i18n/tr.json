@@ -76,7 +76,8 @@
     "CATEGORIES": "Kategoriler",
     "ALL_PRODUCTS": "Tum ilanlar",
     "PRICE_RANGE": "Fiyat araligi",
-    "PRICE_MIN": "$0",
+    "PRICE_MIN": "Min",
+    "PRICE_MAX": "Maks",
     "UP_TO": "En fazla"
   },
   "PRODUCT": {

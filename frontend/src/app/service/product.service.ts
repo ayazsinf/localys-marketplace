@@ -64,12 +64,4 @@ export class ProductService {
   getProducts(): Product[] {
     return this._products();
   }
-
-  getProductsByCategory(category: string): Product[] {
-    return this._products().filter(product => product.categoryName === category);
-  }
-
-  getCategories(): string[] {
-    return [...new Set(this._products().map(product => product.categoryName))];
-  }
 }

@@ -16,15 +16,18 @@ public class EmailService {
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
     private final JavaMailSender mailSender;
+    private final LocalizationService localizationService;
     private final boolean enabled;
     private final String from;
 
     public EmailService(
             JavaMailSender mailSender,
+            LocalizationService localizationService,
             @Value("${app.mail.enabled:false}") boolean enabled,
             @Value("${app.mail.from:no-reply@localys.example}") String from
     ) {
         this.mailSender = mailSender;
+        this.localizationService = localizationService;
         this.enabled = enabled;
         this.from = from;
     }
@@ -33,8 +36,8 @@ public class EmailService {
         if (user == null) {
             return;
         }
-        String subject = "Welcome to Localys";
-        String body = "Hosgeldiniz " + safeName(user) + ".\n\nLocalys hesabiniz hazir.";
+        String subject = localizationService.message("email.welcome.subject");
+        String body = localizationService.message("email.welcome.body", safeName(user));
         sendEmail(user.getEmail(), subject, body);
     }
 
@@ -42,8 +45,39 @@ public class EmailService {
         if (user == null || product == null) {
             return;
         }
-        String subject = "Listing submitted";
-        String body = "Your listing \"" + product.getName() + "\" was submitted for review.";
+        String subject = localizationService.message("email.product.submitted.subject");
+        String body = localizationService.message("email.product.submitted.body", product.getName());
+        sendEmail(user.getEmail(), subject, body);
+    }
+
+    public void sendAdminProductPendingEmail(UserEntity admin, Product product) {
+        if (admin == null || product == null) {
+            return;
+        }
+        String subject = localizationService.message("email.product.pending-admin.subject");
+        String body = localizationService.message("email.product.pending-admin.body", product.getName(), product.getSku());
+        sendEmail(admin.getEmail(), subject, body);
+    }
+
+    public void sendProductApprovedEmail(UserEntity user, Product product) {
+        if (user == null || product == null) {
+            return;
+        }
+        String subject = localizationService.message("email.product.approved.subject");
+        String body = localizationService.message("email.product.approved.body", product.getName());
+        sendEmail(user.getEmail(), subject, body);
+    }
+
+    public void sendProductRejectedEmail(UserEntity user, Product product) {
+        if (user == null || product == null) {
+            return;
+        }
+        String reason = product.getModerationReason();
+        String subject = localizationService.message("email.product.rejected.subject");
+        String reasonText = reason == null || reason.isBlank()
+                ? ""
+                : localizationService.message("email.product.rejected.reason", reason);
+        String body = localizationService.message("email.product.rejected.body", product.getName(), reasonText);
         sendEmail(user.getEmail(), subject, body);
     }
 
@@ -52,8 +86,8 @@ public class EmailService {
             return;
         }
         String name = safeName(actor);
-        String subject = "Favori eklendi";
-        String body = name + " \"" + product.getName() + "\" urununu favorilerine ekledi.";
+        String subject = localizationService.message("email.favorite.subject");
+        String body = localizationService.message("email.favorite.body", name, product.getName());
         sendEmail(recipient.getEmail(), subject, body);
     }
 

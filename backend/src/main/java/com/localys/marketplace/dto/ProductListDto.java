@@ -11,7 +11,10 @@ public record ProductListDto(
         String country,
         String currency,
         boolean inStock,
+        Long categoryId,
         String categoryName,
+        List<Long> categoryPathIds,
+        List<String> categoryPathNames,
         Long vendorUserId,
         List<String> imageUrls
 ) {

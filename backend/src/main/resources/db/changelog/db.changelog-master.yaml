@@ -219,3 +219,25 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 019-extend-category-tree
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V19__extend_category_tree.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 020-add-pending-review-notification-type
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V20__add_pending_review_notification_type.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

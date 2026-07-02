@@ -24,6 +24,13 @@ logging:
     sql: trace
 
 app:
+  locale:
+    default: ${APP_DEFAULT_LOCALE:en}
+  keycloak:
+    issuer-uri: ${OIDC_ISSUER_URI:http://localhost:8081/realms/localys-realm}
+    client-id: ${OIDC_CLIENT_ID:localys-frontend}
+    admin-client-id: ${KEYCLOAK_ADMIN_CLIENT_ID:localys-backend}
+    admin-client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET:localys-backend-secret}
   payment:
     stripe:
       secret-key: ${STRIPE_SECRET_KEY:}
@@ -31,5 +38,12 @@ app:
       cancel-url: http://localhost:4200/checkout?canceled=true
       webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
   mail:
-    enabled: false
+    enabled: ${APP_MAIL_ENABLED:${MAIL_ENABLED:false}}
     from: ${MAIL_FROM:no-reply@localys.example}
+  moderation:
+    auto-approval-enabled: ${APP_MODERATION_AUTO_APPROVAL_ENABLED:false}
+    trusted-vendor-only: ${APP_MODERATION_TRUSTED_VENDOR_ONLY:true}
+    require-image: ${APP_MODERATION_REQUIRE_IMAGE:true}
+    max-auto-approve-price: ${APP_MODERATION_MAX_AUTO_APPROVE_PRICE:1000}
+    min-description-length: ${APP_MODERATION_MIN_DESCRIPTION_LENGTH:20}
+    banned-terms: ${APP_MODERATION_BANNED_TERMS:whatsapp,telegram,crypto,bitcoin}
