@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as L from 'leaflet';
-import { Listing, ListingRequest, ListingService } from '../../service/listing.service';
+import { Listing, ListingRemovalReason, ListingRequest, ListingService } from '../../service/listing.service';
 import { environment } from '../../../environments/environment';
 import { CategoryNode, CategoryService } from '../../service/category.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,6 +19,11 @@ interface LocationResult {
   longitude: number;
   postalCode: string | null;
   city: string | null;
+}
+
+interface RemovalOption {
+  value: ListingRemovalReason;
+  labelKey: string;
 }
 
 @Component({
@@ -41,6 +46,15 @@ export class ListingsComponent implements OnInit {
   locationQuery = '';
   locationResults: LocationResult[] = [];
   isSearchingLocation = false;
+  pendingRemovalListing: Listing | null = null;
+  removalReason: ListingRemovalReason = 'SOLD_ON_LOCALYS';
+  removalNote = '';
+  removalOptions: RemovalOption[] = [
+    { value: 'SOLD_ON_LOCALYS', labelKey: 'LISTINGS.REMOVAL_SOLD_ON_LOCALYS' },
+    { value: 'SOLD_ELSEWHERE', labelKey: 'LISTINGS.REMOVAL_SOLD_ELSEWHERE' },
+    { value: 'NO_LONGER_AVAILABLE', labelKey: 'LISTINGS.REMOVAL_NO_LONGER_AVAILABLE' },
+    { value: 'OTHER', labelKey: 'LISTINGS.REMOVAL_OTHER' }
+  ];
   private map: L.Map | null = null;
   private marker: L.Marker | null = null;
   private readonly maxImages = 6;
@@ -304,13 +318,34 @@ export class ListingsComponent implements OnInit {
     });
   }
 
-  deleteListing(listing: Listing): void {
+  openRemoveListing(listing: Listing): void {
+    this.pendingRemovalListing = listing;
+    this.removalReason = 'SOLD_ON_LOCALYS';
+    this.removalNote = '';
+    this.errorMessage = '';
+  }
+
+  cancelRemoveListing(): void {
+    this.pendingRemovalListing = null;
+    this.removalNote = '';
+  }
+
+  deleteListing(): void {
+    if (!this.pendingRemovalListing) {
+      return;
+    }
     this.isSaving = true;
     this.errorMessage = '';
-    this.listingService.deleteListing(listing.id).subscribe({
-      next: () => {
+    const listing = this.pendingRemovalListing;
+    this.listingService.deleteListing(listing.id, {
+      reason: this.removalReason,
+      note: this.removalNote.trim() || null
+    }).subscribe({
+      next: removed => {
         this.isSaving = false;
-        this.listings = this.listings.filter(item => item.id !== listing.id);
+        this.listings = this.listings.map(item => item.id === removed.id ? removed : item);
+        this.pendingRemovalListing = null;
+        this.removalNote = '';
         this.cdr.detectChanges();
       },
       error: () => {

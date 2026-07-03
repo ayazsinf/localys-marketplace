@@ -11,6 +11,8 @@ import { environment } from '../../../environments/environment';
 export class AdminListingsComponent implements OnInit {
   listings: AdminListing[] = [];
   rejectionReasons: Record<number, string> = {};
+  selectedStatus = 'PENDING';
+  statusOptions = ['PENDING', 'APPROVED', 'REJECTED', 'ALL'];
   isLoading = false;
   processingId: number | null = null;
   errorMessage = '';
@@ -24,7 +26,7 @@ export class AdminListingsComponent implements OnInit {
   loadListings(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    this.adminListingService.list().subscribe({
+    this.adminListingService.list(this.selectedStatus).subscribe({
       next: listings => {
         this.listings = listings;
         this.isLoading = false;
@@ -34,6 +36,11 @@ export class AdminListingsComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  onStatusChange(status: string): void {
+    this.selectedStatus = status;
+    this.loadListings();
   }
 
   approve(listing: AdminListing): void {
@@ -58,6 +65,24 @@ export class AdminListingsComponent implements OnInit {
       next: () => this.removeProcessed(listing.id),
       error: () => {
         this.errorMessage = 'ADMIN_LISTINGS.ERROR_ACTION';
+        this.processingId = null;
+      }
+    });
+  }
+
+  deleteListing(listing: AdminListing): void {
+    this.processingId = listing.id;
+    this.adminListingService.delete(listing.id, 'Removed by admin').subscribe({
+      next: removed => {
+        this.listings = this.listings.map(item => item.id === removed.id ? removed : item);
+        if (this.selectedStatus !== 'ALL') {
+          this.listings = this.listings.filter(item => item.id !== removed.id);
+        }
+        this.processingId = null;
+        this.errorMessage = '';
+      },
+      error: () => {
+        this.errorMessage = 'ADMIN_LISTINGS.ERROR_DELETE';
         this.processingId = null;
       }
     });

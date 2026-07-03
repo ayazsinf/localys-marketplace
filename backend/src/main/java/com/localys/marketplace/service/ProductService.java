@@ -3,12 +3,16 @@ package com.localys.marketplace.service;
 import com.localys.marketplace.event.ProductModerationEvent;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
+import com.localys.marketplace.model.ProductRemovalEvent;
 import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.model.Vendor;
 import com.localys.marketplace.model.enums.ModerationStatus;
 import com.localys.marketplace.model.enums.ProductModerationEventType;
+import com.localys.marketplace.model.enums.ListingRemovalReason;
 import com.localys.marketplace.repository.ProductRepository;
+import com.localys.marketplace.repository.ProductRemovalEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,16 +37,30 @@ public class ProductService {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    private ProductRemovalEventRepository productRemovalEventRepository;
+
+    @Value("${app.listings.removed-visible-days:7}")
+    private int removedVisibleDays;
+
+    @Value("${app.listings.max-active-days:45}")
+    private int maxActiveDays;
+
     public List<Product> getProductsByVendor(Long vendorId) {
         return productRepository.findByVendorId(vendorId);
     }
 
+    public List<Product> getVisibleProductsByVendor(Long vendorId) {
+        int days = Math.max(1, removedVisibleDays);
+        return productRepository.findVisibleForVendor(vendorId, OffsetDateTime.now().minusDays(days));
+    }
+
     public List<Product> getAllProducts() {
-        return productRepository.findByActiveTrueAndModerationStatusOrderByNameAsc(ModerationStatus.APPROVED);
+        return productRepository.findPublicListings(ModerationStatus.APPROVED, OffsetDateTime.now());
     }
 
     public Product getProductById(Long id) {
-        return productRepository.findByIdAndActiveTrueAndModerationStatus(id, ModerationStatus.APPROVED)
+        return productRepository.findPublicById(id, ModerationStatus.APPROVED, OffsetDateTime.now())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
@@ -50,11 +68,16 @@ public class ProductService {
         return productRepository.findByModerationStatusOrderByCreatedAtAsc(status);
     }
 
+    public List<Product> getAllProductsForAdmin() {
+        return productRepository.findAllByOrderByCreatedAtDesc();
+    }
+
     public Product addProductForVendor(Product product, Vendor vendor) {
         product.setVendor(vendor);
         if (product.getSku() == null || product.getSku().isBlank()) {
             product.setSku(generateSku());
         }
+        product.setExpiresAt(resolveExpiry());
         ProductModerationEventType eventType = applyInitialModeration(product);
         Product saved = productRepository.save(product);
         publishModerationEvent(saved, eventType);
@@ -71,6 +94,14 @@ public class ProductService {
         product.setBrand(productDetails.getBrand());
         product.setStockQty(productDetails.getStockQty());
         product.setActive(productDetails.isActive());
+        if (productDetails.isActive()) {
+            product.setRemovalReason(null);
+            product.setRemovalNote(null);
+            product.setRemovedAt(null);
+            if (product.getExpiresAt() == null || !product.getExpiresAt().isAfter(OffsetDateTime.now())) {
+                product.setExpiresAt(resolveExpiry());
+            }
+        }
         product.setCountry(productDetails.getCountry());
         product.setCurrency(productDetails.getCurrency());
         if (productDetails.getSku() != null && !productDetails.getSku().isBlank()) {
@@ -89,10 +120,26 @@ public class ProductService {
         return saved;
     }
 
+    public Product expireProduct(Product product) {
+        return markRemoved(product, ListingRemovalReason.EXPIRED, null, null);
+    }
+
     public void deleteProductForVendor(Long id, Vendor vendor) {
         Product product = productRepository.findByIdAndVendorId(id, vendor.getId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         productRepository.delete(product);
+    }
+
+    public Product removeProductForVendor(Long id, Vendor vendor, ListingRemovalReason reason, String note) {
+        Product product = productRepository.findByIdAndVendorId(id, vendor.getId())
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        return markRemoved(product, reason, note, vendor.getUser());
+    }
+
+    public Product removeProductByAdmin(Long id, String note, UserEntity actor) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        return markRemoved(product, ListingRemovalReason.ADMIN_REMOVED, note, actor);
     }
 
     public List<String> addImagesForVendor(Long id, Vendor vendor, List<MultipartFile> files) {
@@ -178,6 +225,33 @@ public class ProductService {
         product.setModerationReason(null);
         product.setReviewedAt(OffsetDateTime.now());
         product.setReviewedBy(null);
+    }
+
+    private Product markRemoved(Product product, ListingRemovalReason reason, String note, UserEntity actor) {
+        if (reason == null) {
+            throw new IllegalArgumentException("Removal reason is required");
+        }
+        String normalizedNote = note == null || note.isBlank() ? null : note.trim();
+        if (normalizedNote != null && normalizedNote.length() > 1000) {
+            throw new IllegalArgumentException("Removal note is too long");
+        }
+        product.setActive(false);
+        product.setRemovalReason(reason);
+        product.setRemovalNote(normalizedNote);
+        product.setRemovedAt(OffsetDateTime.now());
+        Product saved = productRepository.save(product);
+        ProductRemovalEvent event = new ProductRemovalEvent();
+        event.setProduct(saved);
+        event.setReason(reason);
+        event.setNote(normalizedNote);
+        event.setActorUser(actor);
+        event.setOccurredAt(saved.getRemovedAt());
+        productRemovalEventRepository.save(event);
+        return saved;
+    }
+
+    private OffsetDateTime resolveExpiry() {
+        return OffsetDateTime.now().plusDays(Math.max(1, maxActiveDays));
     }
 
     private void publishModerationEvent(Product product, ProductModerationEventType eventType) {

@@ -1,6 +1,7 @@
 package com.localys.marketplace.controller;
 
 import com.localys.marketplace.dto.AdminListingDto;
+import com.localys.marketplace.dto.RemoveListingRequest;
 import com.localys.marketplace.model.CustomUserDetails;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
@@ -11,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,9 +38,12 @@ public class AdminListingController {
     @GetMapping
     @Transactional(readOnly = true)
     public List<AdminListingDto> list(
-            @RequestParam(name = "status", defaultValue = "PENDING") ModerationStatus status
+            @RequestParam(name = "status", defaultValue = "PENDING") String status
     ) {
-        return productService.getProductsForModeration(status).stream()
+        List<Product> products = "ALL".equalsIgnoreCase(status)
+                ? productService.getAllProductsForAdmin()
+                : productService.getProductsForModeration(ModerationStatus.valueOf(status.toUpperCase()));
+        return products.stream()
                 .map(this::toDto)
                 .toList();
     }
@@ -60,6 +65,20 @@ public class AdminListingController {
             @RequestBody RejectListingRequest request
     ) {
         return ResponseEntity.ok(toDto(productService.rejectProduct(id, request.reason(), reviewer.getUser())));
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<AdminListingDto> delete(
+            @AuthenticationPrincipal CustomUserDetails reviewer,
+            @PathVariable("id") Long id,
+            @RequestBody(required = false) RemoveListingRequest request
+    ) {
+        return ResponseEntity.ok(toDto(productService.removeProductByAdmin(
+                id,
+                request != null ? request.note() : null,
+                reviewer.getUser()
+        )));
     }
 
     private AdminListingDto toDto(Product product) {
@@ -87,6 +106,10 @@ public class AdminListingController {
                 product.getCurrency(),
                 product.getStockQty(),
                 product.isActive(),
+                product.getRemovalReason() != null ? product.getRemovalReason().name() : null,
+                product.getRemovalNote(),
+                product.getRemovedAt(),
+                product.getExpiresAt(),
                 product.getModerationStatus().name(),
                 product.getModerationReason(),
                 product.getSku(),

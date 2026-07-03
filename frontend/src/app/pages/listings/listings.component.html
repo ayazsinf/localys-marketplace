@@ -156,6 +156,10 @@
           {{ listing.active ? ('LISTINGS.STATUS_ACTIVE' | translate) : ('LISTINGS.STATUS_INACTIVE' | translate) }}
         </span>
       </div>
+      <p class="removal-reason" *ngIf="!listing.active && listing.removalReason">
+        {{ 'LISTINGS.REMOVED_REASON' | translate }}:
+        {{ ('LISTINGS.REMOVAL_' + listing.removalReason) | translate }}
+      </p>
       <div
         class="moderation-status"
         [class.moderation-status--approved]="listing.moderationStatus === 'APPROVED'"
@@ -182,13 +186,17 @@
           <span>{{ 'LISTINGS.LABEL_BRAND' | translate }}</span>
           <strong>{{ listing.brand }}</strong>
         </div>
+        <div>
+          <span>{{ 'LISTINGS.LABEL_EXPIRES_AT' | translate }}</span>
+          <strong>{{ listing.expiresAt | date:'mediumDate' }}</strong>
+        </div>
       </div>
       <p class="listing-desc" *ngIf="listing.description">{{ listing.description }}</p>
       <div class="listing-actions">
         <button class="ghost-btn" type="button" (click)="openEditListing(listing)">
           {{ 'LISTINGS.EDIT' | translate }}
         </button>
-        <button class="danger-btn" type="button" (click)="deleteListing(listing)" [disabled]="isSaving">
+        <button class="danger-btn" type="button" (click)="openRemoveListing(listing)" [disabled]="isSaving || !listing.active">
           {{ 'LISTINGS.DELETE' | translate }}
         </button>
       </div>
@@ -196,6 +204,33 @@
 
     <div class="account-card empty-card" *ngIf="listings.length === 0">
       <p>{{ 'LISTINGS.EMPTY' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="remove-panel" *ngIf="pendingRemovalListing">
+    <div class="remove-dialog">
+      <h2>{{ 'LISTINGS.REMOVE_TITLE' | translate }}</h2>
+      <p>{{ 'LISTINGS.REMOVE_SUBTITLE' | translate:{ name: pendingRemovalListing.name } }}</p>
+      <label>
+        <span>{{ 'LISTINGS.REMOVE_REASON_LABEL' | translate }}</span>
+        <select [(ngModel)]="removalReason">
+          <option *ngFor="let option of removalOptions" [ngValue]="option.value">
+            {{ option.labelKey | translate }}
+          </option>
+        </select>
+      </label>
+      <label>
+        <span>{{ 'LISTINGS.REMOVE_NOTE_LABEL' | translate }}</span>
+        <textarea rows="3" [(ngModel)]="removalNote"></textarea>
+      </label>
+      <div class="remove-actions">
+        <button class="ghost-btn" type="button" (click)="cancelRemoveListing()" [disabled]="isSaving">
+          {{ 'COMMON.CANCEL' | translate }}
+        </button>
+        <button class="danger-btn" type="button" (click)="deleteListing()" [disabled]="isSaving">
+          {{ 'LISTINGS.CONFIRM_REMOVE' | translate }}
+        </button>
+      </div>
     </div>
   </div>
 </section>

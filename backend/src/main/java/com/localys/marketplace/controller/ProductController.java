@@ -33,7 +33,7 @@ public class ProductController {
     @GetMapping
     @Transactional(readOnly = true)
     public List<ProductListDto> list() {
-        return repo.findByActiveTrueAndModerationStatusOrderByNameAsc(ModerationStatus.APPROVED).stream()
+        return repo.findPublicListings(ModerationStatus.APPROVED, java.time.OffsetDateTime.now()).stream()
                 .map(this::toDto)
                 .toList();
     }

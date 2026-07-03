@@ -47,3 +47,8 @@ app:
     max-auto-approve-price: ${APP_MODERATION_MAX_AUTO_APPROVE_PRICE:1000}
     min-description-length: ${APP_MODERATION_MIN_DESCRIPTION_LENGTH:20}
     banned-terms: ${APP_MODERATION_BANNED_TERMS:whatsapp,telegram,crypto,bitcoin}
+  listings:
+    removed-visible-days: ${APP_LISTINGS_REMOVED_VISIBLE_DAYS:7}
+    max-active-days: ${APP_LISTINGS_MAX_ACTIVE_DAYS:45}
+    expiration-batch-size: ${APP_LISTINGS_EXPIRATION_BATCH_SIZE:200}
+    expiration-cron: ${APP_LISTINGS_EXPIRATION_CRON:0 15 * * * *}

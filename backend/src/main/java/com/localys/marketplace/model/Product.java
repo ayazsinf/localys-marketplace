@@ -1,6 +1,7 @@
 package com.localys.marketplace.model;
 
 import com.localys.marketplace.model.enums.ModerationStatus;
+import com.localys.marketplace.model.enums.ListingRemovalReason;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +51,19 @@ public class Product extends AuditableEntity {
 
     @Column(nullable = false)
     private boolean active = true;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "removal_reason", length = 40)
+    private ListingRemovalReason removalReason;
+
+    @Column(name = "removal_note", length = 1000)
+    private String removalNote;
+
+    @Column(name = "removed_at")
+    private OffsetDateTime removedAt;
+
+    @Column(name = "expires_at")
+    private OffsetDateTime expiresAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "moderation_status", nullable = false, length = 20)

@@ -241,3 +241,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 021-add-listing-removal-metadata
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V21__add_listing_removal_metadata.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

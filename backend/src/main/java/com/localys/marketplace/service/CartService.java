@@ -53,9 +53,10 @@ public class CartService {
             throw new IllegalArgumentException("Quantity must be positive");
         }
         Cart cart = getOrCreateActiveCart(userId);
-        Product product = productRepository.findByIdAndActiveTrueAndModerationStatus(
+        Product product = productRepository.findPublicById(
                         productId,
-                        ModerationStatus.APPROVED
+                        ModerationStatus.APPROVED,
+                        java.time.OffsetDateTime.now()
                 )
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
         if (product.getVendor() != null

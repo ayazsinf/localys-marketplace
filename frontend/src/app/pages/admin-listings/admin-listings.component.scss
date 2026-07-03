@@ -19,6 +19,22 @@ header p,
   color: #b42318;
 }
 
+.status-filter {
+  margin-top: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #475569;
+  font-size: 14px;
+}
+
+.status-filter select {
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #ffffff;
+}
+
 .moderation-grid {
   display: grid;
   gap: 20px;
@@ -106,6 +122,11 @@ textarea {
 .reject {
   background: #fee2e2;
   color: #991b1b;
+}
+
+.delete {
+  background: #111827;
+  color: #ffffff;
 }
 
 .empty {

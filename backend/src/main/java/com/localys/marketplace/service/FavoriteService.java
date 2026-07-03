@@ -57,9 +57,10 @@ public class FavoriteService {
         }
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Product product = productRepository.findByIdAndActiveTrueAndModerationStatus(
+        Product product = productRepository.findPublicById(
                         productId,
-                        ModerationStatus.APPROVED
+                        ModerationStatus.APPROVED,
+                        java.time.OffsetDateTime.now()
                 )
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
         if (product.getVendor() != null

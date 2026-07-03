@@ -260,7 +260,20 @@
     "ERROR_SKU_DUPLICATE": "Ce SKU est deja utilise. Modifiez-le ou laissez-le vide.",
     "ERROR_IMAGE_TYPE": "Formats autorises : JPG, PNG ou WEBP.",
     "ERROR_IMAGE_SIZE": "Chaque photo doit faire 10MB ou moins.",
-    "ERROR_IMAGE_LIMIT": "Vous pouvez televerser jusqu'a 6 photos."
+    "ERROR_IMAGE_LIMIT": "Vous pouvez televerser jusqu'a 6 photos.",
+    "REMOVED_REASON": "Motif de retrait",
+    "REMOVE_TITLE": "Retirer l annonce",
+    "REMOVE_SUBTITLE": "Choisissez pourquoi \"{{name}}\" est retiree. L annonce sera archivee et masquee aux acheteurs.",
+    "REMOVE_REASON_LABEL": "Motif",
+    "REMOVE_NOTE_LABEL": "Note optionnelle",
+    "CONFIRM_REMOVE": "Retirer l annonce",
+    "REMOVAL_SOLD_ON_LOCALYS": "Vendu via Localys",
+    "REMOVAL_SOLD_ELSEWHERE": "Vendu ailleurs",
+    "REMOVAL_NO_LONGER_AVAILABLE": "Plus disponible",
+    "REMOVAL_ADMIN_REMOVED": "Retire par un admin",
+    "REMOVAL_OTHER": "Autre motif",
+    "LABEL_EXPIRES_AT": "Expire le",
+    "REMOVAL_EXPIRED": "Expiree"
   },
   "ADMIN_LISTINGS": {
     "TITLE": "Moderation des annonces",
@@ -274,7 +287,17 @@
     "EMPTY": "Aucune annonce en attente.",
     "ERROR_LOAD": "Impossible de charger les annonces.",
     "ERROR_ACTION": "L'action de moderation a echoue.",
-    "REASON_REQUIRED": "Saisissez un motif de rejet."
+    "REASON_REQUIRED": "Saisissez un motif de rejet.",
+    "STATUS_FILTER": "Statut",
+    "STATUS": "Statut de moderation",
+    "STATUS_PENDING": "En attente",
+    "STATUS_APPROVED": "Approuvee",
+    "STATUS_REJECTED": "Rejetee",
+    "STATUS_ALL": "Toutes les annonces",
+    "REMOVED_REASON": "Motif de retrait",
+    "DELETE": "Retirer",
+    "ERROR_DELETE": "Impossible de retirer l annonce.",
+    "EXPIRES_AT": "Expire le"
   },
   "FAVORITES": {
     "TITLE": "Favoris",

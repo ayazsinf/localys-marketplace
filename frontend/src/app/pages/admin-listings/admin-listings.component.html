@@ -7,6 +7,15 @@
   <p class="status" *ngIf="isLoading">{{ 'ADMIN_LISTINGS.LOADING' | translate }}</p>
   <p class="status error" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
 
+  <label class="status-filter">
+    <span>{{ 'ADMIN_LISTINGS.STATUS_FILTER' | translate }}</span>
+    <select [ngModel]="selectedStatus" (ngModelChange)="onStatusChange($event)">
+      <option *ngFor="let status of statusOptions" [ngValue]="status">
+        {{ ('ADMIN_LISTINGS.STATUS_' + status) | translate }}
+      </option>
+    </select>
+  </label>
+
   <div class="moderation-grid" *ngIf="!isLoading">
     <article class="moderation-card" *ngFor="let listing of listings">
       <img
@@ -27,6 +36,12 @@
           <div><dt>{{ 'ADMIN_LISTINGS.CATEGORY' | translate }}</dt><dd>{{ listing.categoryName || '-' }}</dd></div>
           <div><dt>SKU</dt><dd>{{ listing.sku }}</dd></div>
           <div><dt>{{ 'ADMIN_LISTINGS.STOCK' | translate }}</dt><dd>{{ listing.stockQty }}</dd></div>
+          <div><dt>{{ 'ADMIN_LISTINGS.EXPIRES_AT' | translate }}</dt><dd>{{ listing.expiresAt | date:'mediumDate' }}</dd></div>
+          <div><dt>{{ 'ADMIN_LISTINGS.STATUS' | translate }}</dt><dd>{{ ('ADMIN_LISTINGS.STATUS_' + listing.moderationStatus) | translate }}</dd></div>
+          <div *ngIf="listing.removalReason">
+            <dt>{{ 'ADMIN_LISTINGS.REMOVED_REASON' | translate }}</dt>
+            <dd>{{ ('LISTINGS.REMOVAL_' + listing.removalReason) | translate }}</dd>
+          </div>
         </dl>
         <textarea
           rows="3"
@@ -47,6 +62,13 @@
             [disabled]="processingId === listing.id"
             (click)="reject(listing)">
             {{ 'ADMIN_LISTINGS.REJECT' | translate }}
+          </button>
+          <button
+            class="delete"
+            type="button"
+            [disabled]="processingId === listing.id || !listing.active"
+            (click)="deleteListing(listing)">
+            {{ 'ADMIN_LISTINGS.DELETE' | translate }}
           </button>
         </div>
       </div>

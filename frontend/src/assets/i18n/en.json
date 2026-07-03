@@ -260,7 +260,20 @@
     "FORM_STOCK": "Stock",
     "FORM_SKU": "SKU",
     "FORM_BRAND": "Brand",
-    "FORM_ACTIVE": "Listing is active"
+    "FORM_ACTIVE": "Listing is active",
+    "REMOVED_REASON": "Removal reason",
+    "REMOVE_TITLE": "Remove listing",
+    "REMOVE_SUBTITLE": "Choose why \"{{name}}\" is being removed. The listing will be archived and hidden from buyers.",
+    "REMOVE_REASON_LABEL": "Reason",
+    "REMOVE_NOTE_LABEL": "Optional note",
+    "CONFIRM_REMOVE": "Remove listing",
+    "REMOVAL_SOLD_ON_LOCALYS": "Sold through Localys",
+    "REMOVAL_SOLD_ELSEWHERE": "Sold elsewhere",
+    "REMOVAL_NO_LONGER_AVAILABLE": "No longer available",
+    "REMOVAL_ADMIN_REMOVED": "Removed by admin",
+    "REMOVAL_OTHER": "Other reason",
+    "LABEL_EXPIRES_AT": "Expires",
+    "REMOVAL_EXPIRED": "Expired"
   },
   "ADMIN_LISTINGS": {
     "TITLE": "Listing moderation",
@@ -274,7 +287,17 @@
     "EMPTY": "There are no listings waiting for review.",
     "ERROR_LOAD": "Could not load pending listings.",
     "ERROR_ACTION": "The moderation action failed.",
-    "REASON_REQUIRED": "Enter a rejection reason."
+    "REASON_REQUIRED": "Enter a rejection reason.",
+    "STATUS_FILTER": "Status",
+    "STATUS": "Moderation status",
+    "STATUS_PENDING": "Pending",
+    "STATUS_APPROVED": "Approved",
+    "STATUS_REJECTED": "Rejected",
+    "STATUS_ALL": "All listings",
+    "REMOVED_REASON": "Removal reason",
+    "DELETE": "Remove",
+    "ERROR_DELETE": "Could not remove the listing.",
+    "EXPIRES_AT": "Expires"
   },
   "FAVORITES": {
     "TITLE": "Favorites",

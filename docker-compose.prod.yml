@@ -42,10 +42,6 @@ services:
       OIDC_ISSUER_URI: https://keycloak.localys.shop/realms/localys-realm
       KEYCLOAK_ADMIN_CLIENT_ID: ${KEYCLOAK_ADMIN_CLIENT_ID}
       KEYCLOAK_ADMIN_CLIENT_SECRET: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
-      APP_MEDIA_UPLOAD_DIR: /app/uploads
-    volumes:
-      - media_uploads:/app/uploads
-      - /opt/localys/localys-marketplace/uploads:/app/uploads
     depends_on:
       - db
       - keycloak
@@ -66,7 +62,6 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./certbot/www:/var/www/certbot:ro
       - ./certbot/conf:/etc/letsencrypt:ro
-      - /opt/localys/localys-marketplace/uploads:/var/www/uploads:ro
     depends_on:
       - frontend
       - backend
@@ -80,4 +75,3 @@ services:
 
 volumes:
   dbdata:
-  media_uploads:

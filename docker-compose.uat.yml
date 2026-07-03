@@ -1,4 +1,15 @@
 services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    env_file: ${APP_ENV_FILE:-.env.uat}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - uat_dbdata:/var/lib/postgresql/data
+
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.5
     restart: unless-stopped
@@ -9,13 +20,15 @@ services:
       KC_DB: postgres
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KC_DB_URL: ${KC_DB_URL}
-      KC_DB_USERNAME: ${KC_DB_USERNAME}
-      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      KC_DB_URL: jdbc:postgresql://db:5432/${KEYCLOAK_DB}
+      KC_DB_USERNAME: ${KEYCLOAK_DB_USERNAME}
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
       KC_HOSTNAME: ${KC_HOSTNAME}
       KC_PROXY: edge
       KC_HTTP_ENABLED: true
       KC_PROXY_HEADERS: xforwarded
+    depends_on:
+      - db
 
   backend:
     build: ./backend
@@ -23,9 +36,11 @@ services:
     env_file: ${APP_ENV_FILE:-.env.uat}
     environment:
       SPRING_PROFILES_ACTIVE: uat
-    volumes:
-      - uat_media_uploads:/app/uploads
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
+      - db
       - keycloak
 
   frontend:
@@ -44,11 +59,10 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
       - ./certbot/www:/var/www/certbot:ro
       - ./certbot/conf:/etc/letsencrypt:ro
-      - uat_media_uploads:/var/www/uploads:ro
     depends_on:
       - frontend
       - backend
       - keycloak
 
 volumes:
-  uat_media_uploads:
+  uat_dbdata:

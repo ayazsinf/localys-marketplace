@@ -12,6 +12,10 @@ export interface AdminListing {
   currency: string;
   stockQty: number;
   active: boolean;
+  removalReason: string | null;
+  removalNote: string | null;
+  removedAt: string | null;
+  expiresAt: string;
   moderationStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
   moderationReason: string | null;
   sku: string;
@@ -43,5 +47,11 @@ export class AdminListingService {
 
   reject(id: number, reason: string): Observable<AdminListing> {
     return this.http.post<AdminListing>(`${environment.apiUrl}/admin/listings/${id}/reject`, { reason });
+  }
+
+  delete(id: number, note?: string | null): Observable<AdminListing> {
+    return this.http.delete<AdminListing>(`${environment.apiUrl}/admin/listings/${id}`, {
+      body: { note: note ?? null }
+    });
   }
 }

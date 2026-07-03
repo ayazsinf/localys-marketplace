@@ -260,7 +260,20 @@
     "FORM_STOCK": "Stok",
     "FORM_SKU": "SKU",
     "FORM_BRAND": "Marka",
-    "FORM_ACTIVE": "Ilan aktif"
+    "FORM_ACTIVE": "Ilan aktif",
+    "REMOVED_REASON": "Kaldirma nedeni",
+    "REMOVE_TITLE": "Ilani kaldir",
+    "REMOVE_SUBTITLE": "\"{{name}}\" ilaninin neden kaldirildigini secin. Ilan arsivlenir ve alicilardan gizlenir.",
+    "REMOVE_REASON_LABEL": "Neden",
+    "REMOVE_NOTE_LABEL": "Opsiyonel not",
+    "CONFIRM_REMOVE": "Ilani kaldir",
+    "REMOVAL_SOLD_ON_LOCALYS": "Localys uzerinden satildi",
+    "REMOVAL_SOLD_ELSEWHERE": "Baska yerde satildi",
+    "REMOVAL_NO_LONGER_AVAILABLE": "Artik uygun degil",
+    "REMOVAL_ADMIN_REMOVED": "Admin tarafindan kaldirildi",
+    "REMOVAL_OTHER": "Diger neden",
+    "LABEL_EXPIRES_AT": "Yayin bitisi",
+    "REMOVAL_EXPIRED": "Suresi doldu"
   },
   "ADMIN_LISTINGS": {
     "TITLE": "Ilan onaylama",
@@ -274,7 +287,17 @@
     "EMPTY": "Onay bekleyen ilan yok.",
     "ERROR_LOAD": "Bekleyen ilanlar yuklenemedi.",
     "ERROR_ACTION": "Onaylama islemi basarisiz oldu.",
-    "REASON_REQUIRED": "Red nedeni yazin."
+    "REASON_REQUIRED": "Red nedeni yazin.",
+    "STATUS_FILTER": "Durum",
+    "STATUS": "Onay durumu",
+    "STATUS_PENDING": "Bekliyor",
+    "STATUS_APPROVED": "Onaylandi",
+    "STATUS_REJECTED": "Reddedildi",
+    "STATUS_ALL": "Tum ilanlar",
+    "REMOVED_REASON": "Kaldirma nedeni",
+    "DELETE": "Kaldir",
+    "ERROR_DELETE": "Ilan kaldirilamadi.",
+    "EXPIRES_AT": "Yayin bitisi"
   },
   "FAVORITES": {
     "TITLE": "Favoriler",
@@ -424,4 +447,3 @@
     }
   }
 }
-

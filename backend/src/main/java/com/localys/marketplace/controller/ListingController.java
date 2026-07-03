@@ -1,6 +1,7 @@
 package com.localys.marketplace.controller;
 
 import com.localys.marketplace.dto.ListingDto;
+import com.localys.marketplace.dto.RemoveListingRequest;
 import com.localys.marketplace.model.Category;
 import com.localys.marketplace.model.CustomUserDetails;
 import com.localys.marketplace.model.Product;
@@ -8,6 +9,7 @@ import com.localys.marketplace.model.ProductImage;
 import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.model.Vendor;
 import com.localys.marketplace.model.enums.VendorStatus;
+import com.localys.marketplace.model.enums.ListingRemovalReason;
 import com.localys.marketplace.repository.CategoryRepository;
 import com.localys.marketplace.repository.UserRepository;
 import com.localys.marketplace.repository.VendorRepository;
@@ -51,7 +53,7 @@ public class ListingController {
         if (vendor == null) {
             return List.of();
         }
-        return productService.getProductsByVendor(vendor.getId()).stream()
+        return productService.getVisibleProductsByVendor(vendor.getId()).stream()
                 .map(this::toDto)
                 .toList();
     }
@@ -89,13 +91,15 @@ public class ListingController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteListing(
+    public ResponseEntity<ListingDto> deleteListing(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable("id") Long id
+            @PathVariable("id") Long id,
+            @RequestBody(required = false) RemoveListingRequest request
     ) {
         Vendor vendor = getOrCreateVendor(userDetails);
-        productService.deleteProductForVendor(id, vendor);
-        return ResponseEntity.noContent().build();
+        ListingRemovalReason reason = parseRemovalReason(request != null ? request.reason() : null);
+        Product removed = productService.removeProductForVendor(id, vendor, reason, request != null ? request.note() : null);
+        return ResponseEntity.ok(toDto(removed));
     }
 
     private Vendor getOrCreateVendor(CustomUserDetails userDetails) {
@@ -165,6 +169,10 @@ public class ListingController {
                 product.getCurrency(),
                 product.getStockQty(),
                 product.isActive(),
+                product.getRemovalReason() != null ? product.getRemovalReason().name() : null,
+                product.getRemovalNote(),
+                product.getRemovedAt(),
+                product.getExpiresAt(),
                 product.getModerationStatus().name(),
                 product.getModerationReason(),
                 product.getSku(),
@@ -203,5 +211,16 @@ public class ListingController {
             current = current.getParent();
         }
         return names;
+    }
+
+    private ListingRemovalReason parseRemovalReason(String reason) {
+        if (reason == null || reason.isBlank()) {
+            throw new IllegalArgumentException("Removal reason is required");
+        }
+        try {
+            return ListingRemovalReason.valueOf(reason.trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Invalid removal reason");
+        }
     }
 }

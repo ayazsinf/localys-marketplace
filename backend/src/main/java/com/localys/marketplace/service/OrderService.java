@@ -8,8 +8,10 @@ import com.localys.marketplace.model.CartItem;
 import com.localys.marketplace.model.Order;
 import com.localys.marketplace.model.OrderItem;
 import com.localys.marketplace.model.Product;
+import com.localys.marketplace.model.ProductRemovalEvent;
 import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.model.enums.CartStatus;
+import com.localys.marketplace.model.enums.ListingRemovalReason;
 import com.localys.marketplace.model.enums.OrderStatus;
 import com.localys.marketplace.model.enums.ModerationStatus;
 import com.localys.marketplace.repository.AddressRepository;
@@ -17,11 +19,13 @@ import com.localys.marketplace.repository.CartItemRepository;
 import com.localys.marketplace.repository.CartRepository;
 import com.localys.marketplace.repository.OrderItemRepository;
 import com.localys.marketplace.repository.OrderRepository;
+import com.localys.marketplace.repository.ProductRemovalEventRepository;
 import com.localys.marketplace.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -33,6 +37,7 @@ public class OrderService {
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
+    private final ProductRemovalEventRepository productRemovalEventRepository;
 
     public OrderService(
             OrderRepository orderRepository,
@@ -40,7 +45,8 @@ public class OrderService {
             CartRepository cartRepository,
             CartItemRepository cartItemRepository,
             UserRepository userRepository,
-            AddressRepository addressRepository
+            AddressRepository addressRepository,
+            ProductRemovalEventRepository productRemovalEventRepository
     ) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
@@ -48,6 +54,7 @@ public class OrderService {
         this.cartItemRepository = cartItemRepository;
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
+        this.productRemovalEventRepository = productRemovalEventRepository;
     }
 
     @Transactional
@@ -105,6 +112,20 @@ public class OrderService {
             item.setCurrency(cartItem.getCurrency());
             order.getItems().add(item);
             subtotal = subtotal.add(lineTotal);
+            int remainingStock = product.getStockQty() - cartItem.getQuantity();
+            product.setStockQty(Math.max(remainingStock, 0));
+            if (remainingStock <= 0) {
+                product.setActive(false);
+                product.setRemovalReason(ListingRemovalReason.SOLD_ON_LOCALYS);
+                product.setRemovalNote(null);
+                product.setRemovedAt(OffsetDateTime.now());
+                ProductRemovalEvent event = new ProductRemovalEvent();
+                event.setProduct(product);
+                event.setReason(ListingRemovalReason.SOLD_ON_LOCALYS);
+                event.setActorUser(user);
+                event.setOccurredAt(product.getRemovedAt());
+                productRemovalEventRepository.save(event);
+            }
         }
 
         order.setTotalAmount(subtotal.add(shippingPrice));

@@ -12,6 +12,10 @@ export interface Listing {
   currency: string;
   stockQty: number;
   active: boolean;
+  removalReason?: ListingRemovalReason | null;
+  removalNote?: string | null;
+  removedAt?: string | null;
+  expiresAt: string;
   moderationStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
   moderationReason?: string | null;
   sku: string;
@@ -25,6 +29,13 @@ export interface Listing {
   locationText?: string | null;
   latitude?: number | null;
   longitude?: number | null;
+}
+
+export type ListingRemovalReason = 'SOLD_ON_LOCALYS' | 'SOLD_ELSEWHERE' | 'NO_LONGER_AVAILABLE' | 'ADMIN_REMOVED' | 'OTHER';
+
+export interface RemoveListingRequest {
+  reason: ListingRemovalReason;
+  note?: string | null;
 }
 
 export interface ListingRequest {
@@ -61,8 +72,8 @@ export class ListingService {
     return this.http.put<Listing>(`${environment.apiUrl}/listings/${id}`, payload);
   }
 
-  deleteListing(id: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiUrl}/listings/${id}`);
+  deleteListing(id: number, payload: RemoveListingRequest): Observable<Listing> {
+    return this.http.delete<Listing>(`${environment.apiUrl}/listings/${id}`, { body: payload });
   }
 
   uploadListingImages(id: number, files: File[]): Observable<string[]> {
