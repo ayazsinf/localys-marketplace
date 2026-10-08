@@ -30,9 +30,24 @@ public class ConversationController {
     @PostMapping("/with/{userId}")
     public ConversationDto getOrCreateConversation(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable("userId") Long userId
+            @PathVariable("userId") Long userId,
+            @RequestParam(value = "productId", required = false) Long productId
     ) {
-        return messageService.getOrCreateConversation(userDetails.getUserId(), userId);
+        return messageService.getOrCreateConversation(userDetails.getUserId(), userId, productId);
+    }
+
+    @GetMapping("/unread-count")
+    public long unreadCount(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return messageService.countUnread(userDetails.getUserId());
+    }
+
+    @PostMapping("/{conversationId}/read")
+    public ResponseEntity<Void> markRead(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("conversationId") Long conversationId
+    ) {
+        messageService.markRead(userDetails.getUserId(), conversationId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{conversationId}/messages")

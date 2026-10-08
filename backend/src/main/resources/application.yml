@@ -18,6 +18,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        # Loads lazy collections (images, categories, sellers) in batches instead of one query per row.
+        default_batch_fetch_size: 50
 
 logging:
   level:

@@ -21,6 +21,9 @@ type Conversation = {
   lastMessage: string;
   lastTime: string;
   unreadCount: number;
+  productId: number | null;
+  productName: string | null;
+  productImageUrl: string | null;
   messages: MessageItem[];
 };
 
@@ -70,6 +73,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
     }
     return this.conversations.filter(conversation =>
       conversation.name.toLowerCase().includes(query) ||
+      (conversation.productName ?? '').toLowerCase().includes(query) ||
       conversation.lastMessage.toLowerCase().includes(query)
     );
   }
@@ -126,6 +130,8 @@ export class MessagesComponent implements OnInit, OnDestroy {
   private loadMessages(conversation: Conversation): void {
     this.messagingService.getMessages(conversation.id).subscribe(messages => {
       conversation.messages = messages.map(message => this.toMessage(message));
+      conversation.unreadCount = 0;
+      this.refreshGlobalUnreadCount();
       this.bindConversationChannel(conversation.id);
     });
   }
@@ -159,7 +165,20 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
     if (this.selectedConversationId !== conversation.id) {
       conversation.unreadCount += 1;
+    } else if (!mapped.fromMe) {
+      // The conversation is open, so the message has been seen.
+      this.messagingService.markRead(conversation.id).subscribe({
+        next: () => this.refreshGlobalUnreadCount(),
+        error: () => {}
+      });
     }
+  }
+
+  private refreshGlobalUnreadCount(): void {
+    this.messagingService.unreadCount().subscribe({
+      next: count => this.messagingService.setUnreadCount(count),
+      error: () => {}
+    });
   }
 
   private toConversation(dto: ConversationDto): Conversation {
@@ -170,7 +189,10 @@ export class MessagesComponent implements OnInit, OnDestroy {
       name: displayName,
       lastMessage: dto.lastMessage || '',
       lastTime: dto.lastMessageAt ? this.formatTime(dto.lastMessageAt) : '',
-      unreadCount: 0,
+      unreadCount: dto.unreadCount ?? 0,
+      productId: dto.productId,
+      productName: dto.productName,
+      productImageUrl: dto.productImageUrl,
       messages: []
     };
   }

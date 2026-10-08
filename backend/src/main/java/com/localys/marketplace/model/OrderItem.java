@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -42,4 +43,13 @@ public class OrderItem {
 
     @Column(nullable = false, length = 3)
     private String currency = "EUR";
+
+    @Column(name = "tracking_number", length = 100)
+    private String trackingNumber;
+
+    @Column(name = "shipped_at")
+    private OffsetDateTime shippedAt;
+
+    @Column(name = "delivered_at")
+    private OffsetDateTime deliveredAt;
 }

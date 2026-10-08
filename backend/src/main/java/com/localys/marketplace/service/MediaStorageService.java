@@ -26,6 +26,7 @@ import java.util.UUID;
 public class MediaStorageService {
 
     private static final String STORAGE_R2 = "r2";
+    private static final long MAX_IMAGE_BYTES = 10L * 1024 * 1024;
 
     private final String storage;
     private final Path uploadRoot;
@@ -55,6 +56,10 @@ public class MediaStorageService {
         if (files == null || files.isEmpty()) {
             return List.of();
         }
+        // Reject the whole batch up front so a bad file does not leave earlier ones orphaned.
+        files.stream()
+                .filter(file -> file != null && !file.isEmpty())
+                .forEach(this::validateImage);
         if (STORAGE_R2.equals(storage)) {
             return storeListingImagesInR2(listingId, files);
         }
@@ -75,13 +80,8 @@ public class MediaStorageService {
             if (file == null || file.isEmpty()) {
                 continue;
             }
-            String contentType = file.getContentType();
-            if (contentType == null || !contentType.toLowerCase(Locale.ROOT).startsWith("image/")) {
-                throw new IllegalArgumentException("Only image uploads are allowed");
-            }
-
-            String extension = resolveExtension(file.getOriginalFilename());
-            String filename = UUID.randomUUID().toString().replace("-", "") + extension;
+            ImageType imageType = validateImage(file);
+            String filename = UUID.randomUUID().toString().replace("-", "") + imageType.extension();
             Path target = listingDir.resolve(filename);
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, target, StandardCopyOption.REPLACE_EXISTING);
@@ -99,15 +99,13 @@ public class MediaStorageService {
             if (file == null || file.isEmpty()) {
                 continue;
             }
-            validateImage(file);
-
-            String extension = resolveExtension(file.getOriginalFilename());
-            String filename = UUID.randomUUID().toString().replace("-", "") + extension;
+            ImageType imageType = validateImage(file);
+            String filename = UUID.randomUUID().toString().replace("-", "") + imageType.extension();
             String key = "listings/" + listingId + "/" + filename;
             PutObjectRequest request = PutObjectRequest.builder()
                     .bucket(r2Bucket)
                     .key(key)
-                    .contentType(file.getContentType())
+                    .contentType(imageType.contentType())
                     .cacheControl("public, max-age=31536000, immutable")
                     .build();
 
@@ -123,22 +121,48 @@ public class MediaStorageService {
         return urls;
     }
 
-    private void validateImage(MultipartFile file) {
-        String contentType = file.getContentType();
-        if (contentType == null || !contentType.toLowerCase(Locale.ROOT).startsWith("image/")) {
-            throw new IllegalArgumentException("Only image uploads are allowed");
+    /**
+     * Identifies the image from its leading bytes. The client-supplied content type and file
+     * name are ignored: trusting them would let e.g. an HTML file be stored and later served
+     * as a page (stored XSS).
+     */
+    private ImageType validateImage(MultipartFile file) {
+        if (file.getSize() > MAX_IMAGE_BYTES) {
+            throw new IllegalArgumentException("Image is too large");
         }
+        byte[] header = new byte[12];
+        int read;
+        try (InputStream inputStream = file.getInputStream()) {
+            read = inputStream.readNBytes(header, 0, header.length);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read uploaded file", e);
+        }
+        if (read >= 3 && (header[0] & 0xFF) == 0xFF && (header[1] & 0xFF) == 0xD8 && (header[2] & 0xFF) == 0xFF) {
+            return new ImageType("image/jpeg", ".jpg");
+        }
+        if (read >= 8 && startsWith(header, new int[]{0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A})) {
+            return new ImageType("image/png", ".png");
+        }
+        if (read >= 6 && startsWith(header, new int[]{'G', 'I', 'F', '8'})) {
+            return new ImageType("image/gif", ".gif");
+        }
+        if (read >= 12 && startsWith(header, new int[]{'R', 'I', 'F', 'F'})
+                && header[8] == 'W' && header[9] == 'E' && header[10] == 'B' && header[11] == 'P') {
+            return new ImageType("image/webp", ".webp");
+        }
+        throw new IllegalArgumentException("Only image uploads are allowed");
     }
 
-    private String resolveExtension(String filename) {
-        if (filename == null) {
-            return "";
+    private boolean startsWith(byte[] data, int[] prefix) {
+        for (int i = 0; i < prefix.length; i++) {
+            if ((data[i] & 0xFF) != prefix[i]) {
+                return false;
+            }
         }
-        int lastDot = filename.lastIndexOf('.');
-        if (lastDot < 0 || lastDot == filename.length() - 1) {
-            return "";
-        }
-        return filename.substring(lastDot).toLowerCase(Locale.ROOT);
+        return true;
+    }
+
+    private record ImageType(String contentType, String extension) {
     }
 
     private S3Client buildR2Client(String endpoint, String accessKeyId, String secretAccessKey) {

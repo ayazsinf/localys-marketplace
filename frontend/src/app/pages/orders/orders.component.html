@@ -1,0 +1,97 @@
+<section class="account-page">
+  <div class="account-header">
+    <h1>{{ 'ORDERS.TITLE' | translate }}</h1>
+    <p>{{ 'ORDERS.SUBTITLE' | translate }}</p>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button
+      type="button"
+      role="tab"
+      [class.active]="activeTab === 'purchases'"
+      [attr.aria-selected]="activeTab === 'purchases'"
+      (click)="selectTab('purchases')">
+      {{ 'ORDERS.TAB_PURCHASES' | translate }}
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [class.active]="activeTab === 'sales'"
+      [attr.aria-selected]="activeTab === 'sales'"
+      (click)="selectTab('sales')">
+      {{ 'ORDERS.TAB_SALES' | translate }}
+    </button>
+  </div>
+
+  <div class="status" *ngIf="isLoading">{{ 'ORDERS.LOADING' | translate }}</div>
+  <div class="status error" *ngIf="!isLoading && errorMessage">{{ errorMessage | translate }}</div>
+
+  <div class="account-card" *ngIf="!isLoading && !errorMessage && orders.length === 0">
+    <div class="placeholder">
+      {{ (activeTab === 'sales' ? 'ORDERS.EMPTY_SALES' : 'ORDERS.EMPTY_PURCHASES') | translate }}
+    </div>
+  </div>
+
+  <div class="order-list" *ngIf="!isLoading && orders.length > 0">
+    <article
+      class="order-card"
+      *ngFor="let order of orders; trackBy: trackByOrder"
+      [class.clickable]="activeTab === 'purchases'"
+      (click)="openOrder(order)">
+      <header class="order-head">
+        <div>
+          <div class="order-number">{{ 'ORDERS.ORDER_NUMBER' | translate: { id: order.id } }}</div>
+          <div class="order-date">{{ formatDate(order.createdAt) }}</div>
+        </div>
+        <span class="status-badge" [attr.data-status]="order.status">
+          {{ ('ORDERS.STATUS.' + order.status) | translate }}
+        </span>
+      </header>
+
+      <ul class="order-items">
+        <li *ngFor="let item of order.items">
+          <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.productName" />
+          <div class="item-placeholder" *ngIf="!item.imageUrl"></div>
+          <span class="item-name">{{ item.productName }}</span>
+          <span class="item-qty">× {{ item.quantity }}</span>
+          <span class="item-total">{{ item.lineTotal | currencyDisplay: order.currency }}</span>
+          <span class="item-shipping" *ngIf="item.shippedAt">
+            {{ (item.deliveredAt ? 'ORDERS.ITEM_DELIVERED' : 'ORDERS.ITEM_SHIPPED') | translate }}
+            · {{ 'ORDERS.TRACKING' | translate }}: {{ item.trackingNumber }}
+          </span>
+        </li>
+      </ul>
+
+      <form class="ship-form" *ngIf="canShip(order)" (submit)="$event.preventDefault(); ship(order)">
+        <label [for]="'tracking-' + order.id">{{ 'ORDERS.TRACKING' | translate }}</label>
+        <div class="ship-row">
+          <input
+            [id]="'tracking-' + order.id"
+            type="text"
+            maxlength="100"
+            [name]="'tracking-' + order.id"
+            [(ngModel)]="trackingInputs[order.id]"
+            [placeholder]="'ORDERS.TRACKING_PLACEHOLDER' | translate" />
+          <button type="submit" class="primary" [disabled]="shippingOrderId === order.id">
+            {{ 'ORDERS.MARK_SHIPPED' | translate }}
+          </button>
+        </div>
+        <div class="status error" *ngIf="shipErrors[order.id]">{{ shipErrors[order.id] | translate }}</div>
+      </form>
+
+      <div class="ship-to" *ngIf="activeTab === 'sales' && order.shippingAddress as address">
+        <div class="ship-to-title">{{ 'ORDERS.SHIP_TO' | translate }}</div>
+        <div>{{ address.fullName || order.buyerDisplayName }}</div>
+        <div>{{ address.line1 }}</div>
+        <div *ngIf="address.line2">{{ address.line2 }}</div>
+        <div>{{ address.postalCode }} {{ address.city }}, {{ address.country }}</div>
+        <div *ngIf="address.phone">{{ address.phone }}</div>
+      </div>
+
+      <footer class="order-foot">
+        <span>{{ 'ORDERS.TOTAL' | translate }}</span>
+        <strong>{{ order.total | currencyDisplay: order.currency }}</strong>
+      </footer>
+    </article>
+  </div>
+</section>

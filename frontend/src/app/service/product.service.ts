@@ -1,7 +1,7 @@
 import {Product} from '../modules/product.model';
-import {computed, Injectable, signal} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {tap} from "rxjs";
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpParams} from "@angular/common/http";
+import {Observable} from "rxjs";
 
 export interface ProductDetail {
   id: number;
@@ -28,40 +28,46 @@ export interface ProductDetail {
 }
 
 
+export type ProductSort = 'NEWEST' | 'PRICE_ASC' | 'PRICE_DESC' | 'NAME_ASC';
+
+export interface ProductSearchParams {
+  q?: string;
+  categoryId?: number | null;
+  minPrice?: number | null;
+  maxPrice?: number | null;
+  sort?: ProductSort;
+  page?: number;
+  size?: number;
+}
+
+export interface PageResponse<T> {
+  items: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
 
-  private readonly _products = signal<Product[]>([]);
-  readonly products = this._products.asReadonly();
-  readonly inStokProducts = computed(() => this._products().filter(p => p.inStock))
-
   constructor(private http: HttpClient) {
   }
 
-  loadProducts() {
-    return this.http.get<Product[]>('/api/products').pipe(
-        tap(list => this._products.set(list))
-    );
-  }
-
-
-
-  setProducts(list: Product[]) {
-    this._products.set(list);
-  }
-
-
-  addProduct(p: Product) {
-    this._products.update(arr => [...arr, p]);
+  /** Filtering, sorting and paging are done by the backend. */
+  search(params: ProductSearchParams): Observable<PageResponse<Product>> {
+    let httpParams = new HttpParams();
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== null && value !== undefined && value !== '') {
+        httpParams = httpParams.set(key, String(value));
+      }
+    }
+    return this.http.get<PageResponse<Product>>('/api/products', { params: httpParams });
   }
 
   getProductDetail(id: number) {
     return this.http.get<ProductDetail>(`/api/products/${id}`);
-  }
-
-  getProducts(): Product[] {
-    return this._products();
   }
 }

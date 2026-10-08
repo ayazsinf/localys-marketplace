@@ -92,6 +92,19 @@ export class ListingsComponent implements OnInit {
     this.loadCategories();
   }
 
+  private resolveUploadError(code: string | undefined): string {
+    switch (code) {
+      case 'TOO_MANY_IMAGES':
+        return 'LISTINGS.ERROR_UPLOAD_TOO_MANY';
+      case 'INVALID_IMAGE':
+        return 'LISTINGS.ERROR_IMAGE_TYPE';
+      case 'IMAGE_TOO_LARGE':
+        return 'LISTINGS.ERROR_IMAGE_SIZE';
+      default:
+        return 'LISTINGS.ERROR_UPLOAD';
+    }
+  }
+
   loadListings(): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -298,8 +311,8 @@ export class ListingsComponent implements OnInit {
             next: () => {
               this.finishSave();
             },
-            error: () => {
-              this.errorMessage = 'LISTINGS.ERROR_UPLOAD';
+            error: uploadErr => {
+              this.errorMessage = this.resolveUploadError(uploadErr?.error?.code);
               this.isSaving = false;
             }
           });
@@ -310,6 +323,8 @@ export class ListingsComponent implements OnInit {
       error: err => {
         if (err?.status === 409 && err?.error?.code === 'SKU_ALREADY_EXISTS') {
           this.errorMessage = 'LISTINGS.ERROR_SKU_DUPLICATE';
+        } else if (err?.error?.code === 'LISTING_NOT_REACTIVATABLE') {
+          this.errorMessage = 'LISTINGS.ERROR_NOT_REACTIVATABLE';
         } else {
           this.errorMessage = 'LISTINGS.ERROR_SAVE';
         }

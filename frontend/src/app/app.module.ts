@@ -20,6 +20,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CartComponent } from './pages/cart/cart.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { OrdersComponent } from './pages/orders/orders.component';
+import { OrderDetailComponent } from './pages/order-detail/order-detail.component';
 import { CurrencyDisplayPipe } from './pipes/currency-display.pipe';
 import { CategoryDisplayPipe } from './pipes/category-display.pipe';
 import { AdminListingsComponent } from './pages/admin-listings/admin-listings.component';
@@ -43,6 +45,8 @@ import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.compon
     CartComponent,
     CheckoutComponent,
     NotificationsComponent,
+    OrdersComponent,
+    OrderDetailComponent,
     AdminListingsComponent,
     AuthDialogComponent,
     CurrencyDisplayPipe,
@@ -74,6 +78,8 @@ import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.compon
     CartComponent,
     CheckoutComponent,
     NotificationsComponent,
+    OrdersComponent,
+    OrderDetailComponent,
     AdminListingsComponent,
     CurrencyDisplayPipe,
     CategoryDisplayPipe,

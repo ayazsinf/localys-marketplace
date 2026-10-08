@@ -7,7 +7,9 @@ import com.localys.marketplace.model.CartItem;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
 import com.localys.marketplace.model.UserEntity;
+import com.localys.marketplace.model.enums.CartItemAvailability;
 import com.localys.marketplace.model.enums.CartStatus;
+import com.localys.marketplace.model.enums.ListingRemovalReason;
 import com.localys.marketplace.model.enums.ModerationStatus;
 import com.localys.marketplace.repository.CartItemRepository;
 import com.localys.marketplace.repository.CartRepository;
@@ -17,6 +19,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -43,7 +46,7 @@ public class CartService {
     @Transactional
     public CartDto getActiveCart(Long userId) {
         Cart cart = getOrCreateActiveCart(userId);
-        removeUnavailableItems(cart);
+        clampQuantitiesToStock(cart);
         return toDto(cart);
     }
 
@@ -103,10 +106,12 @@ public class CartService {
 
         CartItem item = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart item not found"));
-        if (!item.getProduct().isActive()
-                || item.getProduct().getModerationStatus() != ModerationStatus.APPROVED) {
-            cartItemRepository.delete(item);
-            cart.getItems().remove(item);
+        // Unavailable lines stay in the cart (flagged in the DTO) until the buyer removes them.
+        CartItemAvailability availability = availabilityOf(item.getProduct(), OffsetDateTime.now());
+        if (availability == CartItemAvailability.SOLD_OUT) {
+            throw new IllegalArgumentException("Product out of stock");
+        }
+        if (availability != CartItemAvailability.AVAILABLE) {
             throw new IllegalArgumentException("Product not found");
         }
         if (item.getProduct().getVendor() != null
@@ -115,11 +120,6 @@ public class CartService {
             throw new IllegalArgumentException("Cannot add own product");
         }
         int stockQty = item.getProduct().getStockQty();
-        if (stockQty <= 0) {
-            cartItemRepository.delete(item);
-            cart.getItems().remove(item);
-            return toDto(reloadCart(userId, cart));
-        }
         int desiredQty = quantity > stockQty ? stockQty : quantity;
         item.setQuantity(desiredQty);
         cartItemRepository.save(item);
@@ -150,16 +150,18 @@ public class CartService {
     }
 
     private CartDto toDto(Cart cart) {
+        OffsetDateTime now = OffsetDateTime.now();
         List<CartItemDto> items = cart.getItems().stream()
-                .map(this::toItemDto)
+                .map(item -> toItemDto(item, availabilityOf(item.getProduct(), now)))
                 .toList();
         BigDecimal total = items.stream()
+                .filter(item -> CartItemAvailability.AVAILABLE.name().equals(item.availability()))
                 .map(CartItemDto::lineTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return new CartDto(cart.getId(), cart.getStatus().name(), items, total);
     }
 
-    private CartItemDto toItemDto(CartItem item) {
+    private CartItemDto toItemDto(CartItem item, CartItemAvailability availability) {
         Product product = item.getProduct();
         String imageUrl = product.getImages().stream()
                 .sorted(Comparator.comparingInt(ProductImage::getSortOrder))
@@ -177,7 +179,8 @@ public class CartService {
                 item.getCurrency(),
                 product.getStockQty(),
                 item.getQuantity(),
-                lineTotal
+                lineTotal,
+                availability.name()
         );
     }
 
@@ -186,15 +189,36 @@ public class CartService {
                 .orElse(fallback);
     }
 
-    private void removeUnavailableItems(Cart cart) {
-        List<CartItem> unavailable = cart.getItems().stream()
-                .filter(item -> !item.getProduct().isActive()
-                        || item.getProduct().getModerationStatus() != ModerationStatus.APPROVED)
-                .toList();
-        if (unavailable.isEmpty()) {
-            return;
+    /** Mirrors the public listing rules used by search and checkout. */
+    private CartItemAvailability availabilityOf(Product product, OffsetDateTime now) {
+        ListingRemovalReason reason = product.getRemovalReason();
+        if (product.getRemovedAt() != null) {
+            if (reason == ListingRemovalReason.EXPIRED) {
+                return CartItemAvailability.EXPIRED;
+            }
+            if (reason == ListingRemovalReason.SOLD_ON_LOCALYS || reason == ListingRemovalReason.SOLD_ELSEWHERE) {
+                return CartItemAvailability.SOLD_OUT;
+            }
+            return CartItemAvailability.UNAVAILABLE;
         }
-        cartItemRepository.deleteAll(unavailable);
-        cart.getItems().removeAll(unavailable);
+        if (!product.isActive() || product.getModerationStatus() != ModerationStatus.APPROVED) {
+            return CartItemAvailability.UNAVAILABLE;
+        }
+        if (product.getExpiresAt() == null || !product.getExpiresAt().isAfter(now)) {
+            return CartItemAvailability.EXPIRED;
+        }
+        if (product.getStockQty() <= 0) {
+            return CartItemAvailability.SOLD_OUT;
+        }
+        return CartItemAvailability.AVAILABLE;
+    }
+
+    /** Stock can drop after an item was added (other buyers, seller edits); never offer more than exists. */
+    private void clampQuantitiesToStock(Cart cart) {
+        OffsetDateTime now = OffsetDateTime.now();
+        cart.getItems().stream()
+                .filter(item -> availabilityOf(item.getProduct(), now) == CartItemAvailability.AVAILABLE)
+                .filter(item -> item.getQuantity() > item.getProduct().getStockQty())
+                .forEach(item -> item.setQuantity(item.getProduct().getStockQty()));
     }
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, EMPTY, map, Observable, tap, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, from, map, Observable, tap, throwError } from 'rxjs';
+import { catchError, concatMap, last } from 'rxjs/operators';
 import { Product } from '../modules/product.model';
 import { AuthService } from './auth.service';
 import { AuthDialogService } from './auth-dialog.service';
@@ -17,6 +17,7 @@ interface CartItemResponse {
   stockQty: number | null;
   quantity: number;
   lineTotal: number;
+  availability: CartItemAvailability;
 }
 
 interface CartResponse {
@@ -26,9 +27,13 @@ interface CartResponse {
   total: number;
 }
 
+export type CartItemAvailability = 'AVAILABLE' | 'EXPIRED' | 'SOLD_OUT' | 'UNAVAILABLE';
+
 export interface CartItem {
   product: Product;
   quantity: number;
+  /** Expired, sold or removed listings stay in the cart but cannot be checked out. */
+  availability: CartItemAvailability;
 }
 
 export interface CartNotice {
@@ -132,6 +137,26 @@ export class CartService {
     });
   }
 
+  /** Removes lines one after another so the last response is the final cart state. */
+  removeMany(productIds: number[]): void {
+    if (!this.authService.isAuthenticated || productIds.length === 0) {
+      return;
+    }
+    from(productIds).pipe(
+      concatMap(id => this.http.delete<CartResponse>(`/api/cart/items/${id}`)),
+      last()
+    ).subscribe({
+      next: cart => this.applyCart(cart),
+      error: err => {
+        this.noticeSubject.next({
+          type: 'error',
+          message: this.readCartError(err, 'CART.ERROR_REMOVE')
+        });
+        this.refresh().subscribe();
+      }
+    });
+  }
+
   clear(): void {
     this.itemsSubject.next([]);
   }
@@ -147,7 +172,8 @@ export class CartService {
   private applyCart(cart: CartResponse): void {
     const items = cart.items.map(item => ({
       product: this.toProduct(item),
-      quantity: item.quantity
+      quantity: item.quantity,
+      availability: item.availability ?? 'AVAILABLE'
     }));
     this.itemsSubject.next(items);
   }
@@ -161,7 +187,7 @@ export class CartService {
       currency: item.currency,
       imageUrls: item.imageUrl ? [item.imageUrl] : [],
       categoryName: '',
-      inStock: true,
+      inStock: item.availability !== 'SOLD_OUT',
       stockQty: item.stockQty ?? undefined
     };
   }

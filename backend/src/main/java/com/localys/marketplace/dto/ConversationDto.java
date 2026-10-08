@@ -8,6 +8,10 @@ public record ConversationDto(
         String otherUsername,
         String otherDisplayName,
         String lastMessage,
-        OffsetDateTime lastMessageAt
+        OffsetDateTime lastMessageAt,
+        Long productId,
+        String productName,
+        String productImageUrl,
+        long unreadCount
 ) {
 }

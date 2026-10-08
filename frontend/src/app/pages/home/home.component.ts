@@ -2,16 +2,29 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  OnInit,
   computed,
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { catchError, debounceTime, of, switchMap, tap } from 'rxjs';
 import { Product } from '../../modules/product.model';
-import { ProductService } from '../../service/product.service';
+import { PageResponse, ProductSearchParams, ProductService, ProductSort } from '../../service/product.service';
 import { SearchService } from '../../service/search.service';
 
-type SortOption = 'priceLowHigh' | 'priceHighLow' | 'nameAZ';
+type SortOption = 'newest' | 'priceLowHigh' | 'priceHighLow' | 'nameAZ';
+
+const SORT_PARAM: Record<SortOption, ProductSort> = {
+  newest: 'NEWEST',
+  priceLowHigh: 'PRICE_ASC',
+  priceHighLow: 'PRICE_DESC',
+  nameAZ: 'NAME_ASC',
+};
+const PAGE_SIZE = 24;
+/** Upper end of the sidebar slider; at this value there is no max-price filter. */
+const PRICE_SLIDER_MAX = 10000;
+const EMPTY_PAGE: PageResponse<Product> = { items: [], page: 0, size: PAGE_SIZE, totalElements: 0, totalPages: 0 };
 
 @Component({
   selector: 'app-home',
@@ -20,108 +33,100 @@ type SortOption = 'priceLowHigh' | 'priceHighLow' | 'nameAZ';
   styleUrl: './home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly productService = inject(ProductService);
+  private readonly searchService = inject(SearchService);
 
-  constructor(
-      private readonly productService: ProductService,
-      private readonly searchService: SearchService
-  ) {}
+  readonly products = signal<Product[]>([]);
+  readonly totalElements = signal(0);
+  readonly isLoading = signal(false);
+  readonly isLoadingMore = signal(false);
+  readonly loadError = signal(false);
 
-  readonly products = this.productService.products;
-
-  readonly sortOption = signal<SortOption>('priceLowHigh');
+  readonly sortOption = signal<SortOption>('newest');
   readonly selectedMinPrice = signal(0);
-  readonly selectedMaxPrice = signal(10000);
+  readonly selectedMaxPrice = signal(PRICE_SLIDER_MAX);
   readonly selectedCategoryId = signal<number | null>(null);
-  readonly visibleProductCount = signal(9);
 
-  private readonly searchTerm = toSignal(
-      this.searchService.searchTerm$,
-      { initialValue: '' }
-  );
+  private readonly searchTerm = toSignal(this.searchService.searchTerm$, { initialValue: '' });
+  private currentPage = 0;
 
-  readonly filteredProducts = computed(() => {
-    let result = [...this.products()];
-
-    const categoryId = this.selectedCategoryId();
-    if (categoryId) {
-      result = result.filter(p => (p.categoryPathIds ?? []).includes(categoryId));
-    }
-
-    const term = (this.searchTerm() ?? '').trim().toLowerCase();
-    if (term) {
-      result = result.filter(p =>
-          (p.name ?? '').toLowerCase().includes(term) ||
-          (p.description ?? '').toLowerCase().includes(term)
-      );
-    }
-
-    const minPrice = this.selectedMinPrice();
-    const maxPrice = this.selectedMaxPrice();
-    result = result.filter(p => {
-      const price = p.price ?? 0;
-      return price >= minPrice && price <= maxPrice;
-    });
-
-    switch (this.sortOption()) {
-      case 'priceLowHigh':
-        result.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
-        break;
-      case 'priceHighLow':
-        result.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
-        break;
-      case 'nameAZ':
-        result.sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
-        break;
-    }
-
-    return result;
+  private readonly filters = computed<ProductSearchParams>(() => {
+    const min = this.selectedMinPrice();
+    const max = this.selectedMaxPrice();
+    return {
+      q: (this.searchTerm() ?? '').trim(),
+      categoryId: this.selectedCategoryId(),
+      minPrice: min > 0 ? min : null,
+      maxPrice: max < PRICE_SLIDER_MAX ? max : null,
+      sort: SORT_PARAM[this.sortOption()],
+      size: PAGE_SIZE,
+    };
   });
+  private readonly filters$ = toObservable(this.filters);
 
-  readonly visibleProducts = computed(() =>
-      this.filteredProducts().slice(0, this.visibleProductCount())
-  );
+  readonly hasMoreProducts = computed(() => this.products().length < this.totalElements());
 
-  readonly hasMoreProducts = computed(() =>
-      this.visibleProductCount() < this.filteredProducts().length
-  );
-
-  ngOnInit() {
-    this.productService
-        .loadProducts()
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          error: err => console.error('loadProducts error', err),
-        });
-
-    this.searchService.searchTerm$
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(() => this.resetVisibleProducts());
+  ngOnInit(): void {
+    // Debounced so typing in the search box or dragging the price slider sends one request.
+    this.filters$
+      .pipe(
+        debounceTime(300),
+        tap(() => {
+          this.isLoading.set(true);
+          this.loadError.set(false);
+        }),
+        switchMap(filters => this.productService.search({ ...filters, page: 0 }).pipe(
+          catchError(() => {
+            this.loadError.set(true);
+            return of(EMPTY_PAGE);
+          })
+        )),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(page => {
+        this.currentPage = 0;
+        this.products.set(page.items);
+        this.totalElements.set(page.totalElements);
+        this.isLoading.set(false);
+      });
   }
 
   onCategorySelected(categoryId: number | null) {
     this.selectedCategoryId.set(categoryId ?? null);
-    this.resetVisibleProducts();
   }
 
   onPriceRangeChange(range: { min: number; max: number }) {
     this.selectedMinPrice.set(range.min);
     this.selectedMaxPrice.set(range.max);
-    this.resetVisibleProducts();
   }
 
   onSortChange(option: SortOption) {
     this.sortOption.set(option);
-    this.resetVisibleProducts();
   }
 
   loadMoreProducts(): void {
-    this.visibleProductCount.update(count => count + 9);
-  }
-
-  private resetVisibleProducts(): void {
-    this.visibleProductCount.set(9);
+    if (this.isLoadingMore()) {
+      return;
+    }
+    this.isLoadingMore.set(true);
+    const nextPage = this.currentPage + 1;
+    this.productService.search({ ...this.filters(), page: nextPage })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: page => {
+          this.currentPage = nextPage;
+          // Skip duplicates in case new listings shifted the pages in between.
+          const known = new Set(this.products().map(product => product.id));
+          this.products.update(list => [...list, ...page.items.filter(product => !known.has(product.id))]);
+          this.totalElements.set(page.totalElements);
+          this.isLoadingMore.set(false);
+        },
+        error: () => {
+          this.isLoadingMore.set(false);
+        }
+      });
   }
 
   trackById = (_: number, p: Product) => p.id;

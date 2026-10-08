@@ -35,6 +35,7 @@
   "MENU": {
     "MY_PROFILE": "Mon profil",
     "MY_LISTINGS": "Mes annonces",
+    "MY_ORDERS": "Mes commandes",
     "MODERATE_LISTINGS": "Moderation des annonces",
     "FAVORITES": "Favoris",
     "MESSAGES": "Messages",
@@ -70,7 +71,11 @@
     "SORT_LOW_HIGH": "Prix : croissant",
     "SORT_HIGH_LOW": "Prix : decroissant",
     "SORT_NAME": "Nom : A-Z",
-    "LOAD_MORE": "Charger plus d'annonces"
+    "LOAD_MORE": "Charger plus d'annonces",
+    "SORT_NEWEST": "Plus recentes",
+    "RESULTS_COUNT": "{{count}} annonces",
+    "NO_RESULTS": "Aucune annonce ne correspond a votre recherche.",
+    "ERROR_LOAD": "Impossible de charger les annonces. Reessayez."
   },
   "FILTERS": {
     "CATEGORIES": "Categories",
@@ -258,6 +263,8 @@
     "ERROR_DELETE": "Suppression de l'annonce echouee.",
     "ERROR_REQUIRED": "Le titre et la categorie sont requis.",
     "ERROR_SKU_DUPLICATE": "Ce SKU est deja utilise. Modifiez-le ou laissez-le vide.",
+    "ERROR_NOT_REACTIVATABLE": "Une annonce vendue ou supprimee ne peut pas etre reactivee. Creez une nouvelle annonce.",
+    "ERROR_UPLOAD_TOO_MANY": "Une annonce peut contenir au maximum 10 photos.",
     "ERROR_IMAGE_TYPE": "Formats autorises : JPG, PNG ou WEBP.",
     "ERROR_IMAGE_SIZE": "Chaque photo doit faire 10MB ou moins.",
     "ERROR_IMAGE_LIMIT": "Vous pouvez televerser jusqu'a 6 photos.",
@@ -367,7 +374,14 @@
     "ERROR_REMOVE": "Impossible de supprimer l'article.",
     "ERROR_OUT_OF_STOCK": "Rupture de stock.",
     "ERROR_OWN_PRODUCT": "Vous ne pouvez pas acheter votre propre annonce.",
-    "ERROR_NOT_FOUND": "Produit introuvable."
+    "ERROR_NOT_FOUND": "Produit introuvable.",
+    "UNAVAILABLE_BANNER": "Certains articles ne sont plus disponibles et ont ete exclus du total.",
+    "REMOVE_UNAVAILABLE": "Retirer les articles indisponibles",
+    "AVAILABILITY": {
+      "EXPIRED": "Annonce expiree",
+      "SOLD_OUT": "Epuise",
+      "UNAVAILABLE": "Plus disponible"
+    }
   },
   "CHECKOUT": {
     "TITLE": "Paiement",
@@ -444,6 +458,68 @@
     "FAVORITE_ADDED": {
       "TITLE": "Nouveau favori",
       "MESSAGE": "{{actor}} a ajoute \"{{product}}\" a ses favoris."
+    },
+    "ORDER_PAID": {
+      "TITLE": "Paiement confirme",
+      "MESSAGE": "Le paiement de la commande n°{{id}} est confirme. Le vendeur va bientot l envoyer."
+    },
+    "ORDER_SOLD": {
+      "TITLE": "Article vendu",
+      "MESSAGE": "Vous avez vendu \"{{product}}\". Expediez-le depuis Mes commandes > Ventes."
+    },
+    "ORDER_SHIPPED": {
+      "TITLE": "Commande expediee",
+      "MESSAGE": "\"{{product}}\" a ete expedie."
+    },
+    "ORDER_DELIVERED": {
+      "TITLE": "Livraison confirmee",
+      "MESSAGE": "L acheteur a confirme avoir recu \"{{product}}\"."
     }
+  },
+  "ORDERS": {
+    "TITLE": "Mes commandes",
+    "SUBTITLE": "Suivez vos achats et vos ventes.",
+    "TAB_PURCHASES": "Achats",
+    "TAB_SALES": "Ventes",
+    "LOADING": "Chargement des commandes...",
+    "ERROR_LOAD": "Impossible de charger les commandes.",
+    "ERROR_NOT_FOUND": "Commande introuvable.",
+    "ERROR_NOT_PAYABLE": "Cette commande ne peut plus etre payee. Ses articles seront remis dans votre panier.",
+    "EMPTY_PURCHASES": "Vous n avez encore rien commande.",
+    "EMPTY_SALES": "Vous n avez encore rien vendu.",
+    "ORDER_NUMBER": "Commande n°{{id}}",
+    "TOTAL": "Total",
+    "SUBTOTAL": "Sous-total",
+    "SHIPPING": "Livraison",
+    "ITEMS": "Articles",
+    "SHIP_TO": "Adresse de livraison",
+    "BACK": "Toutes les commandes",
+    "PAYMENT_SUCCESS": "Merci ! Votre paiement est confirme et le vendeur a ete prevenu.",
+    "CONFIRMING": "Confirmation du paiement en cours...",
+    "CONFIRMATION_DELAYED": "La confirmation du paiement prend plus de temps que prevu. Le resultat apparaitra sur cette page ; vous pouvez actualiser plus tard.",
+    "PAYMENT_CANCELED": "Paiement annule. Vous pouvez le reprendre pendant 30 minutes ; ensuite les articles reviennent dans votre panier.",
+    "PAY_HINT": "Cette commande attend votre paiement.",
+    "PAY_NOW": "Reprendre le paiement",
+    "STATUS": {
+      "CREATED": "Creee",
+      "PENDING": "En attente",
+      "PAYMENT_PENDING": "Paiement en attente",
+      "PAYMENT_CONFIRMING": "Paiement en cours de confirmation",
+      "PAID": "Payee",
+      "SHIPPED": "Expediee",
+      "DELIVERED": "Livree",
+      "CANCELLED": "Annulee",
+      "REFUNDED": "Remboursee"
+    },
+    "TRACKING": "Numero de suivi",
+    "TRACKING_PLACEHOLDER": "ex. 6A12345678901",
+    "MARK_SHIPPED": "Marquer comme expedie",
+    "ITEM_SHIPPED": "Expedie",
+    "ITEM_DELIVERED": "Livre",
+    "ERROR_TRACKING_REQUIRED": "Veuillez saisir un numero de suivi.",
+    "ERROR_SHIP": "Impossible de marquer la commande comme expediee.",
+    "CONFIRM_DELIVERY": "J ai recu ma commande",
+    "CONFIRM_DELIVERY_HINT": "Vous avez recu vos articles ? Prevenez le vendeur.",
+    "ERROR_CONFIRM_DELIVERY": "Impossible de confirmer la livraison."
   }
 }

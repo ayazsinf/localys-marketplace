@@ -18,12 +18,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.OffsetDateTime;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Objects;
 import java.util.UUID;
 
 @Service
 public class ProductService {
+
+    // Sold or admin-removed listings must stay closed; the seller has to create a new listing.
+    private static final Set<ListingRemovalReason> NON_REACTIVATABLE_REASONS =
+            EnumSet.of(ListingRemovalReason.SOLD_ON_LOCALYS, ListingRemovalReason.ADMIN_REMOVED);
+
+    static final int MAX_IMAGES_PER_LISTING = 10;
 
     @Autowired
     private ProductRepository productRepository;
@@ -46,22 +54,14 @@ public class ProductService {
     @Value("${app.listings.max-active-days:45}")
     private int maxActiveDays;
 
-    public List<Product> getProductsByVendor(Long vendorId) {
-        return productRepository.findByVendorId(vendorId);
-    }
-
     public List<Product> getVisibleProductsByVendor(Long vendorId) {
         int days = Math.max(1, removedVisibleDays);
         return productRepository.findVisibleForVendor(vendorId, OffsetDateTime.now().minusDays(days));
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findPublicListings(ModerationStatus.APPROVED, OffsetDateTime.now());
-    }
-
     public Product getProductById(Long id) {
         return productRepository.findPublicById(id, ModerationStatus.APPROVED, OffsetDateTime.now())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
     }
 
     public List<Product> getProductsForModeration(ModerationStatus status) {
@@ -86,7 +86,11 @@ public class ProductService {
 
     public Product updateProductForVendor(Long id, Product productDetails, Vendor vendor) {
         Product product = productRepository.findByIdAndVendorId(id, vendor.getId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        if (productDetails.isActive() && !product.isActive()
+                && NON_REACTIVATABLE_REASONS.contains(product.getRemovalReason())) {
+            throw new IllegalArgumentException("Listing cannot be reactivated");
+        }
         boolean moderatedContentChanged = hasModeratedContentChanged(product, productDetails);
         product.setName(productDetails.getName());
         product.setPrice(productDetails.getPrice());
@@ -124,15 +128,9 @@ public class ProductService {
         return markRemoved(product, ListingRemovalReason.EXPIRED, null, null);
     }
 
-    public void deleteProductForVendor(Long id, Vendor vendor) {
-        Product product = productRepository.findByIdAndVendorId(id, vendor.getId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-        productRepository.delete(product);
-    }
-
     public Product removeProductForVendor(Long id, Vendor vendor, ListingRemovalReason reason, String note) {
         Product product = productRepository.findByIdAndVendorId(id, vendor.getId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
         return markRemoved(product, reason, note, vendor.getUser());
     }
 
@@ -144,7 +142,11 @@ public class ProductService {
 
     public List<String> addImagesForVendor(Long id, Vendor vendor, List<MultipartFile> files) {
         Product product = productRepository.findByIdAndVendorId(id, vendor.getId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        long incoming = files == null ? 0 : files.stream().filter(file -> file != null && !file.isEmpty()).count();
+        if (product.getImages().size() + incoming > MAX_IMAGES_PER_LISTING) {
+            throw new IllegalArgumentException("Too many images for this listing");
+        }
         List<String> urls = mediaStorageService.storeListingImages(product.getId(), files);
         if (urls.isEmpty()) {
             return urls;

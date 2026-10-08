@@ -1,18 +1,18 @@
 package com.localys.marketplace.controller;
 
+import com.localys.marketplace.dto.PageResponse;
 import com.localys.marketplace.dto.ProductDetailDto;
 import com.localys.marketplace.dto.ProductListDto;
 import com.localys.marketplace.model.Category;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
-import com.localys.marketplace.model.enums.ModerationStatus;
-import com.localys.marketplace.repository.ProductRepository;
+import com.localys.marketplace.service.ProductSearchService;
 import com.localys.marketplace.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,21 +21,32 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
-    private final ProductRepository repo;
+    private final ProductService productService;
+    private final ProductSearchService productSearchService;
 
-    @Autowired
-    private ProductService productService;
-
-    public ProductController(ProductRepository repo) {
-        this.repo = repo;
+    public ProductController(ProductService productService, ProductSearchService productSearchService) {
+        this.productService = productService;
+        this.productSearchService = productSearchService;
     }
 
+    /**
+     * Public listing search. {@code sort} is one of NEWEST (default), PRICE_ASC, PRICE_DESC, NAME_ASC.
+     */
     @GetMapping
     @Transactional(readOnly = true)
-    public List<ProductListDto> list() {
-        return repo.findPublicListings(ModerationStatus.APPROVED, java.time.OffsetDateTime.now()).stream()
-                .map(this::toDto)
-                .toList();
+    public PageResponse<ProductListDto> search(
+            @RequestParam(name = "q", required = false) String query,
+            @RequestParam(name = "categoryId", required = false) Long categoryId,
+            @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
+            @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
+            @RequestParam(name = "sort", required = false) String sort,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "size", required = false) Integer size
+    ) {
+        ProductSearchService.Criteria criteria = new ProductSearchService.Criteria(
+                query, categoryId, minPrice, maxPrice, sort, page, size
+        );
+        return PageResponse.from(productSearchService.search(criteria), this::toDto);
     }
 
     private ProductListDto toDto(Product p) {
@@ -66,15 +77,6 @@ public class ProductController {
                 vendorUserId,
                 imageUrls
         );
-    }
-
-    // Tüm ürünleri listele
-    @GetMapping("/all")
-    @Transactional(readOnly = true)
-    public ResponseEntity<List<ProductListDto>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts().stream()
-                .map(this::toDto)
-                .toList());
     }
 
     // Belirli bir ürünü getir

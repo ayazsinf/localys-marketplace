@@ -99,6 +99,63 @@ public class NotificationService {
         emailService.sendFavoriteAddedEmail(recipient, actor, product);
     }
 
+    public void createOrderPaidNotification(UserEntity buyer, Long orderId) {
+        saveOrderNotification(
+                buyer,
+                NotificationType.ORDER_PAID,
+                "notification.order.paid",
+                "/orders/" + orderId,
+                String.valueOf(orderId)
+        );
+    }
+
+    public void createOrderSoldNotification(UserEntity seller, String productName) {
+        saveOrderNotification(seller, NotificationType.ORDER_SOLD, "notification.order.sold", "/orders?tab=sales", productName);
+    }
+
+    public void createOrderShippedNotification(UserEntity buyer, Long orderId, String productName, String trackingNumber) {
+        saveOrderNotification(
+                buyer,
+                NotificationType.ORDER_SHIPPED,
+                "notification.order.shipped",
+                "/orders/" + orderId,
+                productName,
+                String.valueOf(orderId),
+                trackingNumber
+        );
+    }
+
+    public void createOrderDeliveredNotification(UserEntity seller, String productName) {
+        saveOrderNotification(
+                seller,
+                NotificationType.ORDER_DELIVERED,
+                "notification.order.delivered",
+                "/orders?tab=sales",
+                productName
+        );
+    }
+
+    /** Order ids are passed as strings so MessageFormat does not render them as "1,234". */
+    private void saveOrderNotification(
+            UserEntity user,
+            NotificationType type,
+            String messageKey,
+            String link,
+            Object... args
+    ) {
+        if (user == null) {
+            return;
+        }
+        Notification notification = new Notification();
+        notification.setUser(user);
+        notification.setType(type);
+        notification.setTitle(localizationService.message(messageKey + ".title"));
+        notification.setMessage(localizationService.message(messageKey + ".message", args));
+        notification.setLink(link);
+        notification.setRead(false);
+        notificationRepository.save(notification);
+    }
+
     public List<NotificationDto> listForUser(Long userId) {
         return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
                 .map(this::toDto)

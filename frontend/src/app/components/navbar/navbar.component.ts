@@ -7,6 +7,7 @@ import { Subscription, timer } from "rxjs";
 import { Router } from "@angular/router";
 import { CurrentUserService } from "../../service/current-user.service";
 import { NotificationDto, NotificationService } from "../../service/notification.service";
+import { MessagingService } from "../../service/messaging.service";
 import { AuthDialogService } from "../../service/auth-dialog.service";
 
 @Component({
@@ -39,8 +40,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private router: Router,
     private currentUserService: CurrentUserService,
     public notificationService: NotificationService,
-    private authDialogService: AuthDialogService
+    private authDialogService: AuthDialogService,
+    private messagingService: MessagingService
   ) {}
+
+  get unreadMessageCount(): number {
+    return this.messagingService.unreadCount$.value;
+  }
 
   ngOnInit() {
     const storedLang = localStorage.getItem('lang');
@@ -154,6 +160,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.closeNotificationsMenu();
     this.currentUserService.clear();
     this.unreadCount = 0;
+    this.messagingService.setUnreadCount(0);
     this.notifications = [];
   }
 
@@ -207,6 +214,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private refreshUnreadCount(): void {
     this.notificationService.unreadCount().subscribe(count => {
       this.unreadCount = count;
+    });
+    this.messagingService.unreadCount().subscribe({
+      next: count => {
+        this.messagingService.setUnreadCount(count);
+      },
+      error: () => {}
     });
   }
 

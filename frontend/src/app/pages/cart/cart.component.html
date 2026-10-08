@@ -13,6 +13,13 @@
 
   <div class="cart-content" *ngIf="!isLoading && items.length > 0">
     <div class="cart-table">
+      <div class="cart-unavailable-banner" *ngIf="hasUnavailableItems()">
+        <span>{{ 'CART.UNAVAILABLE_BANNER' | translate }}</span>
+        <button type="button" class="cart-remove" (click)="removeUnavailable()">
+          {{ 'CART.REMOVE_UNAVAILABLE' | translate }}
+        </button>
+      </div>
+
       <div class="cart-table-header">
         <label class="cart-checkbox">
           <input type="checkbox" [checked]="isAllSelected()" (change)="toggleAll()" />
@@ -20,9 +27,13 @@
         </label>
       </div>
 
-      <div class="cart-item" *ngFor="let item of items">
+      <div class="cart-item" *ngFor="let item of items" [class.unavailable]="!isAvailable(item)">
         <label class="cart-checkbox">
-          <input type="checkbox" [checked]="isSelected(item.product.id)" (change)="toggleSelection(item.product.id)" />
+          <input
+            type="checkbox"
+            [checked]="isSelected(item.product.id)"
+            [disabled]="!isAvailable(item)"
+            (change)="toggleSelection(item)" />
         </label>
 
         <div class="cart-thumb">
@@ -32,9 +43,12 @@
         <div class="cart-info">
           <div class="cart-name">{{ item.product.name }}</div>
           <div class="cart-price">{{ item.product.price | currencyDisplay:item.product.currency }}</div>
+          <div class="cart-availability" *ngIf="!isAvailable(item)">
+            {{ ('CART.AVAILABILITY.' + item.availability) | translate }}
+          </div>
         </div>
 
-        <div class="cart-qty" *ngIf="(item.product.stockQty ?? 0) > 1; else singleQty">
+        <div class="cart-qty" *ngIf="isAvailable(item) && (item.product.stockQty ?? 0) > 1; else singleQty">
           <button
             type="button"
             [disabled]="item.quantity <= 1"
@@ -66,7 +80,7 @@
         <span>{{ 'CART.SELECTED_TOTAL' | translate }}</span>
         <strong>{{ getSelectedTotal() | currencyDisplay:items[0]?.product.currency }}</strong>
       </div>
-      <button type="button" class="checkout-btn" (click)="checkout()">{{ 'CART.CHECKOUT' | translate }}</button>
+      <button type="button" class="checkout-btn" [disabled]="selectedIds.size === 0" (click)="checkout()">{{ 'CART.CHECKOUT' | translate }}</button>
     </div>
   </div>
 </section>

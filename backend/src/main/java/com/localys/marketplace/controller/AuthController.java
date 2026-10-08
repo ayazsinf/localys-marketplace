@@ -2,7 +2,6 @@ package com.localys.marketplace.controller;
 
 import com.localys.marketplace.dto.RegisterUserRequest;
 import com.localys.marketplace.model.LoginRequest;
-import com.localys.marketplace.repository.UserRepository;
 import com.localys.marketplace.service.AuthService;
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,10 +24,9 @@ public class AuthController {
     private static final Duration REFRESH_TTL = Duration.ofDays(7);
 
     private final AuthService authService;
-    private final UserRepository userRepository;
-    public AuthController(AuthService service, UserRepository userRepository) {
+
+    public AuthController(AuthService service) {
         this.authService = service;
-        this.userRepository = userRepository;
     }
 
     @PostMapping("/login")
@@ -41,13 +39,6 @@ public class AuthController {
         addAuthCookies(response, tokens, request);
         return ResponseEntity.ok(new AuthResponse(req.username()));
     }
-
-    @GetMapping("/test-db")
-    public Object test() {
-
-        return userRepository.findByUsername("fatih");
-    }
-
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(

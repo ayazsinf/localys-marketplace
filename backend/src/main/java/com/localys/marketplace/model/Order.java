@@ -46,6 +46,9 @@ public class Order extends AuditableEntity {
     @Column(nullable = false, length = 3)
     private String currency = "EUR";
 
+    @Column(name = "stock_deducted", nullable = false)
+    private boolean stockDeducted = false;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 }

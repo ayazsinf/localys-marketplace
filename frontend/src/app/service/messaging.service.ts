@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
 import { Client, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { environment } from '../../environments/environment';
@@ -11,6 +12,10 @@ export interface ConversationDto {
   otherDisplayName: string | null;
   lastMessage: string | null;
   lastMessageAt: string | null;
+  productId: number | null;
+  productName: string | null;
+  productImageUrl: string | null;
+  unreadCount: number;
 }
 
 export interface MessageDto {
@@ -32,8 +37,22 @@ export class MessagingService {
   private stompClient: Client | null = null;
   private connectPromise: Promise<void> | null = null;
   private connected = false;
+  /** Total unread messages, shown as the navbar badge. */
+  readonly unreadCount$ = new BehaviorSubject<number>(0);
 
   constructor(private http: HttpClient) {}
+
+  unreadCount() {
+    return this.http.get<number>(`${environment.apiUrl}/conversations/unread-count`);
+  }
+
+  setUnreadCount(count: number): void {
+    this.unreadCount$.next(Math.max(0, count));
+  }
+
+  markRead(conversationId: number) {
+    return this.http.post<void>(`${environment.apiUrl}/conversations/${conversationId}/read`, {});
+  }
 
   listConversations() {
     return this.http.get<ConversationDto[]>(`${environment.apiUrl}/conversations`);
@@ -45,8 +64,9 @@ export class MessagingService {
     );
   }
 
-  createConversationWith(userId: number) {
-    return this.http.post<ConversationDto>(`${environment.apiUrl}/conversations/with/${userId}`, {});
+  createConversationWith(userId: number, productId?: number | null) {
+    const params: Record<string, string> = productId ? { productId: String(productId) } : {};
+    return this.http.post<ConversationDto>(`${environment.apiUrl}/conversations/with/${userId}`, {}, { params });
   }
 
   sendMessage(conversationId: number, recipientId: number | null, body: string) {

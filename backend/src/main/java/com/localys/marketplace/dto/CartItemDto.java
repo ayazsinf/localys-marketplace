@@ -11,6 +11,7 @@ public record CartItemDto(
         String currency,
         Integer stockQty,
         int quantity,
-        BigDecimal lineTotal
+        BigDecimal lineTotal,
+        String availability
 ) {
 }

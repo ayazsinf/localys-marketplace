@@ -257,3 +257,28 @@
     min-height: 480px;
   }
 }
+
+.avatar.product-thumb {
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.thread-body .thread-product {
+  margin: 0 0 2px;
+  font-size: 12px;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panel-product {
+  font-size: 13px;
+  color: #2563eb;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

@@ -35,6 +35,7 @@
   "MENU": {
     "MY_PROFILE": "My Profile",
     "MY_LISTINGS": "My Listings",
+    "MY_ORDERS": "My Orders",
     "MODERATE_LISTINGS": "Moderate Listings",
     "FAVORITES": "Favorites",
     "MESSAGES": "Messages",
@@ -70,7 +71,11 @@
     "SORT_LOW_HIGH": "Price: Low to High",
     "SORT_HIGH_LOW": "Price: High to Low",
     "SORT_NAME": "Name: A-Z",
-    "LOAD_MORE": "Load More Products"
+    "LOAD_MORE": "Load More Products",
+    "SORT_NEWEST": "Newest first",
+    "RESULTS_COUNT": "{{count}} listings",
+    "NO_RESULTS": "No listings match your search.",
+    "ERROR_LOAD": "Could not load listings. Please try again."
   },
   "FILTERS": {
     "CATEGORIES": "Categories",
@@ -244,6 +249,8 @@
     "ERROR_DELETE": "Could not delete the listing.",
     "ERROR_REQUIRED": "Listing name and category are required.",
     "ERROR_SKU_DUPLICATE": "This SKU is already in use. Change it or leave it blank.",
+    "ERROR_NOT_REACTIVATABLE": "Sold or removed listings cannot be reactivated. Please create a new listing.",
+    "ERROR_UPLOAD_TOO_MANY": "A listing can have at most 10 photos.",
     "ERROR_IMAGE_TYPE": "Only JPG, PNG, or WEBP files are allowed.",
     "ERROR_IMAGE_SIZE": "Each photo must be 10MB or smaller.",
     "ERROR_IMAGE_LIMIT": "You can upload up to 6 photos.",
@@ -367,7 +374,14 @@
     "ERROR_REMOVE": "Could not remove item.",
     "ERROR_OUT_OF_STOCK": "Out of stock.",
     "ERROR_OWN_PRODUCT": "You cannot buy your own listing.",
-    "ERROR_NOT_FOUND": "Product not found."
+    "ERROR_NOT_FOUND": "Product not found.",
+    "UNAVAILABLE_BANNER": "Some items are no longer available and were excluded from your total.",
+    "REMOVE_UNAVAILABLE": "Remove unavailable items",
+    "AVAILABILITY": {
+      "EXPIRED": "Listing expired",
+      "SOLD_OUT": "Sold out",
+      "UNAVAILABLE": "No longer available"
+    }
   },
   "CHECKOUT": {
     "TITLE": "Checkout",
@@ -444,6 +458,68 @@
     "FAVORITE_ADDED": {
       "TITLE": "New favorite",
       "MESSAGE": "{{actor}} added \"{{product}}\" to their favorites."
+    },
+    "ORDER_PAID": {
+      "TITLE": "Payment confirmed",
+      "MESSAGE": "Your payment for order #{{id}} was confirmed. The seller will ship it soon."
+    },
+    "ORDER_SOLD": {
+      "TITLE": "Item sold",
+      "MESSAGE": "You sold \"{{product}}\". Ship it from My Orders > Sales."
+    },
+    "ORDER_SHIPPED": {
+      "TITLE": "Order shipped",
+      "MESSAGE": "\"{{product}}\" has been shipped."
+    },
+    "ORDER_DELIVERED": {
+      "TITLE": "Delivery confirmed",
+      "MESSAGE": "The buyer confirmed receiving \"{{product}}\"."
     }
+  },
+  "ORDERS": {
+    "TITLE": "My orders",
+    "SUBTITLE": "Track what you bought and what you sold.",
+    "TAB_PURCHASES": "Purchases",
+    "TAB_SALES": "Sales",
+    "LOADING": "Loading orders...",
+    "ERROR_LOAD": "Could not load orders.",
+    "ERROR_NOT_FOUND": "Order not found.",
+    "ERROR_NOT_PAYABLE": "This order can no longer be paid. Its items will be returned to your cart.",
+    "EMPTY_PURCHASES": "You have not ordered anything yet.",
+    "EMPTY_SALES": "You have not sold anything yet.",
+    "ORDER_NUMBER": "Order #{{id}}",
+    "TOTAL": "Total",
+    "SUBTOTAL": "Subtotal",
+    "SHIPPING": "Shipping",
+    "ITEMS": "Items",
+    "SHIP_TO": "Ship to",
+    "BACK": "All orders",
+    "PAYMENT_SUCCESS": "Thank you! Your payment was confirmed and the seller has been notified.",
+    "CONFIRMING": "Confirming your payment...",
+    "CONFIRMATION_DELAYED": "Payment confirmation is taking longer than usual. This page will show the result once it arrives; you can refresh later.",
+    "PAYMENT_CANCELED": "Payment was canceled. You can resume it within 30 minutes; after that the items return to your cart.",
+    "PAY_HINT": "This order is waiting for payment.",
+    "PAY_NOW": "Continue to payment",
+    "STATUS": {
+      "CREATED": "Created",
+      "PENDING": "Pending",
+      "PAYMENT_PENDING": "Awaiting payment",
+      "PAYMENT_CONFIRMING": "Confirming payment",
+      "PAID": "Paid",
+      "SHIPPED": "Shipped",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled",
+      "REFUNDED": "Refunded"
+    },
+    "TRACKING": "Tracking number",
+    "TRACKING_PLACEHOLDER": "e.g. 6A12345678901",
+    "MARK_SHIPPED": "Mark as shipped",
+    "ITEM_SHIPPED": "Shipped",
+    "ITEM_DELIVERED": "Delivered",
+    "ERROR_TRACKING_REQUIRED": "Please enter a tracking number.",
+    "ERROR_SHIP": "Could not mark the order as shipped.",
+    "CONFIRM_DELIVERY": "I received it",
+    "CONFIRM_DELIVERY_HINT": "Received your items? Let the seller know.",
+    "ERROR_CONFIRM_DELIVERY": "Could not confirm delivery."
   }
 }

@@ -79,7 +79,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
       this.authDialogService.openLogin().subscribe();
       return;
     }
-    this.messagingService.createConversationWith(this.product.vendorUserId).subscribe({
+    this.messagingService.createConversationWith(this.product.vendorUserId, this.product.id).subscribe({
       next: conversation => {
         this.router.navigate(['/messages'], { queryParams: { conversationId: conversation.id } });
       }

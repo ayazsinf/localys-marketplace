@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, map, of, tap, timeout } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, finalize, map, of, shareReplay, tap, timeout } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface LoginRequest {
@@ -31,6 +31,7 @@ export class AuthService {
   private readonly usernameSubject = new BehaviorSubject<string | null>(null);
 
   readonly authState$ = this.authenticatedSubject.asObservable();
+  private refreshInFlight: Observable<boolean> | null = null;
 
   constructor(private readonly http: HttpClient) {}
 
@@ -59,10 +60,18 @@ export class AuthService {
     });
   }
 
+  /** Concurrent 401s share one refresh call instead of racing each other with the same refresh token. */
   refreshAccess(): Observable<boolean> {
-    return this.http.post<void>(`${this.authBaseUrl}/refresh`, {}).pipe(
-      map(() => true)
-    );
+    if (!this.refreshInFlight) {
+      this.refreshInFlight = this.http.post<void>(`${this.authBaseUrl}/refresh`, {}).pipe(
+        map(() => true),
+        finalize(() => {
+          this.refreshInFlight = null;
+        }),
+        shareReplay({ bufferSize: 1, refCount: false })
+      );
+    }
+    return this.refreshInFlight;
   }
 
   clearSession(): void {

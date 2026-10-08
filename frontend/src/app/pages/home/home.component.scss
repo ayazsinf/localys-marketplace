@@ -77,3 +77,24 @@
     gap: 20px;
   }
 }
+
+.results-count {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.results-status {
+  margin: 24px 0;
+  color: #6b7280;
+
+  &.error {
+    color: #b42318;
+  }
+}
+
+.products-grid.is-loading {
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}

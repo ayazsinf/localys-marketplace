@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { CartItem, CartService } from '../../service/cart.service';
@@ -40,6 +40,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     city: string;
   }> = [];
   isSearchingLocation = false;
+  // Display only: the charged price comes from the backend ShippingMethod enum, keep them in sync.
   shippingOptions = [
     { id: 'mondial', labelKey: 'CHECKOUT.SHIPPING_MONDIAL', price: 4.9 },
     { id: 'chronopost', labelKey: 'CHECKOUT.SHIPPING_CHRONOPOST', price: 8.9 },
@@ -60,6 +61,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   constructor(
     private cartService: CartService,
     private route: ActivatedRoute,
+    private router: Router,
     private cdr: ChangeDetectorRef,
     public authService: AuthService,
     private userService: UserService,
@@ -74,6 +76,15 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Stripe redirects back here; hand over to the order page, which tracks the payment status.
+    const returnParams = this.route.snapshot.queryParamMap;
+    const returnedOrderId = Number(returnParams.get('orderId'));
+    if (returnedOrderId > 0 && (returnParams.get('success') === 'true' || returnParams.get('canceled') === 'true')) {
+      const outcome = returnParams.get('success') === 'true' ? { paid: 1 } : { canceled: 1 };
+      this.router.navigate(['/orders', returnedOrderId], { queryParams: outcome, replaceUrl: true });
+      return;
+    }
+
     const paramsSub = this.route.queryParamMap.subscribe(params => {
       const raw = params.get('items') || '';
       this.selectedIds = raw
@@ -83,7 +94,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.add(paramsSub);
 
-    const itemsSub = this.cartService.items$.subscribe(items => {
+    const itemsSub = this.cartService.items$.subscribe(allItems => {
+      const items = allItems.filter(item => item.availability === 'AVAILABLE');
       if (this.selectedIds.length === 0) {
         this.items = items;
       } else {
@@ -281,7 +293,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       productIds,
       addressId: this.selectedAddressId,
       shippingMethod: this.selectedShippingId,
-      shippingPrice: this.getShippingPrice(),
       paymentMethod: 'STRIPE'
     }).subscribe({
       next: response => {

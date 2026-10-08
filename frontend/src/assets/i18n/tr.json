@@ -35,6 +35,7 @@
   "MENU": {
     "MY_PROFILE": "Profilim",
     "MY_LISTINGS": "Ilanlarim",
+    "MY_ORDERS": "Siparislerim",
     "MODERATE_LISTINGS": "Ilanlari Onayla",
     "FAVORITES": "Favoriler",
     "MESSAGES": "Mesajlar",
@@ -70,7 +71,11 @@
     "SORT_LOW_HIGH": "Fiyat: Dusukten Yuksege",
     "SORT_HIGH_LOW": "Fiyat: Yuksekten Dusuge",
     "SORT_NAME": "Isim: A-Z",
-    "LOAD_MORE": "Daha fazla ilan yukle"
+    "LOAD_MORE": "Daha fazla ilan yukle",
+    "SORT_NEWEST": "En yeniler",
+    "RESULTS_COUNT": "{{count}} ilan",
+    "NO_RESULTS": "Aramaniza uygun ilan bulunamadi.",
+    "ERROR_LOAD": "Ilanlar yuklenemedi. Lutfen tekrar deneyin."
   },
   "FILTERS": {
     "CATEGORIES": "Kategoriler",
@@ -242,6 +247,8 @@
     "ERROR_DELETE": "Ilan silinemedi.",
     "ERROR_REQUIRED": "Ilan basligi ve kategori gerekli.",
     "ERROR_SKU_DUPLICATE": "SKU zaten kullaniliyor. Degistirin ya da bos birakin.",
+    "ERROR_NOT_REACTIVATABLE": "Satilan veya kaldirilan ilan tekrar yayina alinamaz. Lutfen yeni bir ilan olusturun.",
+    "ERROR_UPLOAD_TOO_MANY": "Bir ilana en fazla 10 fotograf eklenebilir.",
     "ERROR_IMAGE_TYPE": "Sadece JPG, PNG veya WEBP dosyalari kabul edilir.",
     "ERROR_IMAGE_SIZE": "Her fotograf en fazla 10MB olmali.",
     "ERROR_IMAGE_LIMIT": "En fazla 6 fotograf yukleyebilirsiniz.",
@@ -367,7 +374,14 @@
     "ERROR_REMOVE": "Urun kaldirilamadi.",
     "ERROR_OUT_OF_STOCK": "Stokta yok.",
     "ERROR_OWN_PRODUCT": "Kendi ilaninizdaki urunu satin alamazsiniz.",
-    "ERROR_NOT_FOUND": "Urun bulunamadi."
+    "ERROR_NOT_FOUND": "Urun bulunamadi.",
+    "UNAVAILABLE_BANNER": "Bazi urunler artik mevcut degil ve toplamdan cikarildi.",
+    "REMOVE_UNAVAILABLE": "Mevcut olmayanlari kaldir",
+    "AVAILABILITY": {
+      "EXPIRED": "Ilanin suresi doldu",
+      "SOLD_OUT": "Tukendi",
+      "UNAVAILABLE": "Artik mevcut degil"
+    }
   },
   "CHECKOUT": {
     "TITLE": "Odeme",
@@ -444,6 +458,68 @@
     "FAVORITE_ADDED": {
       "TITLE": "Yeni favori",
       "MESSAGE": "{{actor}}, \"{{product}}\" urununu favorilerine ekledi."
+    },
+    "ORDER_PAID": {
+      "TITLE": "Odeme onaylandi",
+      "MESSAGE": "#{{id}} numarali siparisinizin odemesi onaylandi. Satici yakinda kargolayacak."
+    },
+    "ORDER_SOLD": {
+      "TITLE": "Urun satildi",
+      "MESSAGE": "\"{{product}}\" satildi. Siparislerim > Satislarim sayfasindan kargolayabilirsiniz."
+    },
+    "ORDER_SHIPPED": {
+      "TITLE": "Siparis kargoya verildi",
+      "MESSAGE": "\"{{product}}\" kargoya verildi."
+    },
+    "ORDER_DELIVERED": {
+      "TITLE": "Teslimat onaylandi",
+      "MESSAGE": "Alici \"{{product}}\" urununu teslim aldigini onayladi."
     }
+  },
+  "ORDERS": {
+    "TITLE": "Siparislerim",
+    "SUBTITLE": "Satin aldiklarinizi ve sattiklarinizi takip edin.",
+    "TAB_PURCHASES": "Satin aldiklarim",
+    "TAB_SALES": "Satislarim",
+    "LOADING": "Siparisler yukleniyor...",
+    "ERROR_LOAD": "Siparisler yuklenemedi.",
+    "ERROR_NOT_FOUND": "Siparis bulunamadi.",
+    "ERROR_NOT_PAYABLE": "Bu siparis artik odenemez. Urunler sepetinize geri eklenecek.",
+    "EMPTY_PURCHASES": "Henuz bir siparisiniz yok.",
+    "EMPTY_SALES": "Henuz bir satisiniz yok.",
+    "ORDER_NUMBER": "Siparis #{{id}}",
+    "TOTAL": "Toplam",
+    "SUBTOTAL": "Ara toplam",
+    "SHIPPING": "Kargo",
+    "ITEMS": "Urunler",
+    "SHIP_TO": "Teslimat adresi",
+    "BACK": "Tum siparisler",
+    "PAYMENT_SUCCESS": "Tesekkurler! Odemeniz onaylandi ve saticiya bildirim gonderildi.",
+    "CONFIRMING": "Odemeniz onaylaniyor...",
+    "CONFIRMATION_DELAYED": "Odeme onayi beklenenden uzun suruyor. Sonuc geldiginde bu sayfada gorunecek; daha sonra sayfayi yenileyebilirsiniz.",
+    "PAYMENT_CANCELED": "Odeme iptal edildi. 30 dakika icinde odemeye devam edebilirsiniz; sonrasinda urunler sepetinize geri doner.",
+    "PAY_HINT": "Bu siparis odeme bekliyor.",
+    "PAY_NOW": "Odemeye devam et",
+    "STATUS": {
+      "CREATED": "Olusturuldu",
+      "PENDING": "Beklemede",
+      "PAYMENT_PENDING": "Odeme bekleniyor",
+      "PAYMENT_CONFIRMING": "Odeme onaylaniyor",
+      "PAID": "Odendi",
+      "SHIPPED": "Kargoya verildi",
+      "DELIVERED": "Teslim edildi",
+      "CANCELLED": "Iptal edildi",
+      "REFUNDED": "Iade edildi"
+    },
+    "TRACKING": "Kargo takip no",
+    "TRACKING_PLACEHOLDER": "orn. 6A12345678901",
+    "MARK_SHIPPED": "Kargoya verdim",
+    "ITEM_SHIPPED": "Kargoda",
+    "ITEM_DELIVERED": "Teslim edildi",
+    "ERROR_TRACKING_REQUIRED": "Lutfen kargo takip numarasini girin.",
+    "ERROR_SHIP": "Siparis kargoya verildi olarak isaretlenemedi.",
+    "CONFIRM_DELIVERY": "Teslim aldim",
+    "CONFIRM_DELIVERY_HINT": "Urunlerinizi teslim aldiniz mi? Saticiya bildirin.",
+    "ERROR_CONFIRM_DELIVERY": "Teslimat onaylanamadi."
   }
 }

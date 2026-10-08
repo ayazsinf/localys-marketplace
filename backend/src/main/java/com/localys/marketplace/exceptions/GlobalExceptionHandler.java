@@ -86,6 +86,45 @@ public class GlobalExceptionHandler {
             ApiError error = new ApiError("PRODUCT_NOT_FOUND", "Product not found.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
+        if (message.contains("tracking number is required")) {
+            ApiError error = new ApiError("TRACKING_REQUIRED", "A tracking number is required.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+        if (message.contains("cannot be shipped") || message.contains("cannot be confirmed")) {
+            ApiError error = new ApiError("ORDER_STATE_CONFLICT", "This action is not possible for the order's current state.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
+        if (message.contains("order not found")) {
+            ApiError error = new ApiError("ORDER_NOT_FOUND", "Order not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+        if (message.contains("conversation not found")) {
+            ApiError error = new ApiError("CONVERSATION_NOT_FOUND", "Conversation not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+        if (message.contains("cannot be reactivated")) {
+            ApiError error = new ApiError(
+                    "LISTING_NOT_REACTIVATABLE",
+                    "Sold or removed listings cannot be reactivated. Please create a new listing."
+            );
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
+        if (message.contains("too many images")) {
+            ApiError error = new ApiError("TOO_MANY_IMAGES", "A listing can have at most 10 images.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+        if (message.contains("image is too large")) {
+            ApiError error = new ApiError("IMAGE_TOO_LARGE", "Images must be 10 MB or smaller.");
+            return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(error);
+        }
+        if (message.contains("only image uploads")) {
+            ApiError error = new ApiError("INVALID_IMAGE", "Only JPEG, PNG, GIF and WebP images are allowed.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+        if (message.contains("not awaiting payment") || message.contains("no longer payable")) {
+            ApiError error = new ApiError("ORDER_NOT_PAYABLE", "This order can no longer be paid.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
         ApiError error = new ApiError("INVALID_REQUEST", "Request could not be processed.");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }

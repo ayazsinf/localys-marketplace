@@ -1,5 +1,6 @@
 package com.localys.marketplace.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.localys.marketplace.model.enums.USER_ROLE;
 import jakarta.persistence.*;
@@ -34,6 +35,7 @@ public class UserEntity extends AuditableEntity {
 
 
     @Column(nullable = false, length = 200)
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)

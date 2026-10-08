@@ -4,6 +4,7 @@ import com.localys.marketplace.dto.StripeCheckoutResponse;
 import com.localys.marketplace.model.Order;
 import com.localys.marketplace.model.OrderItem;
 import com.localys.marketplace.model.Payment;
+import com.localys.marketplace.model.enums.OrderStatus;
 import com.localys.marketplace.model.enums.PaymentProvider;
 import com.localys.marketplace.model.enums.PaymentStatus;
 import com.localys.marketplace.repository.OrderRepository;
@@ -20,13 +21,20 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class StripePaymentService {
 
     private static final Logger logger = LoggerFactory.getLogger(StripePaymentService.class);
+
+    /** Must stay below {@link OrderExpirationService}'s cleanup threshold. */
+    static final Duration SESSION_TTL = Duration.ofMinutes(31);
 
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
@@ -64,8 +72,25 @@ public class StripePaymentService {
         if (!order.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("Order not found");
         }
+        if (order.getStatus() != OrderStatus.PAYMENT_PENDING) {
+            throw new IllegalArgumentException("Order is not awaiting payment");
+        }
 
-        Payment payment = paymentRepository.findByOrder_Id(orderId)
+        Optional<Payment> existingPayment = paymentRepository.findByOrder_Id(orderId);
+        Optional<String> openSessionUrl = existingPayment.flatMap(this::findOpenSessionUrl);
+        if (openSessionUrl.isPresent()) {
+            // Never open a second session for the same order: the customer could pay twice.
+            return new StripeCheckoutResponse(openSessionUrl.get());
+        }
+        OffsetDateTime lastSessionStart = order.getCreatedAt()
+                .plus(OrderExpirationService.UNPAID_ORDER_TTL)
+                .minus(SESSION_TTL);
+        if (OffsetDateTime.now().isAfter(lastSessionStart)) {
+            // A new session would outlive the order's reservation (see OrderExpirationService).
+            throw new IllegalArgumentException("Order is no longer payable");
+        }
+
+        Payment payment = existingPayment
                 .orElseGet(() -> {
                     Payment newPayment = new Payment();
                     newPayment.setOrder(order);
@@ -79,9 +104,12 @@ public class StripePaymentService {
 
         SessionCreateParams.Builder sessionBuilder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl(successUrl)
-                .setCancelUrl(cancelUrl)
-                .setClientReferenceId(order.getId().toString());
+                .setSuccessUrl(withOrderId(successUrl, order.getId()))
+                .setCancelUrl(withOrderId(cancelUrl, order.getId()))
+                .setClientReferenceId(order.getId().toString())
+                // Bounded lifetime so the stock reservation is released quickly when the
+                // customer abandons the payment (Stripe minimum is 30 minutes).
+                .setExpiresAt(Instant.now().plus(SESSION_TTL).getEpochSecond());
 
         List<SessionCreateParams.LineItem> lineItems = order.getItems().stream()
                 .map(this::toLineItem)
@@ -102,6 +130,24 @@ public class StripePaymentService {
         } catch (StripeException ex) {
             logger.warn("Stripe checkout failed for order {}: {}", orderId, ex.getMessage());
             throw new IllegalArgumentException("Stripe error: " + ex.getMessage());
+        }
+    }
+
+    /** Lets the frontend land on the right order after Stripe redirects back. */
+    private String withOrderId(String url, Long orderId) {
+        return url + (url.contains("?") ? "&" : "?") + "orderId=" + orderId;
+    }
+
+    private Optional<String> findOpenSessionUrl(Payment payment) {
+        if (payment.getProviderSessionId() == null) {
+            return Optional.empty();
+        }
+        try {
+            Session session = Session.retrieve(payment.getProviderSessionId());
+            return "open".equals(session.getStatus()) ? Optional.ofNullable(session.getUrl()) : Optional.empty();
+        } catch (StripeException ex) {
+            logger.warn("Could not retrieve Stripe session {}: {}", payment.getProviderSessionId(), ex.getMessage());
+            return Optional.empty();
         }
     }
 

@@ -1,10 +1,7 @@
 package com.localys.marketplace.service;
 
-import com.localys.marketplace.model.Order;
 import com.localys.marketplace.model.Payment;
-import com.localys.marketplace.model.enums.OrderStatus;
 import com.localys.marketplace.model.enums.PaymentStatus;
-import com.localys.marketplace.repository.OrderRepository;
 import com.localys.marketplace.repository.PaymentRepository;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
@@ -21,23 +18,28 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Translates Stripe events into order state changes. Stripe delivers events at least once
+ * and in no guaranteed order, so every transition is delegated to {@link OrderService},
+ * which only ever moves an order forward (a paid order is never cancelled by a late event).
+ */
 @Service
 public class StripeWebhookService {
 
     private static final Logger logger = LoggerFactory.getLogger(StripeWebhookService.class);
 
     private final PaymentRepository paymentRepository;
-    private final OrderRepository orderRepository;
+    private final OrderService orderService;
 
     @Value("${app.payment.stripe.webhook-secret:}")
     private String webhookSecret;
 
     public StripeWebhookService(
             PaymentRepository paymentRepository,
-            OrderRepository orderRepository
+            OrderService orderService
     ) {
         this.paymentRepository = paymentRepository;
-        this.orderRepository = orderRepository;
+        this.orderService = orderService;
     }
 
     @Transactional
@@ -54,7 +56,9 @@ public class StripeWebhookService {
 
         switch (event.getType()) {
             case "checkout.session.completed" -> handleSessionCompleted(event);
-            case "checkout.session.expired" -> handleSessionExpired(event);
+            case "checkout.session.async_payment_succeeded" -> handleAsyncPaymentSucceeded(event);
+            case "checkout.session.async_payment_failed" -> handleSessionClosedUnpaid(event, PaymentStatus.FAILED);
+            case "checkout.session.expired" -> handleSessionClosedUnpaid(event, PaymentStatus.CANCELLED);
             case "payment_intent.payment_failed" -> handlePaymentFailed(event);
             case "payment_intent.succeeded" -> handlePaymentSucceeded(event);
             default -> logger.debug("Ignoring Stripe event type {}", event.getType());
@@ -66,21 +70,59 @@ public class StripeWebhookService {
         if (session == null) {
             return;
         }
-        Optional<Payment> payment = paymentRepository.findByProviderSessionId(session.getId());
-        if (payment.isEmpty() && session.getClientReferenceId() != null) {
-            payment = parseOrderId(session.getClientReferenceId())
-                    .flatMap(paymentRepository::findByOrder_Id);
+        Optional<Payment> match = findBySession(session);
+        if (match.isEmpty()) {
+            logger.warn("Stripe session {} did not match a payment record.", session.getId());
+            return;
         }
-        updatePayment(payment, PaymentStatus.SUCCEEDED, OrderStatus.PAID);
+        Payment payment = match.get();
+        if (session.getPaymentIntent() != null) {
+            payment.setProviderPaymentIntentId(session.getPaymentIntent());
+        }
+        // "completed" only means the customer finished the checkout form. For async methods
+        // the money has not arrived yet (payment_status = "unpaid").
+        String paymentStatus = session.getPaymentStatus();
+        if ("paid".equals(paymentStatus) || "no_payment_required".equals(paymentStatus)) {
+            markSucceeded(payment);
+        } else {
+            if (payment.getStatus() != PaymentStatus.SUCCEEDED) {
+                payment.setStatus(PaymentStatus.PROCESSING);
+            }
+            paymentRepository.save(payment);
+            orderService.markPaymentConfirming(payment.getOrder().getId());
+        }
     }
 
-    private void handleSessionExpired(Event event) {
+    private void handleAsyncPaymentSucceeded(Event event) {
         Session session = getStripeObject(event, Session.class);
         if (session == null) {
             return;
         }
-        Optional<Payment> payment = paymentRepository.findByProviderSessionId(session.getId());
-        updatePayment(payment, PaymentStatus.CANCELLED, OrderStatus.CANCELLED);
+        findBySession(session).ifPresentOrElse(
+                this::markSucceeded,
+                () -> logger.warn("Stripe session {} did not match a payment record.", session.getId())
+        );
+    }
+
+    private void handleSessionClosedUnpaid(Event event, PaymentStatus paymentStatus) {
+        Session session = getStripeObject(event, Session.class);
+        if (session == null) {
+            return;
+        }
+        // Only the session currently attached to the payment may cancel the order; an old
+        // session expiring must not cancel an order the customer is paying with a newer one.
+        Optional<Payment> match = paymentRepository.findByProviderSessionId(session.getId());
+        if (match.isEmpty()) {
+            logger.debug("Stripe session {} is not the active session of any payment.", session.getId());
+            return;
+        }
+        Payment payment = match.get();
+        if (payment.getStatus() == PaymentStatus.SUCCEEDED) {
+            return;
+        }
+        payment.setStatus(paymentStatus);
+        paymentRepository.save(payment);
+        orderService.cancelUnpaid(payment.getOrder().getId());
     }
 
     private void handlePaymentFailed(Event event) {
@@ -88,8 +130,14 @@ public class StripeWebhookService {
         if (intent == null) {
             return;
         }
-        Optional<Payment> payment = paymentRepository.findByProviderPaymentIntentId(intent.getId());
-        updatePayment(payment, PaymentStatus.FAILED, OrderStatus.PAYMENT_PENDING);
+        // A failed attempt inside Checkout is retryable until the session expires, so the
+        // order (and its stock reservation) stays open; expiry releases it.
+        paymentRepository.findByProviderPaymentIntentId(intent.getId())
+                .filter(payment -> payment.getStatus() != PaymentStatus.SUCCEEDED)
+                .ifPresent(payment -> {
+                    payment.setStatus(PaymentStatus.FAILED);
+                    paymentRepository.save(payment);
+                });
     }
 
     private void handlePaymentSucceeded(Event event) {
@@ -97,24 +145,25 @@ public class StripeWebhookService {
         if (intent == null) {
             return;
         }
-        Optional<Payment> payment = paymentRepository.findByProviderPaymentIntentId(intent.getId());
-        updatePayment(payment, PaymentStatus.SUCCEEDED, OrderStatus.PAID);
+        // The intent id is only known after checkout.session.completed, which handles the
+        // common case; this covers the event arriving later or being replayed.
+        paymentRepository.findByProviderPaymentIntentId(intent.getId())
+                .ifPresent(this::markSucceeded);
     }
 
-    private void updatePayment(Optional<Payment> payment, PaymentStatus status, OrderStatus orderStatus) {
-        if (payment.isEmpty()) {
-            logger.warn("Stripe webhook did not match a payment record.");
-            return;
-        }
-        Payment entity = payment.get();
-        entity.setStatus(status);
-        paymentRepository.save(entity);
+    private void markSucceeded(Payment payment) {
+        payment.setStatus(PaymentStatus.SUCCEEDED);
+        paymentRepository.save(payment);
+        orderService.markPaid(payment.getOrder().getId());
+    }
 
-        Order order = entity.getOrder();
-        if (order != null && orderStatus != null) {
-            order.setStatus(orderStatus);
-            orderRepository.save(order);
+    private Optional<Payment> findBySession(Session session) {
+        Optional<Payment> payment = paymentRepository.findByProviderSessionId(session.getId());
+        if (payment.isEmpty() && session.getClientReferenceId() != null) {
+            payment = parseOrderId(session.getClientReferenceId())
+                    .flatMap(paymentRepository::findByOrder_Id);
         }
+        return payment;
     }
 
     private Optional<Long> parseOrderId(String referenceId) {

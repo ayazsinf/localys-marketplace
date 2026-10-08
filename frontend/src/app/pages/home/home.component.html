@@ -16,6 +16,7 @@
                         class="sort-select"
                         [ngModel]="sortOption()"
                         (ngModelChange)="onSortChange($event)">
+                    <option value="newest">{{ 'HOME.SORT_NEWEST' | translate }}</option>
                     <option value="priceLowHigh">{{ 'HOME.SORT_LOW_HIGH' | translate }}</option>
                     <option value="priceHighLow">{{ 'HOME.SORT_HIGH_LOW' | translate }}</option>
                     <option value="nameAZ">{{ 'HOME.SORT_NAME' | translate }}</option>
@@ -23,8 +24,18 @@
             </div>
           </div>
 
-          <div class="products-grid">
-            @for (product of visibleProducts(); track product.id){
+          @if (!isLoading() && !loadError()) {
+            <p class="results-count">{{ 'HOME.RESULTS_COUNT' | translate: { count: totalElements() } }}</p>
+          }
+
+          @if (loadError()) {
+            <p class="results-status error">{{ 'HOME.ERROR_LOAD' | translate }}</p>
+          } @else if (!isLoading() && products().length === 0) {
+            <p class="results-status">{{ 'HOME.NO_RESULTS' | translate }}</p>
+          }
+
+          <div class="products-grid" [class.is-loading]="isLoading()">
+            @for (product of products(); track product.id){
               <app-product-card
                       [product]="product"
                      >
@@ -33,8 +44,8 @@
 
           </div>
 
-          <div class="load-more" *ngIf="hasMoreProducts()">
-            <button class="load-more-btn" type="button" (click)="loadMoreProducts()">
+          <div class="load-more" *ngIf="hasMoreProducts() && !isLoading()">
+            <button class="load-more-btn" type="button" [disabled]="isLoadingMore()" (click)="loadMoreProducts()">
               {{ 'HOME.LOAD_MORE' | translate }}
             </button>
           </div>

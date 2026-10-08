@@ -245,9 +245,45 @@ databaseChangeLog:
   - changeSet:
       id: 021-add-listing-removal-metadata
       author: codex
+      # Neon (local/dev) ran an earlier draft of V21 that lacked expires_at.
+      # The script is idempotent, so re-run it whenever its checksum differs.
+      runOnChange: true
       changes:
         - sqlFile:
             path: db/migration/V21__add_listing_removal_metadata.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 022-add-order-stock-deducted-flag
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V22__add_order_stock_deducted_flag.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 023-add-order-notification-types
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V23__add_order_notification_types.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
+
+  - changeSet:
+      id: 024-shipping-search-and-listing-conversations
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V24__shipping_search_and_listing_conversations.sql
             relativeToChangelogFile: false
             splitStatements: true
             stripComments: false

@@ -93,6 +93,13 @@
                         {{ 'AUTH.CREATE_ACCOUNT' | translate }}
                     </button>
                 } @else {
+                    <a
+                            routerLink="/messages"
+                            class="notification-trigger"
+                            [attr.aria-label]="'MENU.MESSAGES' | translate">
+                        <span class="material-icons">chat_bubble_outline</span>
+                        <span class="notification-badge" *ngIf="unreadMessageCount > 0">{{ unreadMessageCount }}</span>
+                    </a>
                     <div class="notification-menu">
                         <button
                                 type="button"
@@ -149,6 +156,7 @@
                         <div class="profile-dropdown" [class.open]="isProfileMenuOpen">
                             <a routerLink="/profile" (click)="closeProfileMenu()">{{ 'MENU.MY_PROFILE' | translate }}</a>
                             <a routerLink="/listings" (click)="closeProfileMenu()">{{ 'MENU.MY_LISTINGS' | translate }}</a>
+                            <a routerLink="/orders" (click)="closeProfileMenu()">{{ 'MENU.MY_ORDERS' | translate }}</a>
                             <a *ngIf="isAdmin" routerLink="/admin/listings" (click)="closeProfileMenu()">
                                 {{ 'MENU.MODERATE_LISTINGS' | translate }}
                             </a>

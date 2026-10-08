@@ -1,0 +1,74 @@
+<section class="account-page">
+  <a routerLink="/orders" class="back-link">← {{ 'ORDERS.BACK' | translate }}</a>
+
+  <div class="status" *ngIf="isLoading">{{ 'ORDERS.LOADING' | translate }}</div>
+  <div class="status error" *ngIf="errorMessage">{{ errorMessage | translate }}</div>
+
+  <ng-container *ngIf="order">
+    <div class="account-header">
+      <h1>{{ 'ORDERS.ORDER_NUMBER' | translate: { id: order.id } }}</h1>
+      <p>{{ formatDate(order.createdAt) }}</p>
+    </div>
+
+    <div class="notice success" *ngIf="order.status === 'PAID' && !errorMessage">
+      {{ 'ORDERS.PAYMENT_SUCCESS' | translate }}
+    </div>
+    <div class="notice" *ngIf="isConfirming">{{ 'ORDERS.CONFIRMING' | translate }}</div>
+    <div class="notice" *ngIf="infoMessage">{{ infoMessage | translate }}</div>
+
+    <article class="order-card">
+      <header class="order-head">
+        <div class="order-number">{{ 'ORDERS.ITEMS' | translate }}</div>
+        <span class="status-badge" [attr.data-status]="order.status">
+          {{ ('ORDERS.STATUS.' + order.status) | translate }}
+        </span>
+      </header>
+
+      <ul class="order-items">
+        <li *ngFor="let item of order.items">
+          <img *ngIf="item.imageUrl" [src]="item.imageUrl" [alt]="item.productName" />
+          <div class="item-placeholder" *ngIf="!item.imageUrl"></div>
+          <a class="item-name" [routerLink]="['/products', item.productId]">{{ item.productName }}</a>
+          <span class="item-qty">× {{ item.quantity }}</span>
+          <span class="item-total">{{ item.lineTotal | currencyDisplay: order.currency }}</span>
+          <span class="item-shipping" *ngIf="item.shippedAt">
+            {{ (item.deliveredAt ? 'ORDERS.ITEM_DELIVERED' : 'ORDERS.ITEM_SHIPPED') | translate }}
+            · {{ 'ORDERS.TRACKING' | translate }}: {{ item.trackingNumber }}
+          </span>
+        </li>
+      </ul>
+
+      <div class="ship-to" *ngIf="order.shippingAddress as address">
+        <div class="ship-to-title">{{ 'ORDERS.SHIP_TO' | translate }}</div>
+        <div *ngIf="address.fullName">{{ address.fullName }}</div>
+        <div>{{ address.line1 }}</div>
+        <div *ngIf="address.line2">{{ address.line2 }}</div>
+        <div>{{ address.postalCode }} {{ address.city }}, {{ address.country }}</div>
+      </div>
+
+      <div class="totals">
+        <div><span>{{ 'ORDERS.SUBTOTAL' | translate }}</span><span>{{ order.subtotal | currencyDisplay: order.currency }}</span></div>
+        <div><span>{{ 'ORDERS.SHIPPING' | translate }}</span><span>{{ order.shippingPrice | currencyDisplay: order.currency }}</span></div>
+      </div>
+
+      <footer class="order-foot">
+        <span>{{ 'ORDERS.TOTAL' | translate }}</span>
+        <strong>{{ order.total | currencyDisplay: order.currency }}</strong>
+      </footer>
+    </article>
+
+    <div class="pay-actions" *ngIf="canConfirmDelivery">
+      <p>{{ 'ORDERS.CONFIRM_DELIVERY_HINT' | translate }}</p>
+      <button type="button" class="primary" [disabled]="isConfirmingDelivery" (click)="confirmDelivery()">
+        {{ 'ORDERS.CONFIRM_DELIVERY' | translate }}
+      </button>
+    </div>
+
+    <div class="pay-actions" *ngIf="canPay">
+      <p>{{ 'ORDERS.PAY_HINT' | translate }}</p>
+      <button type="button" class="primary" [disabled]="isPaying" (click)="pay()">
+        {{ (isPaying ? 'CHECKOUT.REDIRECTING' : 'ORDERS.PAY_NOW') | translate }}
+      </button>
+    </div>
+  </ng-container>
+</section>

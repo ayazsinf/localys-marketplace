@@ -60,6 +60,11 @@ function Import-DotEnv {
 
     $env:SPRING_PROFILES_ACTIVE = "local"
     $env:OIDC_ISSUER_URI = "http://localhost:8081/realms/localys-realm"
+
+    # Backend runs from ./backend, so a repo-relative upload dir (e.g. backend/uploads) must be made absolute.
+    if ($env:APP_MEDIA_UPLOAD_DIR -and -not [System.IO.Path]::IsPathRooted($env:APP_MEDIA_UPLOAD_DIR)) {
+        $env:APP_MEDIA_UPLOAD_DIR = Join-Path $root $env:APP_MEDIA_UPLOAD_DIR
+    }
 }
 
 function Assert-Command {

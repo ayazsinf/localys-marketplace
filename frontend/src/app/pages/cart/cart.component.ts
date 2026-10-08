@@ -55,10 +55,14 @@ export class CartComponent implements OnInit, OnDestroy {
       this.selectedIds.clear();
       return;
     }
-    this.items.forEach(item => this.selectedIds.add(item.product.id));
+    this.purchasableItems().forEach(item => this.selectedIds.add(item.product.id));
   }
 
-  toggleSelection(productId: number): void {
+  toggleSelection(item: CartItem): void {
+    const productId = item.product.id;
+    if (!this.isAvailable(item)) {
+      return;
+    }
     if (this.selectedIds.has(productId)) {
       this.selectedIds.delete(productId);
       return;
@@ -71,7 +75,22 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   isAllSelected(): boolean {
-    return this.items.length > 0 && this.items.every(item => this.selectedIds.has(item.product.id));
+    const purchasable = this.purchasableItems();
+    return purchasable.length > 0 && purchasable.every(item => this.selectedIds.has(item.product.id));
+  }
+
+  isAvailable(item: CartItem): boolean {
+    return item.availability === 'AVAILABLE';
+  }
+
+  hasUnavailableItems(): boolean {
+    return this.items.some(item => !this.isAvailable(item));
+  }
+
+  removeUnavailable(): void {
+    this.cartService.removeMany(
+      this.items.filter(item => !this.isAvailable(item)).map(item => item.product.id)
+    );
   }
 
   changeQuantity(item: CartItem, delta: number): void {
@@ -99,6 +118,9 @@ export class CartComponent implements OnInit, OnDestroy {
 
   checkout(): void {
     const ids = Array.from(this.selectedIds.values());
+    if (ids.length === 0) {
+      return;
+    }
     this.router.navigate(['/checkout'], {
       queryParams: {
         items: ids.join(',')
@@ -121,7 +143,12 @@ export class CartComponent implements OnInit, OnDestroy {
     return `${environment.apiUrl}${normalized}`;
   }
 
-  private syncSelection(items: CartItem[]): void {
+  private purchasableItems(): CartItem[] {
+    return this.items.filter(item => this.isAvailable(item));
+  }
+
+  private syncSelection(allItems: CartItem[]): void {
+    const items = allItems.filter(item => this.isAvailable(item));
     if (items.length === 0) {
       this.selectedIds.clear();
       return;

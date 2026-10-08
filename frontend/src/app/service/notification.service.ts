@@ -71,6 +71,19 @@ export class NotificationService {
         product: quotedValues[0]
       });
     }
+    if (notification.type === 'ORDER_PAID') {
+      const orderId = notification.link?.match(/\/orders\/(\d+)/)?.[1];
+      if (orderId) {
+        return this.translateService.instant('NOTIFICATION_CONTENT.ORDER_PAID.MESSAGE', { id: orderId });
+      }
+    }
+    if ((notification.type === 'ORDER_SOLD'
+      || notification.type === 'ORDER_SHIPPED'
+      || notification.type === 'ORDER_DELIVERED') && quotedValues[0]) {
+      return this.translateService.instant(`NOTIFICATION_CONTENT.${notification.type}.MESSAGE`, {
+        product: quotedValues[0]
+      });
+    }
     return notification.message;
   }
 }

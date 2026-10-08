@@ -21,12 +21,20 @@
           *ngFor="let conversation of filteredConversations; trackBy: trackByConversation"
           [class.is-active]="conversation.id === selectedConversationId"
           (click)="selectConversation(conversation)">
-          <div class="avatar">{{ conversation.name.charAt(0) }}</div>
+          <img
+            *ngIf="conversation.productImageUrl; else letterAvatar"
+            class="avatar product-thumb"
+            [src]="conversation.productImageUrl"
+            [alt]="conversation.productName || ''" />
+          <ng-template #letterAvatar>
+            <div class="avatar">{{ conversation.name.charAt(0) }}</div>
+          </ng-template>
           <div class="thread-body">
             <div class="thread-top">
               <h3>{{ conversation.name }}</h3>
               <span class="time">{{ conversation.lastTime }}</span>
             </div>
+            <p class="thread-product" *ngIf="conversation.productName">{{ conversation.productName }}</p>
             <p class="preview">{{ conversation.lastMessage }}</p>
           </div>
           <span class="badge" *ngIf="conversation.unreadCount">{{ conversation.unreadCount }}</span>
@@ -39,6 +47,12 @@
         <header class="panel-header">
           <div>
             <h2>{{ selectedConversation?.name }}</h2>
+            <a
+              *ngIf="selectedConversation?.productId"
+              class="panel-product"
+              [routerLink]="['/products', selectedConversation?.productId]">
+              {{ 'MESSAGES.LISTING_LABEL' | translate }}: {{ selectedConversation?.productName }}
+            </a>
           </div>
         </header>
 

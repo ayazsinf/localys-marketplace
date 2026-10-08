@@ -136,6 +136,12 @@ public class ListingController {
         if (request.price() == null) {
             throw new IllegalArgumentException("Listing price is required");
         }
+        if (request.price().signum() <= 0) {
+            throw new IllegalArgumentException("Listing price must be positive");
+        }
+        if (request.stockQty() < 0) {
+            throw new IllegalArgumentException("Listing stock cannot be negative");
+        }
         Product product = new Product();
         String country = MarketCountryResolver.resolveCountry(request.country(), request.currency());
         product.setName(request.name().trim());
