@@ -75,6 +75,7 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final PaymentRepository paymentRepository;
     private final NotificationService notificationService;
+    private final ReviewService reviewService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -89,7 +90,8 @@ public class OrderService {
             ProductRemovalEventRepository productRemovalEventRepository,
             ProductRepository productRepository,
             PaymentRepository paymentRepository,
-            NotificationService notificationService
+            NotificationService notificationService,
+            ReviewService reviewService
     ) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
@@ -101,6 +103,7 @@ public class OrderService {
         this.productRepository = productRepository;
         this.paymentRepository = paymentRepository;
         this.notificationService = notificationService;
+        this.reviewService = reviewService;
     }
 
     @Transactional
@@ -423,8 +426,12 @@ public class OrderService {
     }
 
     private OrderDto toDto(Order order, List<OrderItem> items, boolean sellerView) {
+        Map<Long, Integer> ratings = sellerView
+                ? Map.of()
+                : reviewService.ratingsByOrderItem(items.stream().map(OrderItem::getId).toList());
         List<OrderDto.OrderItemDto> itemDtos = items.stream()
                 .map(item -> new OrderDto.OrderItemDto(
+                        item.getId(),
                         item.getProduct().getId(),
                         item.getProductNameSnapshot(),
                         firstImageUrl(item.getProduct()),
@@ -433,7 +440,8 @@ public class OrderService {
                         item.getLineTotal(),
                         item.getTrackingNumber(),
                         item.getShippedAt(),
-                        item.getDeliveredAt()
+                        item.getDeliveredAt(),
+                        ratings.get(item.getId())
                 ))
                 .toList();
         BigDecimal subtotal = items.stream()

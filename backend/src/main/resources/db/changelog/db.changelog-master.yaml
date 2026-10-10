@@ -299,3 +299,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 026-create-reviews
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V26__create_reviews.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

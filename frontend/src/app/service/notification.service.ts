@@ -84,6 +84,15 @@ export class NotificationService {
         product: quotedValues[0]
       });
     }
+    if (notification.type === 'REVIEW_RECEIVED' && quotedValues[0]) {
+      const rating = notification.message.match(/(\d)\/5/)?.[1];
+      if (rating) {
+        return this.translateService.instant('NOTIFICATION_CONTENT.REVIEW_RECEIVED.MESSAGE', {
+          product: quotedValues[0],
+          rating
+        });
+      }
+    }
     return notification.message;
   }
 }

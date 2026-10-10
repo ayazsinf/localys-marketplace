@@ -25,6 +25,8 @@ public record ProductDetailDto(
         OffsetDateTime createdAt,
         String locationText,
         Double latitude,
-        Double longitude
+        Double longitude,
+        double vendorRating,
+        long vendorReviewCount
 ) {
 }

@@ -94,6 +94,18 @@ public class GlobalExceptionHandler {
             ApiError error = new ApiError("ORDER_STATE_CONFLICT", "This action is not possible for the order's current state.");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         }
+        if (message.contains("rating must be") || message.contains("review comment is too long")) {
+            ApiError error = new ApiError("INVALID_REVIEW", "Rating must be 1 to 5 and the comment at most 1000 characters.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+        if (message.contains("review not allowed")) {
+            ApiError error = new ApiError("REVIEW_NOT_ALLOWED", "You can review an item once you have received it.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
+        if (message.contains("already reviewed")) {
+            ApiError error = new ApiError("ALREADY_REVIEWED", "You already reviewed this item.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
         if (message.contains("order not found")) {
             ApiError error = new ApiError("ORDER_NOT_FOUND", "Order not found.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);

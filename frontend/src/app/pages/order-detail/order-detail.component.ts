@@ -2,12 +2,18 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, timer } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { Order, OrderService } from '../../service/order.service';
+import { Order, OrderItem, OrderService } from '../../service/order.service';
+import { ReviewService } from '../../service/review.service';
 import { getLocaleForLanguage } from '../../shared/market';
 
 const AWAITING_PAYMENT = ['PAYMENT_PENDING', 'PAYMENT_CONFIRMING'];
 const POLL_INTERVAL_MS = 3000;
 const MAX_POLLS = 10;
+
+interface ReviewDraft {
+  rating: number;
+  comment: string;
+}
 
 @Component({
   selector: 'app-order-detail',
@@ -22,6 +28,9 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   infoMessage = '';
   isPaying = false;
   isConfirmingDelivery = false;
+  readonly ratingValues = [1, 2, 3, 4, 5];
+  reviewDrafts: Record<number, ReviewDraft> = {};
+  reviewSubmittingId: number | null = null;
   /** True while we wait for the Stripe webhook after a successful redirect. */
   isConfirming = false;
   private orderId = 0;
@@ -31,6 +40,7 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     private orderService: OrderService,
+    private reviewService: ReviewService,
     private route: ActivatedRoute,
     private translateService: TranslateService,
     private cdr: ChangeDetectorRef
@@ -79,6 +89,44 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
       }
     });
     this.subscriptions.add(confirmSub);
+  }
+
+  stars(rating: number): string {
+    return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+  }
+
+  draftFor(item: OrderItem): ReviewDraft {
+    if (!this.reviewDrafts[item.orderItemId]) {
+      this.reviewDrafts[item.orderItemId] = { rating: 0, comment: '' };
+    }
+    return this.reviewDrafts[item.orderItemId];
+  }
+
+  submitReview(item: OrderItem): void {
+    const draft = this.draftFor(item);
+    if (!draft.rating || this.reviewSubmittingId !== null) {
+      return;
+    }
+    this.reviewSubmittingId = item.orderItemId;
+    this.errorMessage = '';
+    const reviewSub = this.reviewService.createReview(item.orderItemId, draft.rating, draft.comment.trim()).subscribe({
+      next: review => {
+        item.myRating = review.rating;
+        delete this.reviewDrafts[item.orderItemId];
+        this.reviewSubmittingId = null;
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        this.reviewSubmittingId = null;
+        if (err?.error?.code === 'ALREADY_REVIEWED') {
+          this.loadOrder();
+          return;
+        }
+        this.errorMessage = 'REVIEWS.ERROR_SUBMIT';
+        this.cdr.detectChanges();
+      }
+    });
+    this.subscriptions.add(reviewSub);
   }
 
   pay(): void {

@@ -474,6 +474,10 @@
     "ORDER_DELIVERED": {
       "TITLE": "Livraison confirmee",
       "MESSAGE": "L acheteur a confirme avoir recu \"{{product}}\"."
+    },
+    "REVIEW_RECEIVED": {
+      "TITLE": "Nouvel avis",
+      "MESSAGE": "Un acheteur vous a attribue {{rating}}/5 pour \"{{product}}\"."
     }
   },
   "ORDERS": {
@@ -521,5 +525,17 @@
     "CONFIRM_DELIVERY": "J ai recu ma commande",
     "CONFIRM_DELIVERY_HINT": "Vous avez recu vos articles ? Prevenez le vendeur.",
     "ERROR_CONFIRM_DELIVERY": "Impossible de confirmer la livraison."
+  },
+  "REVIEWS": {
+    "TITLE": "Avis sur le vendeur",
+    "COUNT": "{{count}} avis",
+    "NONE_YET": "Pas encore d'avis",
+    "ANONYMOUS": "Un acheteur",
+    "SHOW_MORE": "Voir plus d'avis",
+    "RATE_SELLER": "Notez le vendeur",
+    "YOUR_RATING": "Votre note",
+    "COMMENT_PLACEHOLDER": "Comment se sont passes l'article et la livraison ? (facultatif)",
+    "SUBMIT": "Envoyer l'avis",
+    "ERROR_SUBMIT": "Impossible d'envoyer votre avis."
   }
 }

@@ -9,6 +9,11 @@ import { environment } from '../../../environments/environment';
 import * as L from 'leaflet';
 import { Product } from '../../modules/product.model';
 import { AuthDialogService } from '../../service/auth-dialog.service';
+import { Review, ReviewService } from '../../service/review.service';
+import { TranslateService } from '@ngx-translate/core';
+import { getLocaleForLanguage } from '../../shared/market';
+
+const REVIEWS_PAGE_SIZE = 5;
 
 @Component({
   selector: 'app-product-detail',
@@ -19,6 +24,10 @@ import { AuthDialogService } from '../../service/auth-dialog.service';
 export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit {
   product: ProductDetail | null = null;
   selectedImage: string | null = null;
+  reviews: Review[] = [];
+  hasMoreReviews = false;
+  isLoadingReviews = false;
+  private reviewsPage = 0;
   private map: L.Map | null = null;
   private mapObserver: ResizeObserver | null = null;
   private viewReady = false;
@@ -31,6 +40,8 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
     private authService: AuthService,
     private authDialogService: AuthDialogService,
     private cartService: CartService,
+    private reviewService: ReviewService,
+    private translateService: TranslateService,
     private currentUserService: CurrentUserService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -51,6 +62,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
         this.selectedImage = product.imageUrls?.[0] ?? null;
         this.cdr.detectChanges();
         this.tryInitMap();
+        this.loadReviews();
       },
       error: () => {
         this.router.navigate(['/']);
@@ -65,6 +77,45 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
 
   ngOnDestroy(): void {
     this.destroyMap();
+  }
+
+  stars(rating: number): string {
+    const rounded = Math.round(rating);
+    return '★'.repeat(rounded) + '☆'.repeat(5 - rounded);
+  }
+
+  formatReviewDate(value: string): string {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+    return date.toLocaleDateString(getLocaleForLanguage(
+      this.translateService.currentLang || this.translateService.getDefaultLang()
+    ));
+  }
+
+  loadMoreReviews(): void {
+    this.reviewsPage++;
+    this.loadReviews();
+  }
+
+  private loadReviews(): void {
+    if (!this.product?.vendorId || !this.product.vendorReviewCount || this.isLoadingReviews) {
+      return;
+    }
+    this.isLoadingReviews = true;
+    this.reviewService.getVendorReviews(this.product.vendorId, this.reviewsPage, REVIEWS_PAGE_SIZE).subscribe({
+      next: result => {
+        this.reviews = [...this.reviews, ...result.reviews.items];
+        this.hasMoreReviews = result.reviews.page + 1 < result.reviews.totalPages;
+        this.isLoadingReviews = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isLoadingReviews = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   selectImage(url: string): void {

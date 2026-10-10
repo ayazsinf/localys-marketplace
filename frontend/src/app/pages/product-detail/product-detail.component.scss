@@ -198,3 +198,50 @@
     grid-template-columns: 1fr;
   }
 }
+
+.seller-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #111827;
+}
+
+.stars {
+  color: #f59e0b;
+  letter-spacing: 1px;
+}
+
+.subtle {
+  color: #6b7280;
+}
+
+.reviews-card {
+  .review-list {
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+
+  li + li {
+    border-top: 1px solid #f1f5f9;
+    padding-top: 14px;
+  }
+
+  .review-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+  }
+
+  p {
+    margin: 6px 0 0;
+  }
+
+  .review-product {
+    font-size: 12px;
+  }
+}

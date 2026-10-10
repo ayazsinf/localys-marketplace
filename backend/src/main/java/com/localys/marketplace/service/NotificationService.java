@@ -135,6 +135,17 @@ public class NotificationService {
         );
     }
 
+    public void createReviewReceivedNotification(UserEntity seller, String productName, int rating) {
+        saveOrderNotification(
+                seller,
+                NotificationType.REVIEW_RECEIVED,
+                "notification.review.received",
+                "/orders?tab=sales",
+                productName,
+                String.valueOf(rating)
+        );
+    }
+
     /** Order ids are passed as strings so MessageFormat does not render them as "1,234". */
     private void saveOrderNotification(
             UserEntity user,

@@ -474,6 +474,10 @@
     "ORDER_DELIVERED": {
       "TITLE": "Delivery confirmed",
       "MESSAGE": "The buyer confirmed receiving \"{{product}}\"."
+    },
+    "REVIEW_RECEIVED": {
+      "TITLE": "New review",
+      "MESSAGE": "A buyer rated you {{rating}}/5 for \"{{product}}\"."
     }
   },
   "ORDERS": {
@@ -521,5 +525,17 @@
     "CONFIRM_DELIVERY": "I received it",
     "CONFIRM_DELIVERY_HINT": "Received your items? Let the seller know.",
     "ERROR_CONFIRM_DELIVERY": "Could not confirm delivery."
+  },
+  "REVIEWS": {
+    "TITLE": "Seller reviews",
+    "COUNT": "{{count}} reviews",
+    "NONE_YET": "No reviews yet",
+    "ANONYMOUS": "A buyer",
+    "SHOW_MORE": "Show more reviews",
+    "RATE_SELLER": "Rate the seller",
+    "YOUR_RATING": "Your rating",
+    "COMMENT_PLACEHOLDER": "How was the item and the delivery? (optional)",
+    "SUBMIT": "Send review",
+    "ERROR_SUBMIT": "Could not send your review."
   }
 }

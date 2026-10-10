@@ -21,7 +21,12 @@ public record OrderDto(
         ShippingAddressDto shippingAddress,
         List<OrderItemDto> items
 ) {
+    /**
+     * @param myRating the buyer's rating of this item's seller, or null when not reviewed
+     *                 (always null in the seller view)
+     */
     public record OrderItemDto(
+            Long orderItemId,
             Long productId,
             String productName,
             String imageUrl,
@@ -30,7 +35,8 @@ public record OrderDto(
             BigDecimal lineTotal,
             String trackingNumber,
             OffsetDateTime shippedAt,
-            OffsetDateTime deliveredAt
+            OffsetDateTime deliveredAt,
+            Integer myRating
     ) {
     }
 

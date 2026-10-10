@@ -7,6 +7,7 @@ import com.localys.marketplace.model.Category;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
 import com.localys.marketplace.service.ProductSearchService;
+import com.localys.marketplace.service.ReviewService;
 import com.localys.marketplace.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +24,16 @@ import java.util.Optional;
 public class ProductController {
     private final ProductService productService;
     private final ProductSearchService productSearchService;
+    private final ReviewService reviewService;
 
-    public ProductController(ProductService productService, ProductSearchService productSearchService) {
+    public ProductController(
+            ProductService productService,
+            ProductSearchService productSearchService,
+            ReviewService reviewService
+    ) {
         this.productService = productService;
         this.productSearchService = productSearchService;
+        this.reviewService = reviewService;
     }
 
     /**
@@ -109,6 +116,9 @@ public class ProductController {
                 }
             }
         }
+        ReviewService.Summary rating = vendorId == null
+                ? new ReviewService.Summary(0, 0)
+                : reviewService.summary(vendorId);
 
         return new ProductDetailDto(
                 product.getId(),
@@ -131,7 +141,9 @@ public class ProductController {
                 product.getCreatedAt(),
                 product.getLocationText(),
                 product.getLatitude(),
-                product.getLongitude()
+                product.getLongitude(),
+                rating.average(),
+                rating.count()
         );
     }
 

@@ -35,6 +35,37 @@
             {{ (item.deliveredAt ? 'ORDERS.ITEM_DELIVERED' : 'ORDERS.ITEM_SHIPPED') | translate }}
             · {{ 'ORDERS.TRACKING' | translate }}: {{ item.trackingNumber }}
           </span>
+          <div class="item-review" *ngIf="item.deliveredAt">
+            <span class="review-done" *ngIf="item.myRating">
+              {{ 'REVIEWS.YOUR_RATING' | translate }}:
+              <span class="stars" [attr.aria-label]="item.myRating + '/5'">{{ stars(item.myRating) }}</span>
+            </span>
+            <form class="review-form" *ngIf="!item.myRating" (ngSubmit)="submitReview(item)">
+              <span class="review-label">{{ 'REVIEWS.RATE_SELLER' | translate }}</span>
+              <div class="star-input" role="radiogroup" [attr.aria-label]="'REVIEWS.RATE_SELLER' | translate">
+                <button
+                  type="button"
+                  role="radio"
+                  *ngFor="let value of ratingValues"
+                  [class.is-on]="value <= draftFor(item).rating"
+                  [attr.aria-checked]="draftFor(item).rating === value"
+                  [attr.aria-label]="value + '/5'"
+                  (click)="draftFor(item).rating = value">★</button>
+              </div>
+              <textarea
+                rows="2"
+                maxlength="1000"
+                [name]="'review-comment-' + item.orderItemId"
+                [(ngModel)]="draftFor(item).comment"
+                [placeholder]="'REVIEWS.COMMENT_PLACEHOLDER' | translate"></textarea>
+              <button
+                type="submit"
+                class="primary"
+                [disabled]="!draftFor(item).rating || reviewSubmittingId === item.orderItemId">
+                {{ 'REVIEWS.SUBMIT' | translate }}
+              </button>
+            </form>
+          </div>
         </li>
       </ul>
 

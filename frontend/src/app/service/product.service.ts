@@ -25,6 +25,8 @@ export interface ProductDetail {
   locationText: string | null;
   latitude: number | null;
   longitude: number | null;
+  vendorRating: number;
+  vendorReviewCount: number;
 }
 
 

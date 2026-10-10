@@ -474,6 +474,10 @@
     "ORDER_DELIVERED": {
       "TITLE": "Teslimat onaylandi",
       "MESSAGE": "Alici \"{{product}}\" urununu teslim aldigini onayladi."
+    },
+    "REVIEW_RECEIVED": {
+      "TITLE": "Yeni degerlendirme",
+      "MESSAGE": "Bir alici \"{{product}}\" icin size {{rating}}/5 puan verdi."
     }
   },
   "ORDERS": {
@@ -521,5 +525,17 @@
     "CONFIRM_DELIVERY": "Teslim aldim",
     "CONFIRM_DELIVERY_HINT": "Urunlerinizi teslim aldiniz mi? Saticiya bildirin.",
     "ERROR_CONFIRM_DELIVERY": "Teslimat onaylanamadi."
+  },
+  "REVIEWS": {
+    "TITLE": "Satici degerlendirmeleri",
+    "COUNT": "{{count}} degerlendirme",
+    "NONE_YET": "Henuz degerlendirme yok",
+    "ANONYMOUS": "Bir alici",
+    "SHOW_MORE": "Daha fazla goster",
+    "RATE_SELLER": "Saticiyi degerlendir",
+    "YOUR_RATING": "Puaniniz",
+    "COMMENT_PLACEHOLDER": "Urun ve teslimat nasildi? (istege bagli)",
+    "SUBMIT": "Degerlendirmeyi gonder",
+    "ERROR_SUBMIT": "Degerlendirmeniz gonderilemedi."
   }
 }
