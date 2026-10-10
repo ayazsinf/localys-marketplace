@@ -41,7 +41,8 @@
     "MESSAGES": "Messages",
     "ACCOUNT_MENU": "Open account menu",
     "LISTING_REPORTS": "Listing reports",
-    "SAVED_SEARCHES": "Saved searches"
+    "SAVED_SEARCHES": "Saved searches",
+    "MY_OFFERS": "My offers"
   },
   "COMMON": {
     "CANCEL": "Cancel",
@@ -495,6 +496,22 @@
     "SAVED_SEARCH_MATCH": {
       "TITLE": "New listings for your search",
       "MESSAGE": "{{count}} new listings match your saved search \"{{name}}\"."
+    },
+    "OFFER_RECEIVED": {
+      "TITLE": "New offer",
+      "MESSAGE": "You received an offer of {{amount}} for \"{{product}}\"."
+    },
+    "OFFER_COUNTERED": {
+      "TITLE": "Counter offer",
+      "MESSAGE": "The seller proposes {{amount}} for \"{{product}}\"."
+    },
+    "OFFER_ACCEPTED": {
+      "TITLE": "Offer accepted",
+      "MESSAGE": "The offer of {{amount}} for \"{{product}}\" was accepted."
+    },
+    "OFFER_DECLINED": {
+      "TITLE": "Offer declined",
+      "MESSAGE": "The offer of {{amount}} for \"{{product}}\" was declined."
     }
   },
   "ORDERS": {
@@ -699,5 +716,43 @@
     "ERROR_DELIVERY": "Choose at least one delivery option.",
     "ERROR_REMOVE_IMAGE": "Could not remove the photo.",
     "ERROR_NOT_FOUND": "Listing not found."
+  },
+  "OFFERS": {
+    "TITLE": "Offers",
+    "SUBTITLE": "Negotiate prices with buyers and sellers.",
+    "TAB_RECEIVED": "Received",
+    "TAB_SENT": "Sent",
+    "LOADING": "Loading offers...",
+    "EMPTY_RECEIVED": "No offers on your listings yet.",
+    "EMPTY_SENT": "You have not made any offers yet.",
+    "ERROR_LOAD": "Could not load offers.",
+    "ERROR_ACTION": "The action failed. The list was refreshed.",
+    "ERROR_COUNTER_RANGE": "A counter offer must be above the offer and below your asking price.",
+    "ERROR_SEND": "Could not send your offer.",
+    "ERROR_AMOUNT": "Your offer must be above 0 and below the asking price.",
+    "ERROR_BUY": "This offer can no longer be bought.",
+    "MAKE": "Make an offer",
+    "YOUR_PRICE": "Your price",
+    "SEND": "Send offer",
+    "SEE_ALL": "See my offers",
+    "LISTED_AT": "listed at {{price}}",
+    "VALID_UNTIL": "valid until {{date}}",
+    "ACCEPT": "Accept",
+    "DECLINE": "Decline",
+    "COUNTER": "Counter offer",
+    "SEND_COUNTER": "Send",
+    "WITHDRAW": "Withdraw",
+    "BUY_AT": "Buy for {{amount}}",
+    "CART_BADGE": "Offer price",
+    "STATUS_PENDING": "Waiting for the seller",
+    "STATUS_COUNTERED": "Counter offer",
+    "STATUS_ACCEPTED": "Accepted",
+    "STATUS_DECLINED": "Declined",
+    "STATUS_WITHDRAWN": "Withdrawn",
+    "STATUS_EXPIRED": "Expired",
+    "STATUS_PURCHASED": "Bought",
+    "MY_STATUS_PENDING": "You offered {{amount}}. Waiting for the seller.",
+    "MY_STATUS_COUNTERED": "The seller proposes {{amount}}. Answer it in My offers.",
+    "MY_STATUS_ACCEPTED": "Your offer of {{amount}} was accepted."
   }
 }

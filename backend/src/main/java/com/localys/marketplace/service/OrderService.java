@@ -15,6 +15,7 @@ import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.model.enums.CartStatus;
 import com.localys.marketplace.model.enums.ListingRemovalReason;
 import com.localys.marketplace.model.enums.OrderStatus;
+import com.localys.marketplace.model.enums.OfferStatus;
 import com.localys.marketplace.model.enums.ModerationStatus;
 import com.localys.marketplace.model.enums.PaymentStatus;
 import com.localys.marketplace.model.enums.ShippingMethod;
@@ -130,13 +131,13 @@ public class OrderService {
         if (selectedItems.isEmpty()) {
             throw new IllegalArgumentException("No items selected");
         }
-        if (selectedItems.stream().map(CartItem::getCurrency).distinct().count() > 1) {
-            throw new IllegalArgumentException("Items with different currencies cannot be ordered together");
-        }
-
         // Lock the products before reading their stock so concurrent checkouts are serialized.
         Map<Long, Product> lockedProducts = lockProducts(
                 selectedItems.stream().map(item -> item.getProduct().getId()).toList());
+        if (lockedProducts.values().stream().map(Product::getCurrency).distinct().count() > 1) {
+            throw new IllegalArgumentException("Items with different currencies cannot be ordered together");
+        }
+        OffsetDateTime now = OffsetDateTime.now();
 
         Order order = new Order();
         order.setUser(user);
@@ -176,18 +177,22 @@ public class OrderService {
             item.setProduct(product);
             item.setVendor(product.getVendor());
             item.setProductNameSnapshot(product.getName());
-            item.setUnitPriceSnapshot(cartItem.getUnitPriceSnapshot());
+            // Today's listing price, or the accepted offer price; never a stale cart snapshot.
+            BigDecimal unitPrice = cartItem.currentUnitPrice(now);
+            if (cartItem.hasValidOffer(now)) {
+                item.setOffer(cartItem.getOffer());
+            }
+            item.setUnitPriceSnapshot(unitPrice);
             item.setQuantity(cartItem.getQuantity());
-            BigDecimal lineTotal = cartItem.getUnitPriceSnapshot()
-                    .multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+            BigDecimal lineTotal = unitPrice.multiply(BigDecimal.valueOf(cartItem.getQuantity()));
             item.setLineTotal(lineTotal);
-            item.setCurrency(cartItem.getCurrency());
+            item.setCurrency(product.getCurrency());
             order.getItems().add(item);
             subtotal = subtotal.add(lineTotal);
         }
 
         order.setTotalAmount(subtotal.add(shippingPrice));
-        order.setCurrency(selectedItems.get(0).getCurrency());
+        order.setCurrency(order.getItems().get(0).getCurrency());
         order.setStockDeducted(true);
         Order saved = orderRepository.save(order);
         orderItemRepository.saveAll(saved.getItems());
@@ -221,6 +226,11 @@ public class OrderService {
             order.setStockDeducted(true);
         }
         order.setStatus(OrderStatus.PAID);
+        // The negotiated price has been used; the offer cannot be bought again.
+        order.getItems().stream()
+                .map(OrderItem::getOffer)
+                .filter(offer -> offer != null && offer.getStatus() == OfferStatus.ACCEPTED)
+                .forEach(offer -> offer.setStatus(OfferStatus.PURCHASED));
         for (Product product : locked.values()) {
             if (product.getStockQty() <= 0 && product.isActive()) {
                 closeAsSold(product, order.getUser());
@@ -423,6 +433,11 @@ public class OrderService {
             cartItem.setQuantity(Math.min(item.getQuantity(), product.getStockQty()));
             cartItem.setUnitPriceSnapshot(product.getPrice());
             cartItem.setCurrency(product.getCurrency());
+            if (item.getOffer() != null && item.getOffer().isBuyable(now)) {
+                cartItem.setOffer(item.getOffer());
+                cartItem.setQuantity(1);
+                cartItem.setUnitPriceSnapshot(item.getOffer().getAmount());
+            }
             cart.getItems().add(cartItem);
         }
         cartRepository.save(cart);

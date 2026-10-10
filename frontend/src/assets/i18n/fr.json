@@ -41,7 +41,8 @@
     "MESSAGES": "Messages",
     "ACCOUNT_MENU": "Ouvrir le menu du compte",
     "LISTING_REPORTS": "Signalements",
-    "SAVED_SEARCHES": "Recherches enregistrees"
+    "SAVED_SEARCHES": "Recherches enregistrees",
+    "MY_OFFERS": "Mes offres"
   },
   "COMMON": {
     "CANCEL": "Annuler",
@@ -495,6 +496,22 @@
     "SAVED_SEARCH_MATCH": {
       "TITLE": "Nouvelles annonces pour votre recherche",
       "MESSAGE": "{{count}} nouvelles annonces correspondent a votre recherche \"{{name}}\"."
+    },
+    "OFFER_RECEIVED": {
+      "TITLE": "Nouvelle offre",
+      "MESSAGE": "Vous avez recu une offre de {{amount}} pour \"{{product}}\"."
+    },
+    "OFFER_COUNTERED": {
+      "TITLE": "Contre-offre",
+      "MESSAGE": "Le vendeur propose {{amount}} pour \"{{product}}\"."
+    },
+    "OFFER_ACCEPTED": {
+      "TITLE": "Offre acceptee",
+      "MESSAGE": "L'offre de {{amount}} pour \"{{product}}\" a ete acceptee."
+    },
+    "OFFER_DECLINED": {
+      "TITLE": "Offre refusee",
+      "MESSAGE": "L'offre de {{amount}} pour \"{{product}}\" a ete refusee."
     }
   },
   "ORDERS": {
@@ -699,5 +716,43 @@
     "ERROR_DELIVERY": "Choisissez au moins un mode de livraison.",
     "ERROR_REMOVE_IMAGE": "Impossible de supprimer la photo.",
     "ERROR_NOT_FOUND": "Annonce introuvable."
+  },
+  "OFFERS": {
+    "TITLE": "Offres",
+    "SUBTITLE": "Negociez les prix avec les acheteurs et les vendeurs.",
+    "TAB_RECEIVED": "Recues",
+    "TAB_SENT": "Envoyees",
+    "LOADING": "Chargement des offres...",
+    "EMPTY_RECEIVED": "Aucune offre sur vos annonces pour le moment.",
+    "EMPTY_SENT": "Vous n'avez fait aucune offre.",
+    "ERROR_LOAD": "Impossible de charger les offres.",
+    "ERROR_ACTION": "L'action a echoue. La liste a ete actualisee.",
+    "ERROR_COUNTER_RANGE": "La contre-offre doit etre superieure a l'offre et inferieure a votre prix.",
+    "ERROR_SEND": "Impossible d'envoyer votre offre.",
+    "ERROR_AMOUNT": "Votre offre doit etre superieure a 0 et inferieure au prix demande.",
+    "ERROR_BUY": "Cette offre ne peut plus etre achetee.",
+    "MAKE": "Faire une offre",
+    "YOUR_PRICE": "Votre prix",
+    "SEND": "Envoyer l'offre",
+    "SEE_ALL": "Voir mes offres",
+    "LISTED_AT": "affiche a {{price}}",
+    "VALID_UNTIL": "valable jusqu'au {{date}}",
+    "ACCEPT": "Accepter",
+    "DECLINE": "Refuser",
+    "COUNTER": "Contre-offre",
+    "SEND_COUNTER": "Envoyer",
+    "WITHDRAW": "Retirer",
+    "BUY_AT": "Acheter pour {{amount}}",
+    "CART_BADGE": "Prix negocie",
+    "STATUS_PENDING": "En attente du vendeur",
+    "STATUS_COUNTERED": "Contre-offre",
+    "STATUS_ACCEPTED": "Acceptee",
+    "STATUS_DECLINED": "Refusee",
+    "STATUS_WITHDRAWN": "Retiree",
+    "STATUS_EXPIRED": "Expiree",
+    "STATUS_PURCHASED": "Achetee",
+    "MY_STATUS_PENDING": "Vous avez propose {{amount}}. En attente du vendeur.",
+    "MY_STATUS_COUNTERED": "Le vendeur propose {{amount}}. Repondez dans Mes offres.",
+    "MY_STATUS_ACCEPTED": "Votre offre de {{amount}} a ete acceptee."
   }
 }

@@ -4,6 +4,7 @@ import com.localys.marketplace.dto.CartDto;
 import com.localys.marketplace.dto.CartItemDto;
 import com.localys.marketplace.model.Cart;
 import com.localys.marketplace.model.CartItem;
+import com.localys.marketplace.model.Offer;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
 import com.localys.marketplace.model.UserEntity;
@@ -87,6 +88,10 @@ public class CartService {
                     return newItem;
                 });
         int desiredQty = item.getQuantity() + quantity;
+        if (item.hasValidOffer(OffsetDateTime.now())) {
+            // An offer is negotiated for one unit.
+            desiredQty = 1;
+        }
         if (desiredQty > stockQty) {
             desiredQty = stockQty;
         }
@@ -124,9 +129,42 @@ public class CartService {
         }
         int stockQty = item.getProduct().getStockQty();
         int desiredQty = quantity > stockQty ? stockQty : quantity;
+        if (item.hasValidOffer(OffsetDateTime.now())) {
+            desiredQty = 1;
+        }
         item.setQuantity(desiredQty);
         cartItemRepository.save(item);
         return toDto(reloadCart(userId, cart));
+    }
+
+    /**
+     * Puts one unit of the offer's listing in the buyer's cart at the accepted price, replacing
+     * any line for the same listing. The caller has checked the offer is the buyer's and buyable.
+     */
+    @Transactional
+    public CartDto addOfferItem(Long buyerId, Offer offer) {
+        Product product = offer.getProduct();
+        if (!product.isShippingAvailable()) {
+            throw new IllegalArgumentException("Product is hand delivery only");
+        }
+        if (availabilityOf(product, OffsetDateTime.now()) != CartItemAvailability.AVAILABLE) {
+            throw new IllegalArgumentException("Product out of stock");
+        }
+        Cart cart = getOrCreateActiveCart(buyerId);
+        CartItem item = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId())
+                .orElseGet(() -> {
+                    CartItem newItem = new CartItem();
+                    newItem.setCart(cart);
+                    newItem.setProduct(product);
+                    cart.getItems().add(newItem);
+                    return newItem;
+                });
+        item.setOffer(offer);
+        item.setQuantity(1);
+        item.setUnitPriceSnapshot(offer.getAmount());
+        item.setCurrency(offer.getCurrency());
+        cartRepository.save(cart);
+        return toDto(cart);
     }
 
     @Transactional
@@ -171,7 +209,11 @@ public class CartService {
                 .map(ProductImage::getUrl)
                 .findFirst()
                 .orElse(null);
-        BigDecimal unitPrice = item.getUnitPriceSnapshot();
+        OffsetDateTime now = OffsetDateTime.now();
+        BigDecimal unitPrice = item.currentUnitPrice(now);
+        // Keep the stored snapshot in line with what checkout will charge.
+        item.setUnitPriceSnapshot(unitPrice);
+        item.setCurrency(product.getCurrency());
         BigDecimal lineTotal = unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
         return new CartItemDto(
                 product.getId(),
@@ -183,7 +225,8 @@ public class CartService {
                 product.getStockQty(),
                 item.getQuantity(),
                 lineTotal,
-                availability.name()
+                availability.name(),
+                item.hasValidOffer(now)
         );
     }
 

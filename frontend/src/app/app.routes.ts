@@ -19,6 +19,7 @@ import {AdminReportsComponent} from "./pages/admin-reports/admin-reports.compone
 import {SavedSearchesComponent} from "./pages/saved-searches/saved-searches.component";
 import {PublicProfileComponent} from "./pages/public-profile/public-profile.component";
 import {ListingWizardComponent} from "./pages/listing-wizard/listing-wizard.component";
+import {OffersComponent} from "./pages/offers/offers.component";
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -37,6 +38,7 @@ export const routes: Routes = [
   { path: 'admin/reports', component: AdminReportsComponent, canActivate: [authGuard] },
   { path: 'cart', component: CartComponent, canActivate: [authGuard] },
   { path: 'orders', component: OrdersComponent, canActivate: [authGuard] },
+  { path: 'offers', component: OffersComponent, canActivate: [authGuard] },
   { path: 'orders/:id', component: OrderDetailComponent, canActivate: [authGuard] },
   { path: 'checkout', component: CheckoutComponent },
   { path: 'products/:id', component: ProductDetailComponent },

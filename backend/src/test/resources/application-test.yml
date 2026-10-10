@@ -30,3 +30,5 @@ app:
     expiration-cron: "-"
   saved-searches:
     alert-cron: "-"
+  offers:
+    expiration-cron: "-"

@@ -29,6 +29,7 @@ import { AdminReportsComponent } from './pages/admin-reports/admin-reports.compo
 import { RatingFormComponent } from './components/rating-form/rating-form.component';
 import { PublicProfileComponent } from './pages/public-profile/public-profile.component';
 import { ListingWizardComponent } from './pages/listing-wizard/listing-wizard.component';
+import { OffersComponent } from './pages/offers/offers.component';
 import { SavedSearchesComponent } from './pages/saved-searches/saved-searches.component';
 import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.component';
 
@@ -59,6 +60,7 @@ import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.compon
     RatingFormComponent,
     PublicProfileComponent,
     ListingWizardComponent,
+    OffersComponent,
     CurrencyDisplayPipe,
     CategoryDisplayPipe
   ],

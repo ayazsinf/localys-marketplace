@@ -41,7 +41,8 @@
     "MESSAGES": "Mesajlar",
     "ACCOUNT_MENU": "Hesap menusunu ac",
     "LISTING_REPORTS": "Ilan Sikayetleri",
-    "SAVED_SEARCHES": "Kayitli Aramalar"
+    "SAVED_SEARCHES": "Kayitli Aramalar",
+    "MY_OFFERS": "Tekliflerim"
   },
   "COMMON": {
     "CANCEL": "Iptal",
@@ -495,6 +496,22 @@
     "SAVED_SEARCH_MATCH": {
       "TITLE": "Aramaniz icin yeni ilanlar",
       "MESSAGE": "Kayitli aramaniz \"{{name}}\" icin {{count}} yeni ilan var."
+    },
+    "OFFER_RECEIVED": {
+      "TITLE": "Yeni teklif",
+      "MESSAGE": "\"{{product}}\" icin {{amount}} teklif aldiniz."
+    },
+    "OFFER_COUNTERED": {
+      "TITLE": "Karsi teklif",
+      "MESSAGE": "Satici \"{{product}}\" icin {{amount}} oneriyor."
+    },
+    "OFFER_ACCEPTED": {
+      "TITLE": "Teklif kabul edildi",
+      "MESSAGE": "\"{{product}}\" icin {{amount}} teklif kabul edildi."
+    },
+    "OFFER_DECLINED": {
+      "TITLE": "Teklif reddedildi",
+      "MESSAGE": "\"{{product}}\" icin {{amount}} teklif reddedildi."
     }
   },
   "ORDERS": {
@@ -699,5 +716,43 @@
     "ERROR_DELIVERY": "En az bir teslimat secenegi secin.",
     "ERROR_REMOVE_IMAGE": "Fotograf silinemedi.",
     "ERROR_NOT_FOUND": "Ilan bulunamadi."
+  },
+  "OFFERS": {
+    "TITLE": "Teklifler",
+    "SUBTITLE": "Alici ve saticilarla fiyat pazarligi yapin.",
+    "TAB_RECEIVED": "Gelen",
+    "TAB_SENT": "Gonderilen",
+    "LOADING": "Teklifler yukleniyor...",
+    "EMPTY_RECEIVED": "Ilanlariniza henuz teklif gelmedi.",
+    "EMPTY_SENT": "Henuz teklif vermediniz.",
+    "ERROR_LOAD": "Teklifler yuklenemedi.",
+    "ERROR_ACTION": "Islem basarisiz oldu. Liste yenilendi.",
+    "ERROR_COUNTER_RANGE": "Karsi teklif, teklifin uzerinde ve ilan fiyatinin altinda olmali.",
+    "ERROR_SEND": "Teklifiniz gonderilemedi.",
+    "ERROR_AMOUNT": "Teklifiniz 0'dan buyuk ve ilan fiyatindan dusuk olmali.",
+    "ERROR_BUY": "Bu teklifle artik satin alinamaz.",
+    "MAKE": "Teklif ver",
+    "YOUR_PRICE": "Teklifiniz",
+    "SEND": "Teklifi gonder",
+    "SEE_ALL": "Tekliflerime git",
+    "LISTED_AT": "ilan fiyati {{price}}",
+    "VALID_UNTIL": "{{date}} tarihine kadar gecerli",
+    "ACCEPT": "Kabul et",
+    "DECLINE": "Reddet",
+    "COUNTER": "Karsi teklif",
+    "SEND_COUNTER": "Gonder",
+    "WITHDRAW": "Geri cek",
+    "BUY_AT": "{{amount}} fiyatla satin al",
+    "CART_BADGE": "Teklif fiyati",
+    "STATUS_PENDING": "Saticinin yaniti bekleniyor",
+    "STATUS_COUNTERED": "Karsi teklif",
+    "STATUS_ACCEPTED": "Kabul edildi",
+    "STATUS_DECLINED": "Reddedildi",
+    "STATUS_WITHDRAWN": "Geri cekildi",
+    "STATUS_EXPIRED": "Suresi doldu",
+    "STATUS_PURCHASED": "Satin alindi",
+    "MY_STATUS_PENDING": "{{amount}} teklif ettiniz. Saticinin yaniti bekleniyor.",
+    "MY_STATUS_COUNTERED": "Satici {{amount}} oneriyor. Tekliflerim sayfasindan yanitlayin.",
+    "MY_STATUS_ACCEPTED": "{{amount}} teklifiniz kabul edildi."
   }
 }

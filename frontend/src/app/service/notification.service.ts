@@ -85,6 +85,13 @@ export class NotificationService {
         product: quotedValues[0]
       });
     }
+    if (notification.type.startsWith('OFFER_') && quotedValues.length >= 2) {
+      // Backend messages quote the amount first, then the listing.
+      return this.translateService.instant(`NOTIFICATION_CONTENT.${notification.type}.MESSAGE`, {
+        amount: quotedValues[0],
+        product: quotedValues[1]
+      });
+    }
     if (notification.type === 'SAVED_SEARCH_MATCH' && quotedValues[0]) {
       const count = notification.message.match(/^(\d+)/)?.[1];
       if (count) {

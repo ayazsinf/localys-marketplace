@@ -86,6 +86,37 @@
         </button>
       </div>
 
+      <div class="offer-block" *ngIf="!isOwner() && product.active">
+        <ng-container *ngIf="myOffer; else makeOffer">
+          <p class="offer-status">
+            {{ ('OFFERS.MY_STATUS_' + myOffer.status) | translate: { amount: (myOffer.amount | currencyDisplay: myOffer.currency) } }}
+          </p>
+          <button type="button" class="primary-btn" *ngIf="myOffer.status === 'ACCEPTED' && product.shippingAvailable"
+                  [disabled]="isOfferBusy" (click)="buyWithOffer()">
+            {{ 'OFFERS.BUY_AT' | translate: { amount: (myOffer.amount | currencyDisplay: myOffer.currency) } }}
+          </button>
+          <a routerLink="/offers" [queryParams]="{ tab: 'sent' }" class="offer-link">{{ 'OFFERS.SEE_ALL' | translate }}</a>
+        </ng-container>
+        <ng-template #makeOffer>
+          <button type="button" class="ghost-btn" *ngIf="!isOfferFormOpen" (click)="openOfferForm()">
+            {{ 'OFFERS.MAKE' | translate }}
+          </button>
+          <form class="offer-form" *ngIf="isOfferFormOpen" (ngSubmit)="submitOffer()">
+            <label>
+              <span>{{ 'OFFERS.YOUR_PRICE' | translate }} ({{ product.currency }})</span>
+              <input type="number" name="offerAmount" min="0.01" step="0.01" [max]="product.price" [(ngModel)]="offerAmount" />
+            </label>
+            <div class="offer-actions">
+              <button type="button" class="ghost-btn" (click)="isOfferFormOpen = false">{{ 'REPORT.CANCEL' | translate }}</button>
+              <button type="submit" class="primary-btn" [disabled]="isOfferBusy || !(offerAmount > 0 && offerAmount < product.price)">
+                {{ 'OFFERS.SEND' | translate }}
+              </button>
+            </div>
+          </form>
+        </ng-template>
+        <p class="report-error" *ngIf="offerError">{{ offerError | translate }}</p>
+      </div>
+
       <div class="report-block" *ngIf="!isOwner()">
         <p class="report-done" *ngIf="reportSent">{{ 'REPORT.THANKS' | translate }}</p>
         <button type="button" class="link-btn" *ngIf="!reportSent && !isReportOpen" (click)="openReport()">

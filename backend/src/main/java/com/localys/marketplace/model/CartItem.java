@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -34,4 +35,24 @@ public class CartItem {
 
     @Column(nullable = false, length = 3)
     private String currency = "EUR";
+
+    /** Accepted offer this line is bought with; null to pay the listing price. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "offer_id")
+    private Offer offer;
+
+    /**
+     * What the buyer pays per unit right now: the accepted offer while it is still valid,
+     * otherwise the listing's current price (never a stale price from when it was added).
+     */
+    public BigDecimal currentUnitPrice(OffsetDateTime now) {
+        if (offer != null && offer.isBuyable(now)) {
+            return offer.getAmount();
+        }
+        return product.getPrice();
+    }
+
+    public boolean hasValidOffer(OffsetDateTime now) {
+        return offer != null && offer.isBuyable(now);
+    }
 }

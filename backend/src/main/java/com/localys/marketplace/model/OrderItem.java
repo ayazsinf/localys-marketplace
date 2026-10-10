@@ -52,4 +52,9 @@ public class OrderItem {
 
     @Column(name = "delivered_at")
     private OffsetDateTime deliveredAt;
+
+    /** The accepted offer that set this line's price, if any. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "offer_id")
+    private Offer offer;
 }

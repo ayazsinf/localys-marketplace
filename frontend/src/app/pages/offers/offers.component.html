@@ -1,0 +1,70 @@
+<section class="account-page">
+  <div class="account-header">
+    <h1>{{ 'OFFERS.TITLE' | translate }}</h1>
+    <p>{{ 'OFFERS.SUBTITLE' | translate }}</p>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" [class.active]="activeTab === 'received'"
+            [attr.aria-selected]="activeTab === 'received'" (click)="selectTab('received')">
+      {{ 'OFFERS.TAB_RECEIVED' | translate }}
+    </button>
+    <button type="button" role="tab" [class.active]="activeTab === 'sent'"
+            [attr.aria-selected]="activeTab === 'sent'" (click)="selectTab('sent')">
+      {{ 'OFFERS.TAB_SENT' | translate }}
+    </button>
+  </div>
+
+  <p class="status" *ngIf="isLoading">{{ 'OFFERS.LOADING' | translate }}</p>
+  <p class="status error" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
+  <p class="status" *ngIf="!isLoading && !errorMessage && offers.length === 0">
+    {{ (activeTab === 'received' ? 'OFFERS.EMPTY_RECEIVED' : 'OFFERS.EMPTY_SENT') | translate }}
+  </p>
+
+  <ul class="offer-list" *ngIf="!isLoading">
+    <li *ngFor="let offer of offers" [class.awaiting]="offer.awaitingMe">
+      <img *ngIf="offer.productImageUrl" [src]="imageUrl(offer.productImageUrl)" [alt]="offer.productName" />
+      <div class="offer-placeholder" *ngIf="!offer.productImageUrl"></div>
+      <div class="offer-main">
+        <a class="offer-product" [routerLink]="['/products', offer.productId]">{{ offer.productName }}</a>
+        <div class="offer-prices">
+          <strong>{{ offer.amount | currencyDisplay: offer.currency }}</strong>
+          <span class="subtle">{{ 'OFFERS.LISTED_AT' | translate: { price: (offer.listingPrice | currencyDisplay: offer.currency) } }}</span>
+        </div>
+        <div class="offer-meta">
+          <span class="status-chip" [attr.data-status]="offer.status">{{ ('OFFERS.STATUS_' + offer.status) | translate }}</span>
+          <a [routerLink]="['/users', offer.otherUserId]">{{ offer.otherUserName || ('PROFILE_PUBLIC.MEMBER' | translate) }}</a>
+          <span class="subtle" *ngIf="offer.status === 'ACCEPTED' && offer.expiresAt">
+            {{ 'OFFERS.VALID_UNTIL' | translate: { date: (offer.expiresAt | date: 'short') } }}
+          </span>
+        </div>
+
+        <form class="counter-form" *ngIf="counterOpenId === offer.id" (ngSubmit)="sendCounter(offer)">
+          <input type="number" min="0.01" step="0.01" [name]="'counter-' + offer.id" [(ngModel)]="counterAmounts[offer.id]" />
+          <button type="submit" class="primary" [disabled]="processingId === offer.id">{{ 'OFFERS.SEND_COUNTER' | translate }}</button>
+          <button type="button" class="ghost" (click)="counterOpenId = null">{{ 'REPORT.CANCEL' | translate }}</button>
+        </form>
+      </div>
+
+      <div class="offer-actions" *ngIf="counterOpenId !== offer.id">
+        <ng-container *ngIf="offer.awaitingMe">
+          <button type="button" class="primary" [disabled]="processingId === offer.id" (click)="accept(offer)">{{ 'OFFERS.ACCEPT' | translate }}</button>
+          <button type="button" class="ghost" *ngIf="activeTab === 'received'" [disabled]="processingId === offer.id" (click)="openCounter(offer)">
+            {{ 'OFFERS.COUNTER' | translate }}
+          </button>
+          <button type="button" class="ghost" [disabled]="processingId === offer.id" (click)="decline(offer)">{{ 'OFFERS.DECLINE' | translate }}</button>
+        </ng-container>
+        <ng-container *ngIf="activeTab === 'sent'">
+          <button type="button" class="primary" *ngIf="canBuy(offer)" [disabled]="processingId === offer.id" (click)="buy(offer)">
+            {{ 'OFFERS.BUY_AT' | translate: { amount: (offer.amount | currencyDisplay: offer.currency) } }}
+          </button>
+          <button type="button" class="ghost"
+                  *ngIf="offer.status === 'PENDING' || offer.status === 'COUNTERED' || offer.status === 'ACCEPTED'"
+                  [disabled]="processingId === offer.id" (click)="withdraw(offer)">
+            {{ 'OFFERS.WITHDRAW' | translate }}
+          </button>
+        </ng-container>
+      </div>
+    </li>
+  </ul>
+</section>

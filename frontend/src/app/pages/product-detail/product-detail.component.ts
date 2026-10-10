@@ -10,6 +10,7 @@ import * as L from 'leaflet';
 import { Product } from '../../modules/product.model';
 import { AuthDialogService } from '../../service/auth-dialog.service';
 import { REPORT_REASONS, ReportReason, ReportService } from '../../service/report.service';
+import { Offer, OfferService } from '../../service/offer.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -27,6 +28,11 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
   isReporting = false;
   reportSent = false;
   reportError = '';
+  myOffer: Offer | null = null;
+  isOfferFormOpen = false;
+  isOfferBusy = false;
+  offerAmount = 0;
+  offerError = '';
   private map: L.Map | null = null;
   private mapObserver: ResizeObserver | null = null;
   private viewReady = false;
@@ -40,6 +46,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
     private authDialogService: AuthDialogService,
     private cartService: CartService,
     private reportService: ReportService,
+    private offerService: OfferService,
     private currentUserService: CurrentUserService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -60,6 +67,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
         this.selectedImage = product.imageUrls?.[0] ?? null;
         this.cdr.detectChanges();
         this.tryInitMap();
+        this.loadMyOffer(product.id);
       },
       error: () => {
         this.router.navigate(['/']);
@@ -82,6 +90,70 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
 
   get sellerInitial(): string {
     return (this.sellerName.trim()[0] ?? '?').toUpperCase();
+  }
+
+  openOfferForm(): void {
+    if (!this.authService.isAuthenticated) {
+      this.authDialogService.openLogin().subscribe();
+      return;
+    }
+    this.offerError = '';
+    // Suggest a typical first offer, 10% under the asking price.
+    this.offerAmount = this.product ? Math.floor(this.product.price * 0.9 * 100) / 100 : 0;
+    this.isOfferFormOpen = true;
+  }
+
+  submitOffer(): void {
+    if (!this.product || this.isOfferBusy) {
+      return;
+    }
+    this.isOfferBusy = true;
+    this.offerError = '';
+    this.offerService.make(this.product.id, Number(this.offerAmount)).subscribe({
+      next: offer => {
+        this.myOffer = offer;
+        this.isOfferBusy = false;
+        this.isOfferFormOpen = false;
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        this.isOfferBusy = false;
+        this.offerError = err?.error?.code === 'INVALID_OFFER_AMOUNT' ? 'OFFERS.ERROR_AMOUNT' : 'OFFERS.ERROR_SEND';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  buyWithOffer(): void {
+    if (!this.myOffer || !this.product || this.isOfferBusy) {
+      return;
+    }
+    this.isOfferBusy = true;
+    const productId = this.product.id;
+    this.offerService.addToCart(this.myOffer.id).subscribe({
+      next: () => {
+        this.cartService.refresh().subscribe();
+        this.router.navigate(['/checkout'], { queryParams: { items: productId } });
+      },
+      error: () => {
+        this.isOfferBusy = false;
+        this.offerError = 'OFFERS.ERROR_BUY';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private loadMyOffer(productId: number): void {
+    if (!this.authService.isAuthenticated) {
+      return;
+    }
+    this.offerService.mine(productId).subscribe({
+      next: offer => {
+        this.myOffer = offer;
+        this.cdr.detectChanges();
+      },
+      error: () => this.myOffer = null
+    });
   }
 
   openReport(): void {

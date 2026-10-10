@@ -336,3 +336,49 @@
   color: #9a3412;
   font-size: 14px;
 }
+
+.offer-block {
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+
+  .offer-status {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .offer-link {
+    font-size: 13px;
+    color: #2563eb;
+  }
+}
+
+.offer-form {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+
+  label {
+    display: grid;
+    gap: 4px;
+    font-weight: 600;
+  }
+
+  input {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font: inherit;
+  }
+
+  .offer-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}

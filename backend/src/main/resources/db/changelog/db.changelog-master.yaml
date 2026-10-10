@@ -365,3 +365,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 032-create-offers
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V32__create_offers.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

@@ -12,6 +12,8 @@ public record CartItemDto(
         Integer stockQty,
         int quantity,
         BigDecimal lineTotal,
-        String availability
+        String availability,
+        /** Priced with an accepted offer (quantity fixed at 1). */
+        boolean offerApplied
 ) {
 }

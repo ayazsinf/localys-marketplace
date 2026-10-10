@@ -82,6 +82,23 @@ public class GlobalExceptionHandler {
             ApiError error = new ApiError("OWN_PRODUCT", "You cannot perform this action on your own listing.");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
         }
+        if (message.equals("offer not found")) {
+            ApiError error = new ApiError("OFFER_NOT_FOUND", "Offer not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+        if (message.contains("offer already open")) {
+            ApiError error = new ApiError("OFFER_ALREADY_OPEN", "You already have an open offer on this listing.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
+        if (message.contains("offer cannot be answered") || message.contains("not accepted or has expired")) {
+            ApiError error = new ApiError("OFFER_STATE_CONFLICT", "This offer is no longer open for this action.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
+        if (message.contains("offer must be below") || message.contains("counter offer must be")
+                || message.contains("offer amount must be")) {
+            ApiError error = new ApiError("INVALID_OFFER_AMOUNT", ex.getMessage() + ".");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
         if (message.contains("hand delivery only")) {
             ApiError error = new ApiError("HAND_DELIVERY_ONLY", "This item is only handed over in person; contact the seller.");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);

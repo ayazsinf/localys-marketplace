@@ -18,6 +18,7 @@ interface CartItemResponse {
   quantity: number;
   lineTotal: number;
   availability: CartItemAvailability;
+  offerApplied: boolean;
 }
 
 interface CartResponse {
@@ -34,6 +35,8 @@ export interface CartItem {
   quantity: number;
   /** Expired, sold or removed listings stay in the cart but cannot be checked out. */
   availability: CartItemAvailability;
+  /** Priced with an accepted offer (one unit). */
+  offerApplied: boolean;
 }
 
 export interface CartNotice {
@@ -173,7 +176,8 @@ export class CartService {
     const items = cart.items.map(item => ({
       product: this.toProduct(item),
       quantity: item.quantity,
-      availability: item.availability ?? 'AVAILABLE'
+      availability: item.availability ?? 'AVAILABLE',
+      offerApplied: !!item.offerApplied
     }));
     this.itemsSubject.next(items);
   }

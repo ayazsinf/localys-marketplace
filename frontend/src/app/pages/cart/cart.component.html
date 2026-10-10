@@ -43,6 +43,7 @@
         <div class="cart-info">
           <div class="cart-name">{{ item.product.name }}</div>
           <div class="cart-price">{{ item.product.price | currencyDisplay:item.product.currency }}</div>
+          <div class="cart-offer" *ngIf="item.offerApplied">{{ 'OFFERS.CART_BADGE' | translate }}</div>
           <div class="cart-availability" *ngIf="!isAvailable(item)">
             {{ ('CART.AVAILABILITY.' + item.availability) | translate }}
           </div>
@@ -58,7 +59,7 @@
           <span>{{ item.quantity }}</span>
           <button
             type="button"
-            [disabled]="item.quantity >= (item.product.stockQty ?? item.quantity)"
+            [disabled]="item.offerApplied || item.quantity >= (item.product.stockQty ?? item.quantity)"
             (click)="changeQuantity(item, 1)">
             +
           </button>

@@ -2,6 +2,7 @@ package com.localys.marketplace.service;
 
 import com.localys.marketplace.dto.NotificationDto;
 import com.localys.marketplace.model.Notification;
+import com.localys.marketplace.model.Offer;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.SavedSearch;
 import com.localys.marketplace.model.UserEntity;
@@ -159,6 +160,25 @@ public class NotificationService {
                 "notification.listing.reported",
                 "/admin/reports",
                 product.getName()
+        );
+    }
+
+    /** The amount is quoted so the frontend can extract it. */
+    public void createOfferNotification(UserEntity recipient, Offer offer, OfferService.OfferEvent event) {
+        NotificationType type = switch (event) {
+            case RECEIVED -> NotificationType.OFFER_RECEIVED;
+            case COUNTERED -> NotificationType.OFFER_COUNTERED;
+            case ACCEPTED -> NotificationType.OFFER_ACCEPTED;
+            case DECLINED -> NotificationType.OFFER_DECLINED;
+        };
+        boolean toBuyer = recipient.getId().equals(offer.getBuyer().getId());
+        saveOrderNotification(
+                recipient,
+                type,
+                "notification.offer." + event.name().toLowerCase(),
+                toBuyer ? "/offers?tab=sent" : "/offers?tab=received",
+                offer.getProduct().getName(),
+                formatPrice(offer.getAmount(), offer.getCurrency())
         );
     }
 
