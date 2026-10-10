@@ -310,3 +310,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 027-favorite-price-alerts
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V27__favorite_price_alerts.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

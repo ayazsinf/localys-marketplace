@@ -14,6 +14,8 @@ import com.localys.marketplace.repository.ProductRemovalEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +28,8 @@ import java.util.UUID;
 
 @Service
 public class ProductService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     // Sold or admin-removed listings must stay closed; the seller has to create a new listing.
     private static final Set<ListingRemovalReason> NON_REACTIVATABLE_REASONS =
@@ -47,6 +51,9 @@ public class ProductService {
 
     @Autowired
     private ProductRemovalEventRepository productRemovalEventRepository;
+
+    @Autowired
+    private PriceDropService priceDropService;
 
     @Value("${app.listings.removed-visible-days:7}")
     private int removedVisibleDays;
@@ -121,6 +128,7 @@ public class ProductService {
         }
         Product saved = productRepository.save(product);
         publishModerationEvent(saved, eventType);
+        notifyPriceDrop(saved);
         return saved;
     }
 
@@ -174,7 +182,17 @@ public class ProductService {
         product.setReviewedBy(reviewer);
         Product saved = productRepository.save(product);
         publishModerationEvent(saved, ProductModerationEventType.APPROVED);
+        notifyPriceDrop(saved);
         return saved;
+    }
+
+    /** A failed alert must never fail the seller's edit or the admin's approval. */
+    private void notifyPriceDrop(Product product) {
+        try {
+            priceDropService.notifyIfPriceDropped(product.getId());
+        } catch (RuntimeException ex) {
+            logger.warn("Could not send price drop alerts for product {}: {}", product.getId(), ex.getMessage());
+        }
     }
 
     public Product rejectProduct(Long id, String reason, UserEntity reviewer) {

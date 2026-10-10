@@ -1,6 +1,7 @@
 package com.localys.marketplace.repository;
 
 import com.localys.marketplace.model.Favorite;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -8,6 +9,9 @@ import java.util.Optional;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     List<Favorite> findByUserId(Long userId);
+
+    @EntityGraph(attributePaths = "user")
+    List<Favorite> findByProductId(Long productId);
 
     Optional<Favorite> findByUserIdAndProductId(Long userId, Long productId);
 

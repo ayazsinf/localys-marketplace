@@ -478,6 +478,10 @@
     "REVIEW_RECEIVED": {
       "TITLE": "Yeni degerlendirme",
       "MESSAGE": "Bir alici \"{{product}}\" icin size {{rating}}/5 puan verdi."
+    },
+    "PRICE_DROP": {
+      "TITLE": "Fiyat dustu",
+      "MESSAGE": "Favorilerinizdeki \"{{product}}\" simdi {{price}} (onceki fiyat {{previous}})."
     }
   },
   "ORDERS": {

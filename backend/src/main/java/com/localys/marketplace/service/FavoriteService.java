@@ -71,6 +71,8 @@ public class FavoriteService {
         Favorite favorite = new Favorite();
         favorite.setUser(user);
         favorite.setProduct(product);
+        favorite.setLastSeenPrice(product.getPrice());
+        favorite.setLastSeenCurrency(product.getCurrency());
         try {
             favoriteRepository.save(favorite);
         } catch (DataIntegrityViolationException ex) {

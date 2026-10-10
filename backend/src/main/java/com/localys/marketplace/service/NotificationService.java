@@ -8,6 +8,8 @@ import com.localys.marketplace.model.enums.NotificationType;
 import com.localys.marketplace.repository.NotificationRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -144,6 +146,23 @@ public class NotificationService {
                 productName,
                 String.valueOf(rating)
         );
+    }
+
+    /** Prices are quoted so the frontend can extract and re-localize them. */
+    public void createPriceDropNotification(UserEntity user, Product product, BigDecimal previousPrice) {
+        saveOrderNotification(
+                user,
+                NotificationType.PRICE_DROP,
+                "notification.price.drop",
+                "/products/" + product.getId(),
+                product.getName(),
+                formatPrice(product.getPrice(), product.getCurrency()),
+                formatPrice(previousPrice, product.getCurrency())
+        );
+    }
+
+    private String formatPrice(BigDecimal amount, String currency) {
+        return amount.setScale(2, RoundingMode.HALF_UP).toPlainString() + " " + currency;
     }
 
     /** Order ids are passed as strings so MessageFormat does not render them as "1,234". */

@@ -478,6 +478,10 @@
     "REVIEW_RECEIVED": {
       "TITLE": "New review",
       "MESSAGE": "A buyer rated you {{rating}}/5 for \"{{product}}\"."
+    },
+    "PRICE_DROP": {
+      "TITLE": "Price drop",
+      "MESSAGE": "\"{{product}}\" from your favorites is now {{price}} (was {{previous}})."
     }
   },
   "ORDERS": {

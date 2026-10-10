@@ -10,5 +10,6 @@ public enum NotificationType {
     ORDER_SOLD,
     ORDER_SHIPPED,
     ORDER_DELIVERED,
-    REVIEW_RECEIVED
+    REVIEW_RECEIVED,
+    PRICE_DROP
 }

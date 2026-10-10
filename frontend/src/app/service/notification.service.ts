@@ -84,6 +84,13 @@ export class NotificationService {
         product: quotedValues[0]
       });
     }
+    if (notification.type === 'PRICE_DROP' && quotedValues.length >= 3) {
+      return this.translateService.instant('NOTIFICATION_CONTENT.PRICE_DROP.MESSAGE', {
+        product: quotedValues[0],
+        price: quotedValues[1],
+        previous: quotedValues[2]
+      });
+    }
     if (notification.type === 'REVIEW_RECEIVED' && quotedValues[0]) {
       const rating = notification.message.match(/(\d)\/5/)?.[1];
       if (rating) {
