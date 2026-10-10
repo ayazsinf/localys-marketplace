@@ -28,6 +28,9 @@ public record ListingDto(
         List<String> categoryPathNames,
         String locationText,
         Double latitude,
-        Double longitude
+        Double longitude,
+        String condition,
+        Boolean handDelivery,
+        Boolean shippingAvailable
 ) {
 }

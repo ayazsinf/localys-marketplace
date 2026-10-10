@@ -7,6 +7,7 @@ import com.localys.marketplace.dto.UserReviewsDto;
 import com.localys.marketplace.model.Category;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
+import com.localys.marketplace.model.enums.ItemCondition;
 import com.localys.marketplace.service.ProductSearchService;
 import com.localys.marketplace.service.ReviewService;
 import com.localys.marketplace.service.ProductService;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,10 +52,19 @@ public class ProductController {
             @RequestParam(name = "sort", required = false) String sort,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "size", required = false) Integer size,
-            @RequestParam(name = "sellerId", required = false) Long sellerId
+            @RequestParam(name = "sellerId", required = false) Long sellerId,
+            @RequestParam(name = "condition", required = false) List<String> conditions,
+            @RequestParam(name = "delivery", required = false) String delivery
     ) {
+        List<ItemCondition> parsedConditions = conditions == null ? List.of() : conditions.stream()
+                .flatMap(raw -> Arrays.stream(raw.split(",")))
+                .map(ItemCondition::from)
+                .flatMap(Optional::stream)
+                .distinct()
+                .toList();
         ProductSearchService.Criteria criteria = new ProductSearchService.Criteria(
-                query, categoryId, minPrice, maxPrice, sort, page, size, sellerId
+                query, categoryId, minPrice, maxPrice, sort, page, size, sellerId,
+                parsedConditions, ProductSearchService.Delivery.from(delivery)
         );
         return PageResponse.from(productSearchService.search(criteria), this::toDto);
     }
@@ -84,7 +95,10 @@ public class ProductController {
                 categoryPathIds(p.getCategory()),
                 categoryPathNames(p.getCategory()),
                 vendorUserId,
-                imageUrls
+                imageUrls,
+                p.getCondition() != null ? p.getCondition().name() : null,
+                p.isHandDelivery(),
+                p.isShippingAvailable()
         );
     }
 
@@ -145,7 +159,10 @@ public class ProductController {
                 product.getLatitude(),
                 product.getLongitude(),
                 rating.average(),
-                rating.count()
+                rating.count(),
+                product.getCondition() != null ? product.getCondition().name() : null,
+                product.isHandDelivery(),
+                product.isShippingAvailable()
         );
     }
 

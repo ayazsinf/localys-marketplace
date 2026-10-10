@@ -16,7 +16,10 @@ public record ProductListDto(
         List<Long> categoryPathIds,
         List<String> categoryPathNames,
         Long vendorUserId,
-        List<String> imageUrls
+        List<String> imageUrls,
+        String condition,
+        boolean handDelivery,
+        boolean shippingAvailable
 ) {
 }
 

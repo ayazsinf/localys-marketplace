@@ -163,6 +163,9 @@ public class OrderService {
                     && userId.equals(product.getVendor().getUser().getId())) {
                 throw new IllegalArgumentException("Cannot buy own product");
             }
+            if (!product.isShippingAvailable()) {
+                throw new IllegalArgumentException("Product is hand delivery only");
+            }
             if (cartItem.getQuantity() <= 0 || cartItem.getQuantity() > product.getStockQty()) {
                 throw new IllegalArgumentException("Product out of stock");
             }

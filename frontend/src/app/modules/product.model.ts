@@ -13,4 +13,7 @@ export interface Product {
   inStock: boolean;
   stockQty?: number;
   vendorUserId?: number | null;
+  condition?: string | null;
+  handDelivery?: boolean;
+  shippingAvailable?: boolean;
 }

@@ -1,0 +1,188 @@
+<section class="wizard-page">
+  <a routerLink="/listings" class="back-link">← {{ 'WIZARD.BACK_TO_LISTINGS' | translate }}</a>
+  <h1>{{ (editingId ? 'WIZARD.TITLE_EDIT' : 'WIZARD.TITLE_NEW') | translate }}</h1>
+
+  <p class="status" *ngIf="isLoading">{{ 'LISTINGS.LOADING' | translate }}</p>
+
+  <ol class="stepper" *ngIf="!isLoading">
+    <li *ngFor="let id of steps; let i = index"
+        [class.done]="i < stepIndex"
+        [class.current]="i === stepIndex">
+      <button type="button" (click)="goTo(i)" [attr.aria-current]="i === stepIndex ? 'step' : null">
+        <span class="step-number">{{ i + 1 }}</span>
+        <span class="step-label">{{ ('WIZARD.STEP_' + id.toUpperCase()) | translate }}</span>
+      </button>
+    </li>
+  </ol>
+
+  <div class="wizard-card" *ngIf="!isLoading">
+    <!-- 1. Category and title -->
+    <ng-container *ngIf="step === 'category'">
+      <h2>{{ 'WIZARD.CATEGORY_HEADING' | translate }}</h2>
+      <label class="field">
+        <span>{{ 'WIZARD.FIELD_TITLE' | translate }}</span>
+        <input type="text" maxlength="200" [(ngModel)]="form.name" [placeholder]="'WIZARD.TITLE_PLACEHOLDER' | translate" />
+        <small class="hint">{{ 'WIZARD.TITLE_HINT' | translate }}</small>
+      </label>
+      <div class="field">
+        <span>{{ 'LISTINGS.FIELD_CATEGORY' | translate }}</span>
+        <div class="chip-grid">
+          <button type="button" class="chip" *ngFor="let root of rootCategories"
+                  [class.selected]="root.id === selectedRootId" (click)="selectRoot(root)">
+            {{ root.name | categoryDisplay }}
+          </button>
+        </div>
+        <div class="chip-grid sub" *ngIf="selectedRootId && leafCategories.length > 1">
+          <button type="button" class="chip" *ngFor="let leaf of leafCategories"
+                  [class.selected]="leaf.id === form.categoryId" (click)="selectCategory(leaf)">
+            {{ leaf.pathNames.slice(1).join(' / ') || (leaf.name | categoryDisplay) }}
+          </button>
+        </div>
+        <small class="hint" *ngIf="selectedCategory">
+          {{ 'WIZARD.SELECTED_CATEGORY' | translate }}: {{ selectedCategory.pathNames.join(' / ') }}
+        </small>
+      </div>
+    </ng-container>
+
+    <!-- 2. Details -->
+    <ng-container *ngIf="step === 'details'">
+      <h2>{{ 'WIZARD.DETAILS_HEADING' | translate }}</h2>
+      <div class="field">
+        <span>{{ 'WIZARD.FIELD_CONDITION' | translate }}</span>
+        <div class="condition-grid" role="radiogroup">
+          <button type="button" role="radio" class="condition-card" *ngFor="let condition of conditions"
+                  [class.selected]="form.condition === condition"
+                  [attr.aria-checked]="form.condition === condition"
+                  (click)="form.condition = condition">
+            <strong>{{ ('CONDITION.' + condition) | translate }}</strong>
+            <small>{{ ('CONDITION.' + condition + '_HINT') | translate }}</small>
+          </button>
+        </div>
+      </div>
+      <label class="field">
+        <span>{{ 'LISTINGS.FIELD_BRAND' | translate }} <em>({{ 'WIZARD.OPTIONAL' | translate }})</em></span>
+        <input type="text" maxlength="80" [(ngModel)]="form.brand" />
+      </label>
+      <label class="field">
+        <span>{{ 'LISTINGS.FIELD_DESCRIPTION' | translate }}</span>
+        <textarea rows="7" maxlength="4000" [(ngModel)]="form.description"
+                  [placeholder]="'WIZARD.DESCRIPTION_PLACEHOLDER' | translate"></textarea>
+        <small class="hint" [class.warn]="(form.description?.trim()?.length ?? 0) < minDescriptionLength">
+          {{ 'WIZARD.DESCRIPTION_COUNT' | translate: { count: form.description?.trim()?.length ?? 0, min: minDescriptionLength } }}
+        </small>
+      </label>
+    </ng-container>
+
+    <!-- 3. Photos -->
+    <ng-container *ngIf="step === 'photos'">
+      <h2>{{ 'WIZARD.PHOTOS_HEADING' | translate }}</h2>
+      <p class="hint">{{ 'WIZARD.PHOTOS_HINT' | translate: { max: maxImages } }}</p>
+      <div class="photo-grid">
+        <figure class="photo" *ngFor="let url of existingImages; let first = first">
+          <img [src]="imageUrl(url)" [alt]="'LISTINGS.IMAGE_PREVIEW_ALT' | translate" />
+          <span class="cover" *ngIf="first">{{ 'WIZARD.COVER_PHOTO' | translate }}</span>
+          <button type="button" class="remove" (click)="removeExistingImage(url)" [attr.aria-label]="'LISTINGS.REMOVE_IMAGE' | translate">×</button>
+        </figure>
+        <figure class="photo" *ngFor="let preview of newImagePreviews; let i = index">
+          <img [src]="preview" [alt]="'LISTINGS.IMAGE_PREVIEW_ALT' | translate" />
+          <span class="cover" *ngIf="i === 0 && existingImages.length === 0">{{ 'WIZARD.COVER_PHOTO' | translate }}</span>
+          <button type="button" class="remove" (click)="removeNewImage(i)" [attr.aria-label]="'LISTINGS.REMOVE_IMAGE' | translate">×</button>
+        </figure>
+        <label class="photo add" *ngIf="imageCount < maxImages">
+          <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple (change)="onImagesSelected($event)" />
+          <span>+ {{ 'WIZARD.ADD_PHOTOS' | translate }}</span>
+          <small>{{ imageCount }}/{{ maxImages }}</small>
+        </label>
+      </div>
+    </ng-container>
+
+    <!-- 4. Price -->
+    <ng-container *ngIf="step === 'price'">
+      <h2>{{ 'WIZARD.PRICE_HEADING' | translate }}</h2>
+      <div class="field-row">
+        <label class="field">
+          <span>{{ 'LISTINGS.FIELD_PRICE' | translate }} ({{ form.currency }})</span>
+          <input type="number" min="0" step="0.01" [(ngModel)]="form.price" />
+        </label>
+        <label class="field">
+          <span>{{ 'WIZARD.FIELD_QUANTITY' | translate }}</span>
+          <input type="number" min="1" step="1" [(ngModel)]="form.stockQty" />
+        </label>
+        <label class="field">
+          <span>{{ 'PROFILE.ADDRESS_COUNTRY' | translate }}</span>
+          <select [ngModel]="form.country" (ngModelChange)="onCountryChange($event)">
+            <option *ngFor="let market of marketOptions" [ngValue]="market.country">{{ market.labelKey | translate }}</option>
+          </select>
+        </label>
+      </div>
+      <p class="hint">{{ 'WIZARD.PRICE_HINT' | translate }}</p>
+    </ng-container>
+
+    <!-- 5. Location and delivery -->
+    <ng-container *ngIf="step === 'location'">
+      <h2>{{ 'WIZARD.LOCATION_HEADING' | translate }}</h2>
+      <label class="field location-field">
+        <span>{{ 'LISTINGS.FIELD_LOCATION_SEARCH' | translate }}</span>
+        <input type="text" autocomplete="off" [value]="locationQuery"
+               (input)="searchLocation($any($event.target).value)"
+               [placeholder]="'WIZARD.LOCATION_PLACEHOLDER' | translate" />
+        <div class="location-results" *ngIf="locationResults.length">
+          <button type="button" *ngFor="let result of locationResults" (click)="selectLocation(result)">{{ result.label }}</button>
+        </div>
+      </label>
+      <div id="wizard-location-map" class="map"></div>
+      <p class="hint">{{ 'PRODUCT.LOCATION_NOTE' | translate }}</p>
+
+      <div class="field">
+        <span>{{ 'WIZARD.DELIVERY_HEADING' | translate }}</span>
+        <label class="option">
+          <input type="checkbox" [(ngModel)]="form.handDelivery" />
+          <span>
+            <strong>{{ 'DELIVERY.HAND' | translate }}</strong>
+            <small>{{ 'DELIVERY.HAND_HINT' | translate }}</small>
+          </span>
+        </label>
+        <label class="option">
+          <input type="checkbox" [(ngModel)]="form.shippingAvailable" />
+          <span>
+            <strong>{{ 'DELIVERY.SHIPPING' | translate }}</strong>
+            <small>{{ 'DELIVERY.SHIPPING_HINT' | translate }}</small>
+          </span>
+        </label>
+      </div>
+    </ng-container>
+
+    <!-- 6. Preview -->
+    <ng-container *ngIf="step === 'preview'">
+      <h2>{{ 'WIZARD.PREVIEW_HEADING' | translate }}</h2>
+      <article class="preview">
+        <img *ngIf="previewImage" [src]="previewImage" [alt]="form.name" />
+        <div class="preview-body">
+          <p class="preview-category" *ngIf="selectedCategory">{{ selectedCategory.pathNames.join(' / ') }}</p>
+          <h3>{{ form.name }}</h3>
+          <p class="preview-price">{{ form.price | currencyDisplay: form.currency }}</p>
+          <div class="badges">
+            <span class="badge" *ngIf="form.condition">{{ ('CONDITION.' + form.condition) | translate }}</span>
+            <span class="badge" *ngIf="form.handDelivery">{{ 'DELIVERY.HAND' | translate }}</span>
+            <span class="badge" *ngIf="form.shippingAvailable">{{ 'DELIVERY.SHIPPING' | translate }}</span>
+          </div>
+          <p class="preview-location">{{ form.locationText }}</p>
+          <p class="preview-description">{{ form.description }}</p>
+        </div>
+      </article>
+      <p class="hint">{{ 'WIZARD.MODERATION_NOTE' | translate }}</p>
+    </ng-container>
+
+    <p class="error" *ngIf="stepError">{{ stepError | translate }}</p>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
+
+    <div class="wizard-actions">
+      <button type="button" class="ghost" *ngIf="stepIndex > 0" (click)="back()">{{ 'WIZARD.PREVIOUS' | translate }}</button>
+      <span class="spacer"></span>
+      <button type="button" class="primary" *ngIf="step !== 'preview'" (click)="next()">{{ 'WIZARD.NEXT' | translate }}</button>
+      <button type="button" class="primary" *ngIf="step === 'preview'" [disabled]="isSaving" (click)="publish()">
+        {{ (editingId ? 'WIZARD.SAVE_CHANGES' : 'WIZARD.PUBLISH') | translate }}
+      </button>
+    </div>
+  </div>
+</section>

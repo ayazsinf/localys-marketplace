@@ -18,6 +18,7 @@ import {AdminListingsComponent} from "./pages/admin-listings/admin-listings.comp
 import {AdminReportsComponent} from "./pages/admin-reports/admin-reports.component";
 import {SavedSearchesComponent} from "./pages/saved-searches/saved-searches.component";
 import {PublicProfileComponent} from "./pages/public-profile/public-profile.component";
+import {ListingWizardComponent} from "./pages/listing-wizard/listing-wizard.component";
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -26,6 +27,8 @@ export const routes: Routes = [
   { path: 'categories', component: CategoriesComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'listings', component: ListingsComponent, canActivate: [authGuard] },
+  { path: 'listings/new', component: ListingWizardComponent, canActivate: [authGuard] },
+  { path: 'listings/:id/edit', component: ListingWizardComponent, canActivate: [authGuard] },
   { path: 'favorites', component: FavoritesComponent, canActivate: [authGuard] },
   { path: 'saved-searches', component: SavedSearchesComponent, canActivate: [authGuard] },
   { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },

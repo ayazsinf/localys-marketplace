@@ -313,3 +313,26 @@
   color: #2563eb;
   white-space: nowrap;
 }
+
+.delivery-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.delivery-option {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  font-size: 13px;
+}
+
+.hand-only-note {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fff7ed;
+  color: #9a3412;
+  font-size: 14px;
+}

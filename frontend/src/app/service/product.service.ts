@@ -1,4 +1,5 @@
 import {Product} from '../modules/product.model';
+import {ItemCondition} from './listing.service';
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
@@ -27,8 +28,13 @@ export interface ProductDetail {
   longitude: number | null;
   vendorRating: number;
   vendorReviewCount: number;
+  condition: string | null;
+  handDelivery: boolean;
+  shippingAvailable: boolean;
 }
 
+
+export type DeliveryFilter = 'HAND' | 'SHIPPING';
 
 export type ProductSort = 'NEWEST' | 'PRICE_ASC' | 'PRICE_DESC' | 'NAME_ASC';
 
@@ -42,6 +48,9 @@ export interface ProductSearchParams {
   size?: number;
   /** Only this user's listings (public profile). */
   sellerId?: number;
+  /** Any of these conditions; sent as a comma-separated list. */
+  condition?: ItemCondition[];
+  delivery?: DeliveryFilter | null;
 }
 
 export interface PageResponse<T> {

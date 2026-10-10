@@ -10,7 +10,8 @@ import {
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { catchError, debounceTime, of, switchMap, tap } from 'rxjs';
 import { Product } from '../../modules/product.model';
-import { PageResponse, ProductSearchParams, ProductService, ProductSort } from '../../service/product.service';
+import { DeliveryFilter, PageResponse, ProductSearchParams, ProductService, ProductSort } from '../../service/product.service';
+import { ItemCondition } from '../../service/listing.service';
 import { SearchService } from '../../service/search.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
@@ -57,6 +58,8 @@ export class HomeComponent implements OnInit {
   readonly selectedMinPrice = signal(0);
   readonly selectedMaxPrice = signal(PRICE_SLIDER_MAX);
   readonly selectedCategoryId = signal<number | null>(null);
+  readonly selectedConditions = signal<ItemCondition[]>([]);
+  readonly selectedDelivery = signal<DeliveryFilter | null>(null);
 
   /** Pushed to the sidebar only when filters come from the URL (e.g. opening a saved search). */
   readonly appliedPriceRange = signal<{ min: number; max: number } | null>(null);
@@ -77,6 +80,8 @@ export class HomeComponent implements OnInit {
       categoryId: this.selectedCategoryId(),
       minPrice: min > 0 ? min : null,
       maxPrice: max < PRICE_SLIDER_MAX ? max : null,
+      condition: this.selectedConditions(),
+      delivery: this.selectedDelivery(),
       sort: SORT_PARAM[this.sortOption()],
       size: PAGE_SIZE,
     };
@@ -126,6 +131,14 @@ export class HomeComponent implements OnInit {
   onPriceRangeChange(range: { min: number; max: number }) {
     this.selectedMinPrice.set(range.min);
     this.selectedMaxPrice.set(range.max);
+  }
+
+  onConditionsChange(conditions: ItemCondition[]) {
+    this.selectedConditions.set(conditions);
+  }
+
+  onDeliveryChange(delivery: DeliveryFilter | null) {
+    this.selectedDelivery.set(delivery);
   }
 
   onSortChange(option: SortOption) {

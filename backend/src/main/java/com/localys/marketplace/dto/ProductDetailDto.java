@@ -27,6 +27,9 @@ public record ProductDetailDto(
         Double latitude,
         Double longitude,
         double vendorRating,
-        long vendorReviewCount
+        long vendorReviewCount,
+        String condition,
+        boolean handDelivery,
+        boolean shippingAvailable
 ) {
 }

@@ -29,7 +29,13 @@ export interface Listing {
   locationText?: string | null;
   latitude?: number | null;
   longitude?: number | null;
+  condition?: ItemCondition | null;
+  handDelivery?: boolean;
+  shippingAvailable?: boolean;
 }
+
+export const ITEM_CONDITIONS = ['NEW', 'LIKE_NEW', 'GOOD', 'FAIR', 'FOR_PARTS'] as const;
+export type ItemCondition = typeof ITEM_CONDITIONS[number];
 
 export type ListingRemovalReason = 'SOLD_ON_LOCALYS' | 'SOLD_ELSEWHERE' | 'NO_LONGER_AVAILABLE' | 'ADMIN_REMOVED' | 'OTHER';
 
@@ -52,6 +58,9 @@ export interface ListingRequest {
   locationText?: string | null;
   latitude?: number | null;
   longitude?: number | null;
+  condition?: ItemCondition | null;
+  handDelivery?: boolean;
+  shippingAvailable?: boolean;
 }
 
 @Injectable({
@@ -74,6 +83,11 @@ export class ListingService {
 
   deleteListing(id: number, payload: RemoveListingRequest): Observable<Listing> {
     return this.http.delete<Listing>(`${environment.apiUrl}/listings/${id}`, { body: payload });
+  }
+
+  /** Returns the listing's remaining image URLs. */
+  removeListingImage(id: number, url: string): Observable<string[]> {
+    return this.http.delete<string[]>(`${environment.apiUrl}/listings/${id}/images`, { params: { url } });
   }
 
   uploadListingImages(id: number, files: File[]): Observable<string[]> {

@@ -96,7 +96,10 @@ public class FavoriteController {
                 categoryPathIds(product.getCategory()),
                 categoryPathNames(product.getCategory()),
                 vendorUserId,
-                imageUrls
+                imageUrls,
+                product.getCondition() != null ? product.getCondition().name() : null,
+                product.isHandDelivery(),
+                product.isShippingAvailable()
         );
     }
 

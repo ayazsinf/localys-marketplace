@@ -2,6 +2,7 @@ package com.localys.marketplace.service;
 
 import com.localys.marketplace.model.Category;
 import com.localys.marketplace.model.Product;
+import com.localys.marketplace.model.enums.ItemCondition;
 import com.localys.marketplace.model.enums.ModerationStatus;
 import com.localys.marketplace.repository.CategoryRepository;
 import com.localys.marketplace.repository.ProductRepository;
@@ -60,6 +61,28 @@ public class ProductSearchService {
         }
     }
 
+    /** How the buyer wants to receive the item; null means either. */
+    public enum Delivery {
+        HAND,
+        SHIPPING;
+
+        public static Delivery from(String raw) {
+            if (raw == null || raw.isBlank()) {
+                return null;
+            }
+            try {
+                return valueOf(raw.trim().toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException ex) {
+                return null;
+            }
+        }
+    }
+
+    /** Filters that apply to every search; paging and the extra filters left unset. */
+    public static Criteria basic(String query, Long categoryId, BigDecimal minPrice, BigDecimal maxPrice) {
+        return new Criteria(query, categoryId, minPrice, maxPrice, null, null, null, null, List.of(), null);
+    }
+
     public record Criteria(
             String query,
             Long categoryId,
@@ -69,7 +92,10 @@ public class ProductSearchService {
             Integer page,
             Integer size,
             /** Only this user's listings (public profile); null for everyone's. */
-            Long sellerUserId
+            Long sellerUserId,
+            /** Any of these conditions; empty for all. */
+            List<ItemCondition> conditions,
+            Delivery delivery
     ) {
     }
 
@@ -130,6 +156,14 @@ public class ProductSearchService {
             }
             if (!categoryIds.isEmpty()) {
                 predicates.add(root.get("category").get("id").in(categoryIds));
+            }
+            if (criteria.conditions() != null && !criteria.conditions().isEmpty()) {
+                predicates.add(root.get("condition").in(criteria.conditions()));
+            }
+            if (criteria.delivery() == Delivery.HAND) {
+                predicates.add(cb.isTrue(root.get("handDelivery")));
+            } else if (criteria.delivery() == Delivery.SHIPPING) {
+                predicates.add(cb.isTrue(root.get("shippingAvailable")));
             }
             if (criteria.sellerUserId() != null) {
                 predicates.add(cb.equal(root.get("vendor").get("user").get("id"), criteria.sellerUserId()));

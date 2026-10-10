@@ -82,4 +82,27 @@
             </div>
         </div>
     </div>
+
+    <div class="filter-section">
+        <h3>{{ 'FILTERS.CONDITION' | translate }}</h3>
+        <label class="filter-option" *ngFor="let condition of conditions">
+            <input
+                    type="checkbox"
+                    [checked]="selectedConditions.has(condition)"
+                    (change)="toggleCondition(condition)">
+            <span>{{ ('CONDITION.' + condition) | translate }}</span>
+        </label>
+    </div>
+
+    <div class="filter-section">
+        <h3>{{ 'FILTERS.DELIVERY' | translate }}</h3>
+        <label class="filter-option" *ngFor="let option of deliveryOptions">
+            <input
+                    type="radio"
+                    name="delivery-filter"
+                    [checked]="selectedDelivery === option.value"
+                    (change)="selectDelivery(option.value)">
+            <span>{{ option.labelKey | translate }}</span>
+        </label>
+    </div>
 </div>

@@ -1,5 +1,6 @@
 package com.localys.marketplace.model;
 
+import com.localys.marketplace.model.enums.ItemCondition;
 import com.localys.marketplace.model.enums.ModerationStatus;
 import com.localys.marketplace.model.enums.ListingRemovalReason;
 import jakarta.persistence.*;
@@ -87,6 +88,19 @@ public class Product extends AuditableEntity {
 
     @Column
     private Double longitude;
+
+    /** Null for listings created before conditions existed. */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "item_condition", length = 20)
+    private ItemCondition condition;
+
+    /** The seller agrees to meet the buyer and hand the item over. */
+    @Column(name = "hand_delivery", nullable = false)
+    private boolean handDelivery;
+
+    /** The item can be bought online and shipped; hand-delivery-only items cannot be checked out. */
+    @Column(name = "shipping_available", nullable = false)
+    private boolean shippingAvailable = true;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC")

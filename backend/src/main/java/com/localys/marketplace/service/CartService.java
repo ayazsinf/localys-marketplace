@@ -67,6 +67,9 @@ public class CartService {
                 && userId.equals(product.getVendor().getUser().getId())) {
             throw new IllegalArgumentException("Cannot add own product");
         }
+        if (!product.isShippingAvailable()) {
+            throw new IllegalArgumentException("Product is hand delivery only");
+        }
         int stockQty = product.getStockQty();
         if (stockQty <= 0) {
             throw new IllegalArgumentException("Product out of stock");
@@ -201,7 +204,9 @@ public class CartService {
             }
             return CartItemAvailability.UNAVAILABLE;
         }
-        if (!product.isActive() || product.getModerationStatus() != ModerationStatus.APPROVED) {
+        // The seller may switch a listing to hand delivery only after it was added to a cart.
+        if (!product.isActive() || product.getModerationStatus() != ModerationStatus.APPROVED
+                || !product.isShippingAvailable()) {
             return CartItemAvailability.UNAVAILABLE;
         }
         if (product.getExpiresAt() == null || !product.getExpiresAt().isAfter(now)) {

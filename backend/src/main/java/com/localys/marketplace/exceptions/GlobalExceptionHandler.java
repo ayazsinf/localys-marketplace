@@ -82,6 +82,18 @@ public class GlobalExceptionHandler {
             ApiError error = new ApiError("OWN_PRODUCT", "You cannot perform this action on your own listing.");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
         }
+        if (message.contains("hand delivery only")) {
+            ApiError error = new ApiError("HAND_DELIVERY_ONLY", "This item is only handed over in person; contact the seller.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
+        if (message.contains("invalid item condition") || message.contains("at least one delivery option")) {
+            ApiError error = new ApiError("INVALID_LISTING", ex.getMessage() + ".");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+        if (message.equals("image not found")) {
+            ApiError error = new ApiError("IMAGE_NOT_FOUND", "Image not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
         if (message.contains("product not found")) {
             ApiError error = new ApiError("PRODUCT_NOT_FOUND", "Product not found.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);

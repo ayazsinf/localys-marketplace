@@ -17,9 +17,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.OffsetDateTime;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -122,6 +124,9 @@ public class ProductService {
         product.setLocationText(productDetails.getLocationText());
         product.setLatitude(productDetails.getLatitude());
         product.setLongitude(productDetails.getLongitude());
+        product.setCondition(productDetails.getCondition());
+        product.setHandDelivery(productDetails.isHandDelivery());
+        product.setShippingAvailable(productDetails.isShippingAvailable());
         ProductModerationEventType eventType = null;
         if (moderatedContentChanged) {
             eventType = applyModerationPolicy(product);
@@ -171,6 +176,28 @@ public class ProductService {
         Product saved = productRepository.save(product);
         publishModerationEvent(saved, eventType);
         return urls;
+    }
+
+    /**
+     * Removes one photo of the seller's listing and returns the remaining image URLs.
+     * The stored file is kept; it is no longer referenced by the listing.
+     */
+    @Transactional
+    public List<String> removeImageForVendor(Long id, Vendor vendor, String url) {
+        Product product = productRepository.findByIdAndVendorId(id, vendor.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        boolean removed = product.getImages().removeIf(image -> image.getUrl().equals(url));
+        if (!removed) {
+            throw new IllegalArgumentException("Image not found");
+        }
+        List<ProductImage> remaining = product.getImages().stream()
+                .sorted(Comparator.comparingInt(ProductImage::getSortOrder))
+                .toList();
+        for (int i = 0; i < remaining.size(); i++) {
+            remaining.get(i).setSortOrder(i);
+        }
+        productRepository.save(product);
+        return remaining.stream().map(ProductImage::getUrl).toList();
     }
 
     public Product approveProduct(Long id, UserEntity reviewer) {
@@ -297,7 +324,8 @@ public class ProductService {
                 || !Objects.equals(currentCategoryId, updatedCategoryId)
                 || !Objects.equals(current.getLocationText(), updated.getLocationText())
                 || !Objects.equals(current.getLatitude(), updated.getLatitude())
-                || !Objects.equals(current.getLongitude(), updated.getLongitude());
+                || !Objects.equals(current.getLongitude(), updated.getLongitude())
+                || current.getCondition() != updated.getCondition();
     }
 
     private String generateSku() {

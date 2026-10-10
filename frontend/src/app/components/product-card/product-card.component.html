@@ -24,6 +24,7 @@
 
   <div class="product-info">
     <h3 class="product-name">{{ product.name }}</h3>
+    <span class="condition-badge" *ngIf="product.condition">{{ ('CONDITION.' + product.condition) | translate }}</span>
     <p class="product-description">{{ product.description }}</p>
 
     <div class="product-footer">
@@ -31,8 +32,11 @@
         <button
         class="add-to-cart-btn"
         (click)="addToCart($event)"
-        [disabled]="!product.inStock || isOwner()">
-        {{ product.inStock ? (isOwner() ? ('PRODUCT.YOUR_LISTING' | translate) : ('PRODUCT.ADD_TO_CART' | translate)) : ('PRODUCT.OUT_OF_STOCK' | translate) }}
+        [disabled]="!product.inStock || isOwner() || product.shippingAvailable === false">
+        {{ !product.inStock ? ('PRODUCT.OUT_OF_STOCK' | translate)
+          : isOwner() ? ('PRODUCT.YOUR_LISTING' | translate)
+          : product.shippingAvailable === false ? ('DELIVERY.HAND' | translate)
+          : ('PRODUCT.ADD_TO_CART' | translate) }}
       </button>
     </div>
   </div>

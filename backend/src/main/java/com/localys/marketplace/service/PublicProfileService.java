@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 /**
  * Builds the public profile shown to other users: identity, ratings, listings and how
@@ -48,7 +49,7 @@ public class PublicProfileService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         Page<Product> listings = productSearchService.search(new ProductSearchService.Criteria(
-                null, null, null, null, "NEWEST", 0, 1, userId));
+                null, null, null, null, "NEWEST", 0, 1, userId, List.of(), null));
         String location = listings.getContent().stream()
                 .map(Product::getLocationText)
                 .filter(text -> text != null && !text.isBlank())

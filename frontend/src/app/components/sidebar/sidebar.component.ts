@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, output } from '@angular/core';
 import { CategoryNode, CategoryService } from '../../service/category.service';
+import { ITEM_CONDITIONS, ItemCondition } from '../../service/listing.service';
+import { DeliveryFilter } from '../../service/product.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,6 +13,17 @@ export class SidebarComponent implements OnInit {
   categories: CategoryNode[] = [];
   categorySelected = output<number | null>();
   priceRangeSelected = output<{ min: number; max: number }>();
+  conditionsSelected = output<ItemCondition[]>();
+  deliverySelected = output<DeliveryFilter | null>();
+
+  readonly conditions = ITEM_CONDITIONS;
+  readonly deliveryOptions: Array<{ value: DeliveryFilter | null; labelKey: string }> = [
+    { value: null, labelKey: 'FILTERS.DELIVERY_ANY' },
+    { value: 'HAND', labelKey: 'DELIVERY.HAND' },
+    { value: 'SHIPPING', labelKey: 'DELIVERY.SHIPPING' }
+  ];
+  selectedConditions = new Set<ItemCondition>();
+  selectedDelivery: DeliveryFilter | null = null;
 
   maxPrice = 10000;
   selectedMinPrice = 0;
@@ -79,6 +92,20 @@ export class SidebarComponent implements OnInit {
     const max = this.normalizePrice(value);
     this.selectedMaxPrice = Math.max(max, this.selectedMinPrice);
     this.emitPriceRange();
+  }
+
+  toggleCondition(condition: ItemCondition): void {
+    if (this.selectedConditions.has(condition)) {
+      this.selectedConditions.delete(condition);
+    } else {
+      this.selectedConditions.add(condition);
+    }
+    this.conditionsSelected.emit([...this.selectedConditions]);
+  }
+
+  selectDelivery(delivery: DeliveryFilter | null): void {
+    this.selectedDelivery = delivery;
+    this.deliverySelected.emit(delivery);
   }
 
   minPercent(): number {

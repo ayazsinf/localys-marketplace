@@ -11,7 +11,7 @@
 
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>{{ 'COMMON.CLOSE' | translate }}</button>
-  <button mat-flat-button color="primary" (click)="addToCart()">
+  <button mat-flat-button color="primary" [disabled]="product.shippingAvailable === false" (click)="addToCart()">
     {{ 'PRODUCT.ADD_TO_CART' | translate }}
   </button>
 </mat-dialog-actions>

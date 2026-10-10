@@ -9,6 +9,7 @@ import com.localys.marketplace.model.ProductImage;
 import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.model.Vendor;
 import com.localys.marketplace.model.enums.VendorStatus;
+import com.localys.marketplace.model.enums.ItemCondition;
 import com.localys.marketplace.model.enums.ListingRemovalReason;
 import com.localys.marketplace.repository.CategoryRepository;
 import com.localys.marketplace.repository.UserRepository;
@@ -90,6 +91,17 @@ public class ListingController {
         return ResponseEntity.ok(urls);
     }
 
+    /** Removes one photo; {@code url} is one of the listing's image URLs. */
+    @DeleteMapping("/{id}/images")
+    public ResponseEntity<List<String>> removeListingImage(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("id") Long id,
+            @RequestParam("url") String url
+    ) {
+        Vendor vendor = getOrCreateVendor(userDetails);
+        return ResponseEntity.ok(productService.removeImageForVendor(id, vendor, url));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ListingDto> deleteListing(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -158,6 +170,18 @@ public class ListingController {
         product.setLocationText(request.locationText());
         product.setLatitude(request.latitude());
         product.setLongitude(request.longitude());
+        if (request.condition() != null && !request.condition().isBlank()) {
+            product.setCondition(ItemCondition.from(request.condition())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid item condition")));
+        }
+        // Older clients do not send delivery options: keep the previous default (shipping only).
+        boolean handDelivery = Boolean.TRUE.equals(request.handDelivery());
+        boolean shipping = request.shippingAvailable() == null || request.shippingAvailable();
+        if (!handDelivery && !shipping) {
+            throw new IllegalArgumentException("Choose at least one delivery option");
+        }
+        product.setHandDelivery(handDelivery);
+        product.setShippingAvailable(shipping);
         if (request.categoryId() != null) {
             product.setCategory(categoryRepository.findById(request.categoryId())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid category")));
@@ -195,7 +219,10 @@ public class ListingController {
                 categoryPathNames(product.getCategory()),
                 product.getLocationText(),
                 product.getLatitude(),
-                product.getLongitude()
+                product.getLongitude(),
+                product.getCondition() != null ? product.getCondition().name() : null,
+                product.isHandDelivery(),
+                product.isShippingAvailable()
         );
     }
 

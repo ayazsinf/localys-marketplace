@@ -354,3 +354,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 031-listing-condition-and-delivery
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V31__listing_condition_and_delivery.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
