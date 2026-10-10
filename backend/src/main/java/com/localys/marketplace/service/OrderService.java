@@ -27,6 +27,8 @@ import com.localys.marketplace.repository.PaymentRepository;
 import com.localys.marketplace.repository.ProductRemovalEventRepository;
 import com.localys.marketplace.repository.ProductRepository;
 import com.localys.marketplace.repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +75,9 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final PaymentRepository paymentRepository;
     private final NotificationService notificationService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public OrderService(
             OrderRepository orderRepository,
@@ -127,10 +132,8 @@ public class OrderService {
         }
 
         // Lock the products before reading their stock so concurrent checkouts are serialized.
-        Map<Long, Product> lockedProducts = productRepository.findAllByIdForUpdate(
-                        selectedItems.stream().map(item -> item.getProduct().getId()).toList())
-                .stream()
-                .collect(Collectors.toMap(Product::getId, Function.identity()));
+        Map<Long, Product> lockedProducts = lockProducts(
+                selectedItems.stream().map(item -> item.getProduct().getId()).toList());
 
         Order order = new Order();
         order.setUser(user);
@@ -258,8 +261,10 @@ public class OrderService {
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
         restoreCartItems(order);
+        // Keep a final status the webhook already recorded (e.g. FAILED); only close open payments.
         paymentRepository.findByOrder_Id(orderId)
-                .filter(payment -> payment.getStatus() != PaymentStatus.SUCCEEDED)
+                .filter(payment -> payment.getStatus() == PaymentStatus.REQUIRES_PAYMENT
+                        || payment.getStatus() == PaymentStatus.PROCESSING)
                 .ifPresent(payment -> {
                     payment.setStatus(PaymentStatus.CANCELLED);
                     paymentRepository.save(payment);
@@ -483,7 +488,16 @@ public class OrderService {
                 .map(item -> item.getProduct().getId())
                 .distinct()
                 .toList();
-        return productRepository.findAllByIdForUpdate(productIds).stream()
+        return lockProducts(productIds);
+    }
+
+    private Map<Long, Product> lockProducts(List<Long> productIds) {
+        List<Product> locked = productRepository.findAllByIdForUpdate(productIds);
+        // The query takes the row locks, but Hibernate keeps the state of products already
+        // loaded in this transaction (e.g. fetched with the cart). Re-read them so stock checks
+        // see what the previous lock holder committed, not the value from before we waited.
+        locked.forEach(entityManager::refresh);
+        return locked.stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
     }
 

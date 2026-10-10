@@ -4,6 +4,13 @@ spring:
   application:
     name: localys-marketplace
 
+  messages:
+    # messages.properties (English) is the base bundle; Spring Boot only creates the
+    # MessageSource when it exists. Never fall back to the server's OS locale.
+    basename: messages
+    encoding: UTF-8
+    fallback-to-system-locale: false
+
   flyway:
     enabled: false
 

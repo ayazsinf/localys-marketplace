@@ -1,0 +1,30 @@
+spring:
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  mail:
+    # Only needed so a JavaMailSender bean exists; app.mail.enabled keeps it unused.
+    host: localhost
+
+logging:
+  level:
+    sql: warn
+    org.hibernate.SQL: warn
+
+app:
+  mail:
+    enabled: false
+  media:
+    storage: local
+    upload-dir: target/test-uploads
+  payment:
+    stripe:
+      secret-key: ""
+      webhook-secret: whsec_test_secret
+  orders:
+    # Scheduled jobs are triggered explicitly by the tests.
+    expiration-cron: "-"
+  listings:
+    expiration-cron: "-"

@@ -288,3 +288,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 025-enum-columns-to-varchar
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V25__enum_columns_to_varchar.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
