@@ -102,6 +102,21 @@ public class Product extends AuditableEntity {
     @Column(name = "shipping_available", nullable = false)
     private boolean shippingAvailable = true;
 
+    /** Detail page views by anyone but the seller; incremented atomically in the database. */
+    @Column(name = "view_count", nullable = false, updatable = false, insertable = false)
+    private long viewCount;
+
+    /** Position in newest-first results: creation time, moved forward when the seller renews. */
+    @Column(name = "listed_at", nullable = false)
+    private OffsetDateTime listedAt;
+
+    @PrePersist
+    void initListedAt() {
+        if (listedAt == null) {
+            listedAt = OffsetDateTime.now();
+        }
+    }
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC")
     private List<ProductImage> images = new ArrayList<>();

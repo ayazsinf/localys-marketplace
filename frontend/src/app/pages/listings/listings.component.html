@@ -73,9 +73,22 @@
         <span class="pill" *ngIf="listing.shippingAvailable">{{ 'DELIVERY.SHIPPING' | translate }}</span>
       </div>
       <p class="listing-desc" *ngIf="listing.description">{{ listing.description }}</p>
+      <ul class="listing-stats" [attr.aria-label]="'STATS.LABEL' | translate">
+        <li [title]="'STATS.VIEWS' | translate">👁 {{ listing.viewCount ?? 0 }} <span>{{ 'STATS.VIEWS' | translate }}</span></li>
+        <li [title]="'STATS.FAVORITES' | translate">♥ {{ listing.favoriteCount ?? 0 }} <span>{{ 'STATS.FAVORITES' | translate }}</span></li>
+        <li [title]="'STATS.MESSAGES' | translate">💬 {{ listing.conversationCount ?? 0 }} <span>{{ 'STATS.MESSAGES' | translate }}</span></li>
+        <li [title]="'STATS.OFFERS' | translate">
+          <a routerLink="/offers" [queryParams]="{ tab: 'received' }">🏷 {{ listing.openOfferCount ?? 0 }} <span>{{ 'STATS.OFFERS' | translate }}</span></a>
+        </li>
+      </ul>
       <div class="listing-actions">
         <button class="ghost-btn" type="button" (click)="openEditListing(listing)">
           {{ 'LISTINGS.EDIT' | translate }}
+        </button>
+        <button class="ghost-btn" type="button" *ngIf="isOnline(listing)"
+                [disabled]="isSaving || !canRenew(listing)" (click)="renew(listing)"
+                [title]="canRenew(listing) ? ('STATS.RENEW_HINT' | translate) : ('STATS.RENEW_AFTER' | translate: { date: (listing.renewableAt | date: 'mediumDate') })">
+          {{ 'STATS.RENEW' | translate }}
         </button>
         <button class="danger-btn" type="button" (click)="openRemoveListing(listing)" [disabled]="isSaving || !listing.active">
           {{ 'LISTINGS.DELETE' | translate }}

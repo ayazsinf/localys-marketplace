@@ -376,3 +376,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 033-listing-stats-and-renewal
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V33__listing_stats_and_renewal.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

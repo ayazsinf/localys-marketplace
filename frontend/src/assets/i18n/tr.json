@@ -754,5 +754,16 @@
     "MY_STATUS_PENDING": "{{amount}} teklif ettiniz. Saticinin yaniti bekleniyor.",
     "MY_STATUS_COUNTERED": "Satici {{amount}} oneriyor. Tekliflerim sayfasindan yanitlayin.",
     "MY_STATUS_ACCEPTED": "{{amount}} teklifiniz kabul edildi."
+  },
+  "STATS": {
+    "LABEL": "Ilan istatistikleri",
+    "VIEWS": "goruntulenme",
+    "FAVORITES": "favori",
+    "MESSAGES": "mesaj",
+    "OFFERS": "teklif",
+    "RENEW": "Yenile",
+    "RENEW_HINT": "Ilani sonuclarin en ustune tasi",
+    "RENEW_AFTER": "{{date}} tarihinde tekrar yenileyebilirsiniz",
+    "ERROR_RENEW": "Ilan yenilenemedi."
   }
 }

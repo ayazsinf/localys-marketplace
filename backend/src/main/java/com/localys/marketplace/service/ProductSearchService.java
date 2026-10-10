@@ -38,7 +38,7 @@ public class ProductSearchService {
     private static final int MAX_SEARCH_TERMS = 5;
 
     public enum SortOption {
-        NEWEST(Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id"))),
+        NEWEST(Sort.by(Sort.Order.desc("listedAt"), Sort.Order.desc("id"))),
         PRICE_ASC(Sort.by(Sort.Order.asc("price"), Sort.Order.desc("id"))),
         PRICE_DESC(Sort.by(Sort.Order.desc("price"), Sort.Order.desc("id"))),
         NAME_ASC(Sort.by(Sort.Order.asc("name"), Sort.Order.desc("id")));

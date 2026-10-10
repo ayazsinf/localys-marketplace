@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -46,4 +47,11 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
             @Param("userId") Long userId,
             @Param("otherUserId") Long otherUserId
     );
+
+    @Query("""
+            select c.product.id as productId, count(c) as count from Conversation c
+            where c.product.id in :productIds
+            group by c.product.id
+            """)
+    List<ProductCount> countByProduct(@Param("productIds") Collection<Long> productIds);
 }

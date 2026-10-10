@@ -31,6 +31,13 @@ public record ListingDto(
         Double longitude,
         String condition,
         Boolean handDelivery,
-        Boolean shippingAvailable
+        Boolean shippingAvailable,
+        // Seller statistics, read-only (ignored in requests).
+        Long viewCount,
+        Long favoriteCount,
+        Long conversationCount,
+        Long openOfferCount,
+        java.time.OffsetDateTime listedAt,
+        java.time.OffsetDateTime renewableAt
 ) {
 }

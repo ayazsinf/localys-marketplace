@@ -32,6 +32,13 @@ export interface Listing {
   condition?: ItemCondition | null;
   handDelivery?: boolean;
   shippingAvailable?: boolean;
+  viewCount?: number;
+  favoriteCount?: number;
+  conversationCount?: number;
+  openOfferCount?: number;
+  listedAt?: string;
+  /** When the listing can next be moved back to the top. */
+  renewableAt?: string;
 }
 
 export const ITEM_CONDITIONS = ['NEW', 'LIKE_NEW', 'GOOD', 'FAIR', 'FOR_PARTS'] as const;
@@ -83,6 +90,11 @@ export class ListingService {
 
   deleteListing(id: number, payload: RemoveListingRequest): Observable<Listing> {
     return this.http.delete<Listing>(`${environment.apiUrl}/listings/${id}`, { body: payload });
+  }
+
+  /** Moves the listing back to the top of the newest-first results (once a week). */
+  renewListing(id: number): Observable<Listing> {
+    return this.http.post<Listing>(`${environment.apiUrl}/listings/${id}/renew`, {});
   }
 
   /** Returns the listing's remaining image URLs. */

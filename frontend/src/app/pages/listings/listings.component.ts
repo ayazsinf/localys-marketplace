@@ -71,6 +71,35 @@ export class ListingsComponent implements OnInit {
     this.router.navigate(['/listings', listing.id, 'edit']);
   }
 
+  isOnline(listing: Listing): boolean {
+    return listing.active && listing.moderationStatus === 'APPROVED' && !listing.removedAt;
+  }
+
+  canRenew(listing: Listing): boolean {
+    return !listing.renewableAt || new Date(listing.renewableAt).getTime() <= Date.now();
+  }
+
+  /** Moves the listing back to the top of search results. */
+  renew(listing: Listing): void {
+    this.isSaving = true;
+    this.errorMessage = '';
+    this.listingService.renewListing(listing.id).subscribe({
+      next: renewed => {
+        this.isSaving = false;
+        // The response has no counters; keep the ones already shown.
+        this.listings = this.listings.map(item => item.id === renewed.id
+          ? { ...item, listedAt: renewed.listedAt, renewableAt: renewed.renewableAt }
+          : item);
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isSaving = false;
+        this.errorMessage = 'STATS.ERROR_RENEW';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   openRemoveListing(listing: Listing): void {
     this.pendingRemovalListing = listing;
     this.removalReason = 'SOLD_ON_LOCALYS';

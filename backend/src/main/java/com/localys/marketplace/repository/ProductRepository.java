@@ -6,6 +6,7 @@ import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -65,4 +66,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             order by p.expiresAt asc
             """)
     List<Product> findExpiredActiveListings(@Param("now") OffsetDateTime now, Pageable pageable);
+
+    @Modifying
+    @Query("update Product p set p.viewCount = p.viewCount + 1 where p.id = :id")
+    int incrementViewCount(@Param("id") Long id);
 }

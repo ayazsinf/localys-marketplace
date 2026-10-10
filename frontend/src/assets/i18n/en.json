@@ -754,5 +754,16 @@
     "MY_STATUS_PENDING": "You offered {{amount}}. Waiting for the seller.",
     "MY_STATUS_COUNTERED": "The seller proposes {{amount}}. Answer it in My offers.",
     "MY_STATUS_ACCEPTED": "Your offer of {{amount}} was accepted."
+  },
+  "STATS": {
+    "LABEL": "Listing statistics",
+    "VIEWS": "views",
+    "FAVORITES": "favorites",
+    "MESSAGES": "messages",
+    "OFFERS": "offers",
+    "RENEW": "Renew",
+    "RENEW_HINT": "Move this listing back to the top of the results",
+    "RENEW_AFTER": "You can renew again on {{date}}",
+    "ERROR_RENEW": "Could not renew the listing."
   }
 }

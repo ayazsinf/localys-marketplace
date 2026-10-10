@@ -33,4 +33,14 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
 
     @Query("select o.id from Offer o where o.status = :status and o.expiresAt < :now")
     List<Long> findIdsByStatusExpiredBefore(@Param("status") OfferStatus status, @Param("now") OffsetDateTime now);
+
+    @Query("""
+            select o.product.id as productId, count(o) as count from Offer o
+            where o.product.id in :productIds and o.status in :statuses
+            group by o.product.id
+            """)
+    List<ProductCount> countByProduct(
+            @Param("productIds") Collection<Long> productIds,
+            @Param("statuses") Collection<OfferStatus> statuses
+    );
 }

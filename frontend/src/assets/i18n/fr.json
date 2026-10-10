@@ -754,5 +754,16 @@
     "MY_STATUS_PENDING": "Vous avez propose {{amount}}. En attente du vendeur.",
     "MY_STATUS_COUNTERED": "Le vendeur propose {{amount}}. Repondez dans Mes offres.",
     "MY_STATUS_ACCEPTED": "Votre offre de {{amount}} a ete acceptee."
+  },
+  "STATS": {
+    "LABEL": "Statistiques de l'annonce",
+    "VIEWS": "vues",
+    "FAVORITES": "favoris",
+    "MESSAGES": "messages",
+    "OFFERS": "offres",
+    "RENEW": "Remonter",
+    "RENEW_HINT": "Remettre l'annonce en tete des resultats",
+    "RENEW_AFTER": "Vous pourrez la remonter le {{date}}",
+    "ERROR_RENEW": "Impossible de remonter l'annonce."
   }
 }

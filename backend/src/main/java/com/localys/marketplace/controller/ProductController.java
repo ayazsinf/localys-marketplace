@@ -8,10 +8,13 @@ import com.localys.marketplace.model.Category;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
 import com.localys.marketplace.model.enums.ItemCondition;
+import com.localys.marketplace.model.CustomUserDetails;
+import com.localys.marketplace.service.ListingStatsService;
 import com.localys.marketplace.service.ProductSearchService;
 import com.localys.marketplace.service.ReviewService;
 import com.localys.marketplace.service.ProductService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,15 +31,18 @@ public class ProductController {
     private final ProductService productService;
     private final ProductSearchService productSearchService;
     private final ReviewService reviewService;
+    private final ListingStatsService listingStatsService;
 
     public ProductController(
             ProductService productService,
             ProductSearchService productSearchService,
-            ReviewService reviewService
+            ReviewService reviewService,
+            ListingStatsService listingStatsService
     ) {
         this.productService = productService;
         this.productSearchService = productSearchService;
         this.reviewService = reviewService;
+        this.listingStatsService = listingStatsService;
     }
 
     /**
@@ -105,8 +111,18 @@ public class ProductController {
     // Belirli bir ürünü getir
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    public ResponseEntity<ProductDetailDto> getProductById(@PathVariable("id") Long id) {
+    public ResponseEntity<ProductDetailDto> getProductById(
+            @PathVariable("id") Long id,
+            @AuthenticationPrincipal CustomUserDetails viewer
+    ) {
         Product product = productService.getProductById(id);
+        Long sellerId = product.getVendor() != null && product.getVendor().getUser() != null
+                ? product.getVendor().getUser().getId()
+                : null;
+        // The seller looking at their own listing is not a view.
+        if (viewer == null || !viewer.getUserId().equals(sellerId)) {
+            listingStatsService.recordView(product.getId());
+        }
         return ResponseEntity.ok(toDetailDto(product));
     }
 

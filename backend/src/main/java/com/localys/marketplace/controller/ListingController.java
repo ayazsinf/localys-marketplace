@@ -14,6 +14,7 @@ import com.localys.marketplace.model.enums.ListingRemovalReason;
 import com.localys.marketplace.repository.CategoryRepository;
 import com.localys.marketplace.repository.UserRepository;
 import com.localys.marketplace.repository.VendorRepository;
+import com.localys.marketplace.service.ListingStatsService;
 import com.localys.marketplace.service.ProductService;
 import com.localys.marketplace.util.MarketCountryResolver;
 import org.springframework.http.MediaType;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.LinkedList;
 
 @RestController
@@ -34,17 +36,20 @@ public class ListingController {
     private final VendorRepository vendorRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final ListingStatsService listingStatsService;
 
     public ListingController(
             ProductService productService,
             VendorRepository vendorRepository,
             UserRepository userRepository,
-            CategoryRepository categoryRepository
+            CategoryRepository categoryRepository,
+            ListingStatsService listingStatsService
     ) {
         this.productService = productService;
         this.vendorRepository = vendorRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
+        this.listingStatsService = listingStatsService;
     }
 
     @GetMapping
@@ -54,9 +59,22 @@ public class ListingController {
         if (vendor == null) {
             return List.of();
         }
-        return productService.getVisibleProductsByVendor(vendor.getId()).stream()
-                .map(this::toDto)
+        List<Product> products = productService.getVisibleProductsByVendor(vendor.getId());
+        Map<Long, ListingStatsService.Stats> stats = listingStatsService.statsFor(
+                products.stream().map(Product::getId).toList());
+        return products.stream()
+                .map(product -> toDto(product, stats.getOrDefault(product.getId(), listingStatsService.empty())))
                 .toList();
+    }
+
+    /** Brings an online listing back to the top of the newest-first results (once a week). */
+    @PostMapping("/{id}/renew")
+    public ResponseEntity<ListingDto> renewListing(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("id") Long id
+    ) {
+        Vendor vendor = getOrCreateVendor(userDetails);
+        return ResponseEntity.ok(toDto(productService.renewForVendor(id, vendor)));
     }
 
     @PostMapping
@@ -190,6 +208,10 @@ public class ListingController {
     }
 
     private ListingDto toDto(Product product) {
+        return toDto(product, listingStatsService.empty());
+    }
+
+    private ListingDto toDto(Product product, ListingStatsService.Stats stats) {
         return new ListingDto(
                 product.getId(),
                 product.getName(),
@@ -222,7 +244,13 @@ public class ListingController {
                 product.getLongitude(),
                 product.getCondition() != null ? product.getCondition().name() : null,
                 product.isHandDelivery(),
-                product.isShippingAvailable()
+                product.isShippingAvailable(),
+                product.getViewCount(),
+                stats.favorites(),
+                stats.conversations(),
+                stats.openOffers(),
+                product.getListedAt(),
+                listingStatsService.renewableAt(product)
         );
     }
 

@@ -200,6 +200,27 @@ public class ProductService {
         return remaining.stream().map(ProductImage::getUrl).toList();
     }
 
+    /**
+     * Moves an online listing back to the top of the newest-first results. Allowed once a week
+     * so sellers cannot keep their listings permanently on top.
+     */
+    @Transactional
+    public Product renewForVendor(Long id, Vendor vendor) {
+        Product product = productRepository.findByIdAndVendorId(id, vendor.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        OffsetDateTime now = OffsetDateTime.now();
+        if (!product.isActive() || product.getRemovedAt() != null
+                || product.getModerationStatus() != ModerationStatus.APPROVED
+                || product.getExpiresAt() == null || !product.getExpiresAt().isAfter(now)) {
+            throw new IllegalArgumentException("Only online listings can be renewed");
+        }
+        if (product.getListedAt().plus(ListingStatsService.RENEW_INTERVAL).isAfter(now)) {
+            throw new IllegalArgumentException("Listing was renewed recently");
+        }
+        product.setListedAt(now);
+        return productRepository.save(product);
+    }
+
     public Product approveProduct(Long id, UserEntity reviewer) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
