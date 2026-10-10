@@ -729,7 +729,7 @@
     "ERROR_ACTION": "Islem basarisiz oldu. Liste yenilendi.",
     "ERROR_COUNTER_RANGE": "Karsi teklif, teklifin uzerinde ve ilan fiyatinin altinda olmali.",
     "ERROR_SEND": "Teklifiniz gonderilemedi.",
-    "ERROR_AMOUNT": "Teklifiniz 0'dan buyuk ve ilan fiyatindan dusuk olmali.",
+    "ERROR_AMOUNT": "Teklifiniz ilan fiyatinin en az %75'i olmali ve fiyattan dusuk olmali.",
     "ERROR_BUY": "Bu teklifle artik satin alinamaz.",
     "MAKE": "Teklif ver",
     "YOUR_PRICE": "Teklifiniz",
@@ -753,7 +753,8 @@
     "STATUS_PURCHASED": "Satin alindi",
     "MY_STATUS_PENDING": "{{amount}} teklif ettiniz. Saticinin yaniti bekleniyor.",
     "MY_STATUS_COUNTERED": "Satici {{amount}} oneriyor. Tekliflerim sayfasindan yanitlayin.",
-    "MY_STATUS_ACCEPTED": "{{amount}} teklifiniz kabul edildi."
+    "MY_STATUS_ACCEPTED": "{{amount}} teklifiniz kabul edildi.",
+    "MIN_HINT": "En dusuk teklif: {{amount}} (fiyatin %75'i)"
   },
   "STATS": {
     "LABEL": "Ilan istatistikleri",

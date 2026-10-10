@@ -104,11 +104,12 @@
           <form class="offer-form" *ngIf="isOfferFormOpen" (ngSubmit)="submitOffer()">
             <label>
               <span>{{ 'OFFERS.YOUR_PRICE' | translate }} ({{ product.currency }})</span>
-              <input type="number" name="offerAmount" min="0.01" step="0.01" [max]="product.price" [(ngModel)]="offerAmount" />
+              <input type="number" name="offerAmount" step="0.01" [min]="minimumOffer" [max]="product.price" [(ngModel)]="offerAmount" />
+              <small class="offer-hint">{{ 'OFFERS.MIN_HINT' | translate: { amount: (minimumOffer | currencyDisplay: product.currency) } }}</small>
             </label>
             <div class="offer-actions">
               <button type="button" class="ghost-btn" (click)="isOfferFormOpen = false">{{ 'REPORT.CANCEL' | translate }}</button>
-              <button type="submit" class="primary-btn" [disabled]="isOfferBusy || !(offerAmount > 0 && offerAmount < product.price)">
+              <button type="submit" class="primary-btn" [disabled]="isOfferBusy || !(offerAmount >= minimumOffer && offerAmount < product.price)">
                 {{ 'OFFERS.SEND' | translate }}
               </button>
             </div>

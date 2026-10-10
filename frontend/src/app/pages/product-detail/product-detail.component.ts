@@ -10,7 +10,7 @@ import * as L from 'leaflet';
 import { Product } from '../../modules/product.model';
 import { AuthDialogService } from '../../service/auth-dialog.service';
 import { REPORT_REASONS, ReportReason, ReportService } from '../../service/report.service';
-import { Offer, OfferService } from '../../service/offer.service';
+import { MIN_OFFER_RATIO, Offer, OfferService } from '../../service/offer.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -90,6 +90,12 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
 
   get sellerInitial(): string {
     return (this.sellerName.trim()[0] ?? '?').toUpperCase();
+  }
+
+  /** Offers more than 25% under the asking price are refused (same rule as the backend). */
+  get minimumOffer(): number {
+    // toFixed strips float noise (e.g. 7500.0000001) before rounding up to the cent.
+    return this.product ? Math.ceil(Number((this.product.price * MIN_OFFER_RATIO * 100).toFixed(6))) / 100 : 0;
   }
 
   openOfferForm(): void {

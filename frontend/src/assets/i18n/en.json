@@ -729,7 +729,7 @@
     "ERROR_ACTION": "The action failed. The list was refreshed.",
     "ERROR_COUNTER_RANGE": "A counter offer must be above the offer and below your asking price.",
     "ERROR_SEND": "Could not send your offer.",
-    "ERROR_AMOUNT": "Your offer must be above 0 and below the asking price.",
+    "ERROR_AMOUNT": "Your offer must be at least 75% of the asking price and below it.",
     "ERROR_BUY": "This offer can no longer be bought.",
     "MAKE": "Make an offer",
     "YOUR_PRICE": "Your price",
@@ -753,7 +753,8 @@
     "STATUS_PURCHASED": "Bought",
     "MY_STATUS_PENDING": "You offered {{amount}}. Waiting for the seller.",
     "MY_STATUS_COUNTERED": "The seller proposes {{amount}}. Answer it in My offers.",
-    "MY_STATUS_ACCEPTED": "Your offer of {{amount}} was accepted."
+    "MY_STATUS_ACCEPTED": "Your offer of {{amount}} was accepted.",
+    "MIN_HINT": "Minimum offer: {{amount}} (75% of the price)"
   },
   "STATS": {
     "LABEL": "Listing statistics",

@@ -98,7 +98,8 @@ public class GlobalExceptionHandler {
             ApiError error = new ApiError("OFFER_STATE_CONFLICT", "This offer is no longer open for this action.");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         }
-        if (message.contains("offer must be below") || message.contains("counter offer must be")
+        if (message.contains("offer must be below") || message.contains("offer must be at least")
+                || message.contains("counter offer must be")
                 || message.contains("offer amount must be")) {
             ApiError error = new ApiError("INVALID_OFFER_AMOUNT", ex.getMessage() + ".");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);

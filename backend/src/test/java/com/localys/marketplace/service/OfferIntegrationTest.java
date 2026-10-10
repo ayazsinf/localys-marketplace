@@ -61,8 +61,11 @@ class OfferIntegrationTest extends IntegrationTest {
                 .hasMessage("Offer must be below the listing price");
         assertThatThrownBy(() -> offerService.make(buyer.getId(), product.getId(), amount("0")))
                 .hasMessage("Offer amount must be positive");
+        // Lowball offers (more than 25% under the asking price) are refused.
+        assertThatThrownBy(() -> offerService.make(buyer.getId(), product.getId(), amount("74.99")))
+                .hasMessage("Offer must be at least 75% of the listing price");
 
-        OfferDto offer = offerService.make(buyer.getId(), product.getId(), amount("70"));
+        OfferDto offer = offerService.make(buyer.getId(), product.getId(), amount("80"));
         assertThat(offer.status()).isEqualTo("PENDING");
         assertThat(notifications(seller, NotificationType.OFFER_RECEIVED)).isEqualTo(1);
         assertThatThrownBy(() -> offerService.make(buyer.getId(), product.getId(), amount("75")))
@@ -90,13 +93,13 @@ class OfferIntegrationTest extends IntegrationTest {
         assertThat(notifications(seller, NotificationType.OFFER_DECLINED)).isEqualTo(1);
 
         // Once closed, a new offer can be made.
-        assertThat(offerService.make(buyer.getId(), product.getId(), amount("80")).status()).isEqualTo("PENDING");
+        assertThat(offerService.make(buyer.getId(), product.getId(), amount("82")).status()).isEqualTo("PENDING");
         assertThat(offerService.listForSeller(seller.getId())).filteredOn(OfferDto::awaitingMe).hasSize(1);
     }
 
     @Test
     void acceptedOfferIsBoughtAtItsPriceOnce() {
-        OfferDto offer = offerService.make(buyer.getId(), product.getId(), amount("70"));
+        OfferDto offer = offerService.make(buyer.getId(), product.getId(), amount("80"));
         assertThatThrownBy(() -> offerService.addToCart(buyer.getId(), offer.id()))
                 .hasMessage("Offer is not accepted or has expired");
 
@@ -106,7 +109,7 @@ class OfferIntegrationTest extends IntegrationTest {
 
         CartDto cart = offerService.addToCart(buyer.getId(), offer.id());
         assertThat(cart.items()).hasSize(1);
-        assertThat(cart.items().get(0).unitPrice()).isEqualByComparingTo("70.00");
+        assertThat(cart.items().get(0).unitPrice()).isEqualByComparingTo("80.00");
         assertThat(cart.items().get(0).offerApplied()).isTrue();
         // The negotiated price is for one unit.
         cart = cartService.addItem(buyer.getId(), product.getId(), 1);
@@ -114,11 +117,11 @@ class OfferIntegrationTest extends IntegrationTest {
 
         OrderResponse order = orderService.createOrder(buyer.getId(), new OrderCreateRequest(
                 List.of(product.getId()), address.getId(), "mondial", "card"));
-        assertThat(order.subtotal()).isEqualByComparingTo("70.00");
+        assertThat(order.subtotal()).isEqualByComparingTo("80.00");
 
         // An abandoned payment puts the offer back in the cart.
         orderService.cancelUnpaid(order.id());
-        assertThat(cartService.getActiveCart(buyer.getId()).items().get(0).unitPrice()).isEqualByComparingTo("70.00");
+        assertThat(cartService.getActiveCart(buyer.getId()).items().get(0).unitPrice()).isEqualByComparingTo("80.00");
 
         OrderResponse retry = orderService.createOrder(buyer.getId(), new OrderCreateRequest(
                 List.of(product.getId()), address.getId(), "mondial", "card"));
@@ -143,7 +146,7 @@ class OfferIntegrationTest extends IntegrationTest {
 
     @Test
     void expiredOrWithdrawnOffersFallBackToTheListingPrice() {
-        OfferDto offer = offerService.make(buyer.getId(), product.getId(), amount("60"));
+        OfferDto offer = offerService.make(buyer.getId(), product.getId(), amount("76"));
         offerService.accept(seller.getId(), offer.id());
         offerService.addToCart(buyer.getId(), offer.id());
 
@@ -157,9 +160,19 @@ class OfferIntegrationTest extends IntegrationTest {
         assertThat(cart.items().get(0).unitPrice()).isEqualByComparingTo("100.00");
         assertThat(cart.items().get(0).offerApplied()).isFalse();
 
-        OfferDto second = offerService.make(buyer.getId(), product.getId(), amount("65"));
+        OfferDto second = offerService.make(buyer.getId(), product.getId(), amount("78"));
         offerService.withdraw(buyer.getId(), second.id());
         assertThat(offerRepository.findById(second.id()).map(Offer::getStatus)).contains(OfferStatus.WITHDRAWN);
+    }
+
+    @Test
+    void exactlySeventyFivePercentIsAccepted() {
+        Product oddPrice = data.listing(data.vendor(data.user("other-seller")), "33.33", 1);
+        // 75% of 33.33 is 24.9975; the minimum is rounded up to 25.00.
+        assertThatThrownBy(() -> offerService.make(buyer.getId(), oddPrice.getId(), amount("24.99")))
+                .hasMessage("Offer must be at least 75% of the listing price");
+        assertThat(offerService.make(buyer.getId(), oddPrice.getId(), amount("25.00")).status()).isEqualTo("PENDING");
+        assertThat(offerService.make(buyer.getId(), product.getId(), amount("75")).status()).isEqualTo("PENDING");
     }
 
     private BigDecimal amount(String value) {

@@ -36,6 +36,8 @@ public class OfferService {
     private static final Logger logger = LoggerFactory.getLogger(OfferService.class);
 
     static final Duration ACCEPTED_OFFER_TTL = Duration.ofHours(48);
+    /** Offers below this share of the asking price are refused as lowball offers. */
+    static final BigDecimal MIN_OFFER_RATIO = new BigDecimal("0.75");
 
     private final OfferRepository offerRepository;
     private final ProductRepository productRepository;
@@ -70,6 +72,9 @@ public class OfferService {
         BigDecimal amount = normalize(rawAmount);
         if (amount.compareTo(product.getPrice()) >= 0) {
             throw new IllegalArgumentException("Offer must be below the listing price");
+        }
+        if (amount.compareTo(minimumOffer(product.getPrice())) < 0) {
+            throw new IllegalArgumentException("Offer must be at least 75% of the listing price");
         }
         if (offerRepository.existsByProduct_IdAndBuyer_IdAndStatusIn(productId, buyerId, OfferStatus.OPEN)) {
             throw new IllegalArgumentException("Offer already open for this listing");
@@ -233,6 +238,11 @@ public class OfferService {
             throw new IllegalArgumentException("Product not found");
         }
         return product;
+    }
+
+    /** Lowest acceptable offer, rounded up to the cent so it is never below the ratio. */
+    static BigDecimal minimumOffer(BigDecimal listingPrice) {
+        return listingPrice.multiply(MIN_OFFER_RATIO).setScale(2, RoundingMode.CEILING);
     }
 
     private BigDecimal normalize(BigDecimal amount) {

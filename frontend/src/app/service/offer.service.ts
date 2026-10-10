@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 
+/** Offers below this share of the asking price are refused. */
+export const MIN_OFFER_RATIO = 0.75;
+
 export type OfferStatus = 'PENDING' | 'COUNTERED' | 'ACCEPTED' | 'DECLINED' | 'WITHDRAWN' | 'EXPIRED' | 'PURCHASED';
 
 export interface Offer {
