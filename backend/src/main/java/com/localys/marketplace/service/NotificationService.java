@@ -148,6 +148,16 @@ public class NotificationService {
         );
     }
 
+    public void createListingReportedNotification(UserEntity admin, Product product) {
+        saveOrderNotification(
+                admin,
+                NotificationType.LISTING_REPORTED,
+                "notification.listing.reported",
+                "/admin/reports",
+                product.getName()
+        );
+    }
+
     /** Prices are quoted so the frontend can extract and re-localize them. */
     public void createPriceDropNotification(UserEntity user, Product product, BigDecimal previousPrice) {
         saveOrderNotification(

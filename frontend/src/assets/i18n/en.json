@@ -39,7 +39,8 @@
     "MODERATE_LISTINGS": "Moderate Listings",
     "FAVORITES": "Favorites",
     "MESSAGES": "Messages",
-    "ACCOUNT_MENU": "Open account menu"
+    "ACCOUNT_MENU": "Open account menu",
+    "LISTING_REPORTS": "Listing reports"
   },
   "COMMON": {
     "CANCEL": "Cancel",
@@ -482,6 +483,10 @@
     "PRICE_DROP": {
       "TITLE": "Price drop",
       "MESSAGE": "\"{{product}}\" from your favorites is now {{price}} (was {{previous}})."
+    },
+    "LISTING_REPORTED": {
+      "TITLE": "Listing reported",
+      "MESSAGE": "The listing \"{{product}}\" was reported and needs review."
     }
   },
   "ORDERS": {
@@ -541,5 +546,40 @@
     "COMMENT_PLACEHOLDER": "How was the item and the delivery? (optional)",
     "SUBMIT": "Send review",
     "ERROR_SUBMIT": "Could not send your review."
+  },
+  "REPORT": {
+    "OPEN": "Report this listing",
+    "REASON": "Reason",
+    "REASON_SCAM": "Scam or fraud",
+    "REASON_PROHIBITED_ITEM": "Prohibited item",
+    "REASON_MISLEADING": "Misleading description or photos",
+    "REASON_OFFENSIVE": "Offensive content",
+    "REASON_WRONG_CATEGORY": "Wrong category",
+    "REASON_OTHER": "Other",
+    "DETAILS_OPTIONAL": "Anything the moderators should know (optional)",
+    "DETAILS_REQUIRED": "Please describe the problem",
+    "SUBMIT": "Send report",
+    "CANCEL": "Cancel",
+    "THANKS": "Thanks, our moderators will review this listing.",
+    "ERROR": "Could not send the report."
+  },
+  "ADMIN_REPORTS": {
+    "TITLE": "Listing reports",
+    "SUBTITLE": "Listings flagged by users. Dismiss the report or remove the listing.",
+    "LOADING": "Loading reports...",
+    "EMPTY": "No reports here.",
+    "ERROR_LOAD": "Could not load reports.",
+    "ERROR_ACTION": "The action failed. The list was refreshed.",
+    "STATUS_OPEN": "Open",
+    "STATUS_DISMISSED": "Dismissed",
+    "STATUS_ACTIONED": "Listing removed",
+    "STATUS_ALL": "All reports",
+    "REPORTER": "Reported by",
+    "REPORTED_AT": "Reported",
+    "LISTING": "Listing",
+    "LISTING_INACTIVE": "No longer active",
+    "OPEN_COUNT": "{{count}} open reports",
+    "DISMISS": "Dismiss",
+    "REMOVE_LISTING": "Remove listing"
   }
 }

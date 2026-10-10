@@ -15,6 +15,7 @@ import {NotificationsComponent} from "./pages/notifications/notifications.compon
 import {OrdersComponent} from "./pages/orders/orders.component";
 import {OrderDetailComponent} from "./pages/order-detail/order-detail.component";
 import {AdminListingsComponent} from "./pages/admin-listings/admin-listings.component";
+import {AdminReportsComponent} from "./pages/admin-reports/admin-reports.component";
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -27,6 +28,7 @@ export const routes: Routes = [
   { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },
   { path: 'notifications', component: NotificationsComponent, canActivate: [authGuard] },
   { path: 'admin/listings', component: AdminListingsComponent, canActivate: [authGuard] },
+  { path: 'admin/reports', component: AdminReportsComponent, canActivate: [authGuard] },
   { path: 'cart', component: CartComponent, canActivate: [authGuard] },
   { path: 'orders', component: OrdersComponent, canActivate: [authGuard] },
   { path: 'orders/:id', component: OrderDetailComponent, canActivate: [authGuard] },

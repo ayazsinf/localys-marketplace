@@ -79,7 +79,8 @@ export class NotificationService {
     }
     if ((notification.type === 'ORDER_SOLD'
       || notification.type === 'ORDER_SHIPPED'
-      || notification.type === 'ORDER_DELIVERED') && quotedValues[0]) {
+      || notification.type === 'ORDER_DELIVERED'
+      || notification.type === 'LISTING_REPORTED') && quotedValues[0]) {
       return this.translateService.instant(`NOTIFICATION_CONTENT.${notification.type}.MESSAGE`, {
         product: quotedValues[0]
       });

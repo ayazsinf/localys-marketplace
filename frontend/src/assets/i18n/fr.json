@@ -39,7 +39,8 @@
     "MODERATE_LISTINGS": "Moderation des annonces",
     "FAVORITES": "Favoris",
     "MESSAGES": "Messages",
-    "ACCOUNT_MENU": "Ouvrir le menu du compte"
+    "ACCOUNT_MENU": "Ouvrir le menu du compte",
+    "LISTING_REPORTS": "Signalements"
   },
   "COMMON": {
     "CANCEL": "Annuler",
@@ -482,6 +483,10 @@
     "PRICE_DROP": {
       "TITLE": "Baisse de prix",
       "MESSAGE": "\"{{product}}\" de vos favoris est maintenant a {{price}} (au lieu de {{previous}})."
+    },
+    "LISTING_REPORTED": {
+      "TITLE": "Annonce signalee",
+      "MESSAGE": "L'annonce \"{{product}}\" a ete signalee et doit etre examinee."
     }
   },
   "ORDERS": {
@@ -541,5 +546,40 @@
     "COMMENT_PLACEHOLDER": "Comment se sont passes l'article et la livraison ? (facultatif)",
     "SUBMIT": "Envoyer l'avis",
     "ERROR_SUBMIT": "Impossible d'envoyer votre avis."
+  },
+  "REPORT": {
+    "OPEN": "Signaler cette annonce",
+    "REASON": "Motif",
+    "REASON_SCAM": "Arnaque ou fraude",
+    "REASON_PROHIBITED_ITEM": "Article interdit",
+    "REASON_MISLEADING": "Description ou photos trompeuses",
+    "REASON_OFFENSIVE": "Contenu offensant",
+    "REASON_WRONG_CATEGORY": "Mauvaise categorie",
+    "REASON_OTHER": "Autre",
+    "DETAILS_OPTIONAL": "Informations utiles pour les moderateurs (facultatif)",
+    "DETAILS_REQUIRED": "Decrivez le probleme",
+    "SUBMIT": "Envoyer le signalement",
+    "CANCEL": "Annuler",
+    "THANKS": "Merci, nos moderateurs vont examiner cette annonce.",
+    "ERROR": "Impossible d'envoyer le signalement."
+  },
+  "ADMIN_REPORTS": {
+    "TITLE": "Signalements d'annonces",
+    "SUBTITLE": "Annonces signalees par les utilisateurs. Classez le signalement ou retirez l'annonce.",
+    "LOADING": "Chargement des signalements...",
+    "EMPTY": "Aucun signalement.",
+    "ERROR_LOAD": "Impossible de charger les signalements.",
+    "ERROR_ACTION": "L'action a echoue. La liste a ete actualisee.",
+    "STATUS_OPEN": "Ouverts",
+    "STATUS_DISMISSED": "Classes",
+    "STATUS_ACTIONED": "Annonce retiree",
+    "STATUS_ALL": "Tous les signalements",
+    "REPORTER": "Signale par",
+    "REPORTED_AT": "Signale le",
+    "LISTING": "Annonce",
+    "LISTING_INACTIVE": "Plus active",
+    "OPEN_COUNT": "{{count}} signalements ouverts",
+    "DISMISS": "Classer",
+    "REMOVE_LISTING": "Retirer l'annonce"
   }
 }

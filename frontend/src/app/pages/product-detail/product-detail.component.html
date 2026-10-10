@@ -91,6 +91,39 @@
           {{ 'PRODUCT.BUY_NOW' | translate }}
         </button>
       </div>
+
+      <div class="report-block" *ngIf="!isOwner()">
+        <p class="report-done" *ngIf="reportSent">{{ 'REPORT.THANKS' | translate }}</p>
+        <button type="button" class="link-btn" *ngIf="!reportSent && !isReportOpen" (click)="openReport()">
+          {{ 'REPORT.OPEN' | translate }}
+        </button>
+        <form class="report-form" *ngIf="isReportOpen" (ngSubmit)="submitReport()">
+          <label>
+            <span>{{ 'REPORT.REASON' | translate }}</span>
+            <select name="reportReason" [(ngModel)]="reportReason" required>
+              <option *ngFor="let reason of reportReasons" [ngValue]="reason">
+                {{ ('REPORT.REASON_' + reason) | translate }}
+              </option>
+            </select>
+          </label>
+          <textarea
+            name="reportDetails"
+            rows="3"
+            maxlength="1000"
+            [(ngModel)]="reportDetails"
+            [placeholder]="(reportReason === 'OTHER' ? 'REPORT.DETAILS_REQUIRED' : 'REPORT.DETAILS_OPTIONAL') | translate"></textarea>
+          <p class="report-error" *ngIf="reportError">{{ reportError | translate }}</p>
+          <div class="report-actions">
+            <button type="button" class="ghost-btn" (click)="isReportOpen = false">{{ 'REPORT.CANCEL' | translate }}</button>
+            <button
+              type="submit"
+              class="primary-btn"
+              [disabled]="isReporting || (reportReason === 'OTHER' && !reportDetails.trim())">
+              {{ 'REPORT.SUBMIT' | translate }}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </section>

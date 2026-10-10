@@ -321,3 +321,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 028-create-listing-reports
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V28__create_listing_reports.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

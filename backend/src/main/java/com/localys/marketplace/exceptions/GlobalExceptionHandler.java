@@ -106,6 +106,22 @@ public class GlobalExceptionHandler {
             ApiError error = new ApiError("ALREADY_REVIEWED", "You already reviewed this item.");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         }
+        if (message.contains("invalid report reason") || message.contains("report details are")) {
+            ApiError error = new ApiError("INVALID_REPORT", "Choose a reason; details are required for \"other\" and limited to 1000 characters.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+        if (message.contains("already reported")) {
+            ApiError error = new ApiError("ALREADY_REPORTED", "You already reported this listing.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
+        if (message.contains("report not found")) {
+            ApiError error = new ApiError("REPORT_NOT_FOUND", "Report not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+        if (message.contains("report already resolved")) {
+            ApiError error = new ApiError("REPORT_RESOLVED", "This report was already handled.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
         if (message.contains("order not found")) {
             ApiError error = new ApiError("ORDER_NOT_FOUND", "Order not found.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);

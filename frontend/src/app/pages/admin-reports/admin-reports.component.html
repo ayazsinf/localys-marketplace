@@ -1,0 +1,67 @@
+<section class="admin-page">
+  <header>
+    <h1>{{ 'ADMIN_REPORTS.TITLE' | translate }}</h1>
+    <p>{{ 'ADMIN_REPORTS.SUBTITLE' | translate }}</p>
+  </header>
+
+  <p class="status" *ngIf="isLoading">{{ 'ADMIN_REPORTS.LOADING' | translate }}</p>
+  <p class="status error" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
+
+  <label class="status-filter">
+    <span>{{ 'ADMIN_LISTINGS.STATUS_FILTER' | translate }}</span>
+    <select [ngModel]="selectedStatus" (ngModelChange)="onStatusChange($event)">
+      <option *ngFor="let status of statusOptions" [ngValue]="status">
+        {{ ('ADMIN_REPORTS.STATUS_' + status) | translate }}
+      </option>
+    </select>
+  </label>
+
+  <div class="moderation-grid" *ngIf="!isLoading">
+    <article class="moderation-card" *ngFor="let report of reports">
+      <div class="card-body">
+        <div class="heading">
+          <div>
+            <h2><a [routerLink]="['/products', report.productId]">{{ report.productName }}</a></h2>
+            <p>{{ ('REPORT.REASON_' + report.reason) | translate }}</p>
+          </div>
+          <strong *ngIf="report.openReportsForListing > 1">
+            {{ 'ADMIN_REPORTS.OPEN_COUNT' | translate: { count: report.openReportsForListing } }}
+          </strong>
+        </div>
+        <p class="description" *ngIf="report.details">{{ report.details }}</p>
+        <dl>
+          <div>
+            <dt>{{ 'ADMIN_REPORTS.REPORTER' | translate }}</dt>
+            <dd>{{ report.reporterName || ('COMMON.UNKNOWN' | translate) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'ADMIN_REPORTS.REPORTED_AT' | translate }}</dt>
+            <dd>{{ report.createdAt | date:'medium' }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'ADMIN_LISTINGS.STATUS' | translate }}</dt>
+            <dd>{{ ('ADMIN_REPORTS.STATUS_' + report.status) | translate }}</dd>
+          </div>
+          <div *ngIf="!report.productActive">
+            <dt>{{ 'ADMIN_REPORTS.LISTING' | translate }}</dt>
+            <dd>{{ 'ADMIN_REPORTS.LISTING_INACTIVE' | translate }}</dd>
+          </div>
+        </dl>
+        <div class="actions" *ngIf="report.status === 'OPEN'">
+          <button class="approve" type="button" [disabled]="processingId === report.id" (click)="dismiss(report)">
+            {{ 'ADMIN_REPORTS.DISMISS' | translate }}
+          </button>
+          <button
+            class="delete"
+            type="button"
+            [disabled]="processingId === report.id || !report.productActive"
+            (click)="removeListing(report)">
+            {{ 'ADMIN_REPORTS.REMOVE_LISTING' | translate }}
+          </button>
+        </div>
+      </div>
+    </article>
+
+    <p class="empty" *ngIf="reports.length === 0">{{ 'ADMIN_REPORTS.EMPTY' | translate }}</p>
+  </div>
+</section>

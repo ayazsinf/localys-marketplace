@@ -39,7 +39,8 @@
     "MODERATE_LISTINGS": "Ilanlari Onayla",
     "FAVORITES": "Favoriler",
     "MESSAGES": "Mesajlar",
-    "ACCOUNT_MENU": "Hesap menusunu ac"
+    "ACCOUNT_MENU": "Hesap menusunu ac",
+    "LISTING_REPORTS": "Ilan Sikayetleri"
   },
   "COMMON": {
     "CANCEL": "Iptal",
@@ -482,6 +483,10 @@
     "PRICE_DROP": {
       "TITLE": "Fiyat dustu",
       "MESSAGE": "Favorilerinizdeki \"{{product}}\" simdi {{price}} (onceki fiyat {{previous}})."
+    },
+    "LISTING_REPORTED": {
+      "TITLE": "Ilan sikayet edildi",
+      "MESSAGE": "\"{{product}}\" ilani sikayet edildi ve inceleme bekliyor."
     }
   },
   "ORDERS": {
@@ -541,5 +546,40 @@
     "COMMENT_PLACEHOLDER": "Urun ve teslimat nasildi? (istege bagli)",
     "SUBMIT": "Degerlendirmeyi gonder",
     "ERROR_SUBMIT": "Degerlendirmeniz gonderilemedi."
+  },
+  "REPORT": {
+    "OPEN": "Bu ilani sikayet et",
+    "REASON": "Sebep",
+    "REASON_SCAM": "Dolandiricilik",
+    "REASON_PROHIBITED_ITEM": "Yasakli urun",
+    "REASON_MISLEADING": "Yaniltici aciklama veya fotograf",
+    "REASON_OFFENSIVE": "Rahatsiz edici icerik",
+    "REASON_WRONG_CATEGORY": "Yanlis kategori",
+    "REASON_OTHER": "Diger",
+    "DETAILS_OPTIONAL": "Moderatorlerin bilmesi gerekenler (istege bagli)",
+    "DETAILS_REQUIRED": "Lutfen sorunu aciklayin",
+    "SUBMIT": "Sikayeti gonder",
+    "CANCEL": "Vazgec",
+    "THANKS": "Tesekkurler, moderatorlerimiz bu ilani inceleyecek.",
+    "ERROR": "Sikayet gonderilemedi."
+  },
+  "ADMIN_REPORTS": {
+    "TITLE": "Ilan sikayetleri",
+    "SUBTITLE": "Kullanicilarin sikayet ettigi ilanlar. Sikayeti kapatin veya ilani kaldirin.",
+    "LOADING": "Sikayetler yukleniyor...",
+    "EMPTY": "Sikayet yok.",
+    "ERROR_LOAD": "Sikayetler yuklenemedi.",
+    "ERROR_ACTION": "Islem basarisiz oldu. Liste yenilendi.",
+    "STATUS_OPEN": "Acik",
+    "STATUS_DISMISSED": "Kapatildi",
+    "STATUS_ACTIONED": "Ilan kaldirildi",
+    "STATUS_ALL": "Tum sikayetler",
+    "REPORTER": "Sikayet eden",
+    "REPORTED_AT": "Sikayet tarihi",
+    "LISTING": "Ilan",
+    "LISTING_INACTIVE": "Artik aktif degil",
+    "OPEN_COUNT": "{{count}} acik sikayet",
+    "DISMISS": "Sikayeti kapat",
+    "REMOVE_LISTING": "Ilani kaldir"
   }
 }

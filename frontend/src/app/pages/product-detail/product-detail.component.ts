@@ -10,6 +10,7 @@ import * as L from 'leaflet';
 import { Product } from '../../modules/product.model';
 import { AuthDialogService } from '../../service/auth-dialog.service';
 import { Review, ReviewService } from '../../service/review.service';
+import { REPORT_REASONS, ReportReason, ReportService } from '../../service/report.service';
 import { TranslateService } from '@ngx-translate/core';
 import { getLocaleForLanguage } from '../../shared/market';
 
@@ -28,6 +29,13 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
   hasMoreReviews = false;
   isLoadingReviews = false;
   private reviewsPage = 0;
+  readonly reportReasons = REPORT_REASONS;
+  reportReason: ReportReason = 'SCAM';
+  reportDetails = '';
+  isReportOpen = false;
+  isReporting = false;
+  reportSent = false;
+  reportError = '';
   private map: L.Map | null = null;
   private mapObserver: ResizeObserver | null = null;
   private viewReady = false;
@@ -41,6 +49,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
     private authDialogService: AuthDialogService,
     private cartService: CartService,
     private reviewService: ReviewService,
+    private reportService: ReportService,
     private translateService: TranslateService,
     private currentUserService: CurrentUserService,
     private cdr: ChangeDetectorRef
@@ -92,6 +101,42 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
     return date.toLocaleDateString(getLocaleForLanguage(
       this.translateService.currentLang || this.translateService.getDefaultLang()
     ));
+  }
+
+  openReport(): void {
+    if (!this.authService.isAuthenticated) {
+      this.authDialogService.openLogin().subscribe();
+      return;
+    }
+    this.reportError = '';
+    this.isReportOpen = true;
+  }
+
+  submitReport(): void {
+    if (!this.product || this.isReporting) {
+      return;
+    }
+    this.isReporting = true;
+    this.reportError = '';
+    this.reportService.reportListing(this.product.id, this.reportReason, this.reportDetails.trim()).subscribe({
+      next: () => this.finishReport(),
+      error: err => {
+        this.isReporting = false;
+        if (err?.error?.code === 'ALREADY_REPORTED') {
+          this.finishReport();
+          return;
+        }
+        this.reportError = 'REPORT.ERROR';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private finishReport(): void {
+    this.isReporting = false;
+    this.isReportOpen = false;
+    this.reportSent = true;
+    this.cdr.detectChanges();
   }
 
   loadMoreReviews(): void {
