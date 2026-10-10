@@ -4,12 +4,45 @@
     <div class="container">
       <div class="content-wrapper">
         <aside class="sidebar-container">
-          <app-sidebar (categorySelected)="onCategorySelected($event)"
+          <app-sidebar [priceRange]="appliedPriceRange()"
+                       (categorySelected)="onCategorySelected($event)"
                        (priceRangeSelected)="onPriceRangeChange($event)"></app-sidebar>
         </aside>
 
         <section class="products-section">
           <div class="section-header">
+            <div class="save-search">
+              @if (isSaveFormOpen()) {
+                <form class="save-search-form" (ngSubmit)="saveSearch()">
+                  <input
+                    name="savedSearchName"
+                    maxlength="80"
+                    [(ngModel)]="saveSearchName"
+                    [attr.aria-label]="'SAVED_SEARCHES.NAME' | translate"
+                    [placeholder]="'SAVED_SEARCHES.NAME' | translate" />
+                  <button type="submit" class="save-search-btn" [disabled]="isSavingSearch() || !saveSearchName.trim()">
+                    {{ 'SAVED_SEARCHES.SAVE' | translate }}
+                  </button>
+                  <button type="button" class="save-search-cancel" (click)="cancelSaveSearch()">
+                    {{ 'REPORT.CANCEL' | translate }}
+                  </button>
+                </form>
+              } @else if (hasActiveFilters()) {
+                <button type="button" class="save-search-btn" (click)="openSaveSearch()">
+                  {{ 'SAVED_SEARCHES.SAVE_THIS' | translate }}
+                </button>
+              }
+              @if (saveSearchResult() === 'saved') {
+                <span class="save-search-note">
+                  {{ 'SAVED_SEARCHES.SAVED' | translate }}
+                  <a routerLink="/saved-searches">{{ 'SAVED_SEARCHES.VIEW_ALL' | translate }}</a>
+                </span>
+              } @else if (saveSearchResult() === 'limit') {
+                <span class="save-search-note error">{{ 'SAVED_SEARCHES.ERROR_LIMIT' | translate }}</span>
+              } @else if (saveSearchResult() === 'error') {
+                <span class="save-search-note error">{{ 'SAVED_SEARCHES.ERROR_SAVE' | translate }}</span>
+              }
+            </div>
             <div class="sort-options">
                 <select
                         id="sortSelect"

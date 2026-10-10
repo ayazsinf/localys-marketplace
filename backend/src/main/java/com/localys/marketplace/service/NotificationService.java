@@ -3,6 +3,7 @@ package com.localys.marketplace.service;
 import com.localys.marketplace.dto.NotificationDto;
 import com.localys.marketplace.model.Notification;
 import com.localys.marketplace.model.Product;
+import com.localys.marketplace.model.SavedSearch;
 import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.model.enums.NotificationType;
 import com.localys.marketplace.repository.NotificationRepository;
@@ -10,7 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -156,6 +160,37 @@ public class NotificationService {
                 "/admin/reports",
                 product.getName()
         );
+    }
+
+    /** The link reopens the home page with the saved filters applied. */
+    public void createSavedSearchMatchNotification(UserEntity user, SavedSearch search, long matches) {
+        saveOrderNotification(
+                user,
+                NotificationType.SAVED_SEARCH_MATCH,
+                "notification.saved-search.match",
+                savedSearchLink(search),
+                String.valueOf(matches),
+                search.getName()
+        );
+    }
+
+    private String savedSearchLink(SavedSearch search) {
+        List<String> params = new ArrayList<>();
+        if (search.getQuery() != null) {
+            params.add("q=" + URLEncoder.encode(search.getQuery(), StandardCharsets.UTF_8));
+        }
+        if (search.getCategory() != null) {
+            params.add("categoryId=" + search.getCategory().getId());
+        }
+        if (search.getMinPrice() != null) {
+            params.add("minPrice=" + search.getMinPrice().stripTrailingZeros().toPlainString());
+        }
+        if (search.getMaxPrice() != null) {
+            params.add("maxPrice=" + search.getMaxPrice().stripTrailingZeros().toPlainString());
+        }
+        String link = params.isEmpty() ? "/" : "/?" + String.join("&", params);
+        // notifications.link is 500 chars; a long non-ASCII query can exceed it once encoded.
+        return link.length() <= 500 ? link : "/saved-searches";
     }
 
     /** Prices are quoted so the frontend can extract and re-localize them. */

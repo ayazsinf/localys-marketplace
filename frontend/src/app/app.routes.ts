@@ -16,6 +16,7 @@ import {OrdersComponent} from "./pages/orders/orders.component";
 import {OrderDetailComponent} from "./pages/order-detail/order-detail.component";
 import {AdminListingsComponent} from "./pages/admin-listings/admin-listings.component";
 import {AdminReportsComponent} from "./pages/admin-reports/admin-reports.component";
+import {SavedSearchesComponent} from "./pages/saved-searches/saved-searches.component";
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -25,6 +26,7 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'listings', component: ListingsComponent, canActivate: [authGuard] },
   { path: 'favorites', component: FavoritesComponent, canActivate: [authGuard] },
+  { path: 'saved-searches', component: SavedSearchesComponent, canActivate: [authGuard] },
   { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },
   { path: 'notifications', component: NotificationsComponent, canActivate: [authGuard] },
   { path: 'admin/listings', component: AdminListingsComponent, canActivate: [authGuard] },

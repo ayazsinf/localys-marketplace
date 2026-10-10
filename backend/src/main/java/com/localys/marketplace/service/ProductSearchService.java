@@ -92,6 +92,24 @@ public class ProductSearchService {
         );
     }
 
+    /**
+     * Public listings matching {@code criteria} that were approved in {@code (since, until]},
+     * excluding the given user's own listings. Used for saved-search alerts.
+     */
+    public long countApprovedBetween(Criteria criteria, OffsetDateTime since, OffsetDateTime until, Long excludeOwnerUserId) {
+        Set<Long> categoryIds = criteria.categoryId() == null ? Set.of() : withDescendants(criteria.categoryId());
+        Specification<Product> approvedInWindow = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.greaterThan(root.get("reviewedAt"), since));
+            predicates.add(cb.lessThanOrEqualTo(root.get("reviewedAt"), until));
+            if (excludeOwnerUserId != null) {
+                predicates.add(cb.notEqual(root.get("vendor").get("user").get("id"), excludeOwnerUserId));
+            }
+            return cb.and(predicates.toArray(Predicate[]::new));
+        };
+        return productRepository.count(publicListings(criteria, categoryIds, until).and(approvedInWindow));
+    }
+
     private Specification<Product> publicListings(Criteria criteria, Set<Long> categoryIds, OffsetDateTime now) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();

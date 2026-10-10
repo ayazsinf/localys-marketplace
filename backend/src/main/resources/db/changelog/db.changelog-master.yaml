@@ -332,3 +332,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 029-create-saved-searches
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V29__create_saved_searches.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

@@ -12,6 +12,10 @@ import { catchError, debounceTime, of, switchMap, tap } from 'rxjs';
 import { Product } from '../../modules/product.model';
 import { PageResponse, ProductSearchParams, ProductService, ProductSort } from '../../service/product.service';
 import { SearchService } from '../../service/search.service';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { AuthService } from '../../service/auth.service';
+import { AuthDialogService } from '../../service/auth-dialog.service';
+import { SavedSearchService } from '../../service/saved-search.service';
 
 type SortOption = 'newest' | 'priceLowHigh' | 'priceHighLow' | 'nameAZ';
 
@@ -37,6 +41,11 @@ export class HomeComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly productService = inject(ProductService);
   private readonly searchService = inject(SearchService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly authDialogService = inject(AuthDialogService);
+  private readonly savedSearchService = inject(SavedSearchService);
 
   readonly products = signal<Product[]>([]);
   readonly totalElements = signal(0);
@@ -48,6 +57,14 @@ export class HomeComponent implements OnInit {
   readonly selectedMinPrice = signal(0);
   readonly selectedMaxPrice = signal(PRICE_SLIDER_MAX);
   readonly selectedCategoryId = signal<number | null>(null);
+
+  /** Pushed to the sidebar only when filters come from the URL (e.g. opening a saved search). */
+  readonly appliedPriceRange = signal<{ min: number; max: number } | null>(null);
+
+  readonly isSaveFormOpen = signal(false);
+  readonly isSavingSearch = signal(false);
+  readonly saveSearchResult = signal<'saved' | 'error' | 'limit' | null>(null);
+  saveSearchName = '';
 
   private readonly searchTerm = toSignal(this.searchService.searchTerm$, { initialValue: '' });
   private currentPage = 0;
@@ -68,7 +85,16 @@ export class HomeComponent implements OnInit {
 
   readonly hasMoreProducts = computed(() => this.products().length < this.totalElements());
 
+  readonly hasActiveFilters = computed(() => {
+    const filters = this.filters();
+    return !!filters.q || filters.categoryId != null || filters.minPrice != null || filters.maxPrice != null;
+  });
+
   ngOnInit(): void {
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(params => this.applyUrlFilters(params));
+
     // Debounced so typing in the search box or dragging the price slider sends one request.
     this.filters$
       .pipe(
@@ -127,6 +153,82 @@ export class HomeComponent implements OnInit {
           this.isLoadingMore.set(false);
         }
       });
+  }
+
+  openSaveSearch(): void {
+    if (!this.authService.isAuthenticated) {
+      this.authDialogService.openLogin().subscribe();
+      return;
+    }
+    this.saveSearchName = (this.filters().q ?? '').slice(0, 80);
+    this.saveSearchResult.set(null);
+    this.isSaveFormOpen.set(true);
+  }
+
+  cancelSaveSearch(): void {
+    this.isSaveFormOpen.set(false);
+  }
+
+  saveSearch(): void {
+    const name = this.saveSearchName.trim();
+    if (!name || this.isSavingSearch()) {
+      return;
+    }
+    const filters = this.filters();
+    this.isSavingSearch.set(true);
+    this.savedSearchService.create({
+      name,
+      query: filters.q || null,
+      categoryId: filters.categoryId ?? null,
+      minPrice: filters.minPrice ?? null,
+      maxPrice: filters.maxPrice ?? null,
+      alertsEnabled: true
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.isSavingSearch.set(false);
+          this.isSaveFormOpen.set(false);
+          this.saveSearchResult.set('saved');
+        },
+        error: err => {
+          this.isSavingSearch.set(false);
+          this.saveSearchResult.set(err?.error?.code === 'SAVED_SEARCH_LIMIT' ? 'limit' : 'error');
+        }
+      });
+  }
+
+  /**
+   * Applies q, categoryId, minPrice and maxPrice from the URL (saved searches and their alert
+   * notifications link here), then drops them so later filter changes do not leave a stale URL.
+   */
+  private applyUrlFilters(params: ParamMap): void {
+    const keys = ['q', 'categoryId', 'minPrice', 'maxPrice'];
+    if (!keys.some(key => params.has(key))) {
+      return;
+    }
+    const categoryId = this.toNumber(params.get('categoryId'));
+    const minPrice = this.toNumber(params.get('minPrice'));
+    const maxPrice = this.toNumber(params.get('maxPrice'));
+    const min = Math.min(Math.max(minPrice ?? 0, 0), PRICE_SLIDER_MAX);
+    const max = Math.min(Math.max(maxPrice ?? PRICE_SLIDER_MAX, min), PRICE_SLIDER_MAX);
+
+    this.searchService.setSearchTerm((params.get('q') ?? '').trim());
+    this.selectedCategoryId.set(categoryId);
+    this.selectedMinPrice.set(min);
+    this.selectedMaxPrice.set(max);
+    this.appliedPriceRange.set({ min, max });
+    this.saveSearchResult.set(null);
+
+    this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+  }
+
+  private toNumber(value: string | null): number | null {
+    if (value === null || value.trim() === '') {
+      return null;
+    }
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
   }
 
   trackById = (_: number, p: Product) => p.id;

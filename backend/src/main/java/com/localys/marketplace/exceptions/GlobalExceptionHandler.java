@@ -122,6 +122,18 @@ public class GlobalExceptionHandler {
             ApiError error = new ApiError("REPORT_RESOLVED", "This report was already handled.");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         }
+        if (message.contains("saved search limit reached")) {
+            ApiError error = new ApiError("SAVED_SEARCH_LIMIT", "You can save up to 20 searches.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
+        if (message.contains("saved search not found")) {
+            ApiError error = new ApiError("SAVED_SEARCH_NOT_FOUND", "Saved search not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+        if (message.startsWith("saved search")) {
+            ApiError error = new ApiError("INVALID_SAVED_SEARCH", ex.getMessage() + ".");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
         if (message.contains("order not found")) {
             ApiError error = new ApiError("ORDER_NOT_FOUND", "Order not found.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);

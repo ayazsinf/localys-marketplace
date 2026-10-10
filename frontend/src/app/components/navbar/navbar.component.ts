@@ -70,6 +70,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
       }
     });
     this.subscriptions.add(notificationPoll);
+    // Keep the box in sync when the term is set elsewhere (e.g. opening a saved search).
+    const searchSub = this.searchService.searchTerm$.subscribe(term => {
+      if (term !== this.searchTerm.trim()) {
+        this.searchTerm = term;
+      }
+    });
+    this.subscriptions.add(searchSub);
     const noticeSub = this.cartService.notice$.subscribe(notice => {
       if (!notice) {
         return;

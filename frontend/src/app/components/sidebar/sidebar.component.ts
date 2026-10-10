@@ -1,4 +1,4 @@
-import { Component, OnInit, output } from '@angular/core';
+import { Component, Input, OnInit, output } from '@angular/core';
 import { CategoryNode, CategoryService } from '../../service/category.service';
 
 @Component({
@@ -16,6 +16,14 @@ export class SidebarComponent implements OnInit {
   selectedMinPrice = 0;
   selectedMaxPrice = 10000;
   expandedCategoryIds = new Set<number>();
+
+  /** Sets the slider from outside, e.g. when a saved search is opened. */
+  @Input() set priceRange(range: { min: number; max: number } | null) {
+    if (range) {
+      this.selectedMinPrice = this.normalizePrice(range.min);
+      this.selectedMaxPrice = Math.max(this.normalizePrice(range.max), this.selectedMinPrice);
+    }
+  }
 
   constructor(private categoryService: CategoryService) {}
 

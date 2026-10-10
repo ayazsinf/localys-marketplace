@@ -40,7 +40,8 @@
     "FAVORITES": "Favorites",
     "MESSAGES": "Messages",
     "ACCOUNT_MENU": "Open account menu",
-    "LISTING_REPORTS": "Listing reports"
+    "LISTING_REPORTS": "Listing reports",
+    "SAVED_SEARCHES": "Saved searches"
   },
   "COMMON": {
     "CANCEL": "Cancel",
@@ -487,6 +488,10 @@
     "LISTING_REPORTED": {
       "TITLE": "Listing reported",
       "MESSAGE": "The listing \"{{product}}\" was reported and needs review."
+    },
+    "SAVED_SEARCH_MATCH": {
+      "TITLE": "New listings for your search",
+      "MESSAGE": "{{count}} new listings match your saved search \"{{name}}\"."
     }
   },
   "ORDERS": {
@@ -581,5 +586,25 @@
     "OPEN_COUNT": "{{count}} open reports",
     "DISMISS": "Dismiss",
     "REMOVE_LISTING": "Remove listing"
+  },
+  "SAVED_SEARCHES": {
+    "TITLE": "Saved searches",
+    "SUBTITLE": "Get notified when new listings match what you are looking for.",
+    "LOADING": "Loading saved searches...",
+    "EMPTY": "You have no saved searches yet. Search or filter on the home page, then choose \"Save this search\".",
+    "ERROR_LOAD": "Could not load saved searches.",
+    "ERROR_ACTION": "The action failed. Please try again.",
+    "SAVE_THIS": "Save this search",
+    "NAME": "Name this search",
+    "SAVE": "Save",
+    "SAVED": "Search saved. We will let you know about new matches.",
+    "VIEW_ALL": "See saved searches",
+    "ERROR_SAVE": "Could not save the search.",
+    "ERROR_LIMIT": "You can save up to 20 searches. Delete one to add another.",
+    "ALERTS": "Notify me",
+    "OPEN": "Show results",
+    "DELETE": "Delete",
+    "FROM": "From",
+    "UP_TO": "Up to"
   }
 }

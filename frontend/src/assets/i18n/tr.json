@@ -40,7 +40,8 @@
     "FAVORITES": "Favoriler",
     "MESSAGES": "Mesajlar",
     "ACCOUNT_MENU": "Hesap menusunu ac",
-    "LISTING_REPORTS": "Ilan Sikayetleri"
+    "LISTING_REPORTS": "Ilan Sikayetleri",
+    "SAVED_SEARCHES": "Kayitli Aramalar"
   },
   "COMMON": {
     "CANCEL": "Iptal",
@@ -487,6 +488,10 @@
     "LISTING_REPORTED": {
       "TITLE": "Ilan sikayet edildi",
       "MESSAGE": "\"{{product}}\" ilani sikayet edildi ve inceleme bekliyor."
+    },
+    "SAVED_SEARCH_MATCH": {
+      "TITLE": "Aramaniz icin yeni ilanlar",
+      "MESSAGE": "Kayitli aramaniz \"{{name}}\" icin {{count}} yeni ilan var."
     }
   },
   "ORDERS": {
@@ -581,5 +586,25 @@
     "OPEN_COUNT": "{{count}} acik sikayet",
     "DISMISS": "Sikayeti kapat",
     "REMOVE_LISTING": "Ilani kaldir"
+  },
+  "SAVED_SEARCHES": {
+    "TITLE": "Kayitli aramalar",
+    "SUBTITLE": "Aradiginiza uyan yeni ilanlar geldiginde bildirim alin.",
+    "LOADING": "Kayitli aramalar yukleniyor...",
+    "EMPTY": "Henuz kayitli aramaniz yok. Ana sayfada arayin veya filtreleyin, sonra \"Bu aramayi kaydet\"i secin.",
+    "ERROR_LOAD": "Kayitli aramalar yuklenemedi.",
+    "ERROR_ACTION": "Islem basarisiz oldu. Lutfen tekrar deneyin.",
+    "SAVE_THIS": "Bu aramayi kaydet",
+    "NAME": "Aramaya bir ad verin",
+    "SAVE": "Kaydet",
+    "SAVED": "Arama kaydedildi. Yeni ilanlar geldiginde haber verecegiz.",
+    "VIEW_ALL": "Kayitli aramalara git",
+    "ERROR_SAVE": "Arama kaydedilemedi.",
+    "ERROR_LIMIT": "En fazla 20 arama kaydedebilirsiniz. Yenisini eklemek icin birini silin.",
+    "ALERTS": "Bildirim gonder",
+    "OPEN": "Sonuclari goster",
+    "DELETE": "Sil",
+    "FROM": "En az",
+    "UP_TO": "En fazla"
   }
 }

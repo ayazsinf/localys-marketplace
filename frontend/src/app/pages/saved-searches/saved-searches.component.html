@@ -1,0 +1,40 @@
+<section class="account-page">
+  <div class="account-header">
+    <h1>{{ 'SAVED_SEARCHES.TITLE' | translate }}</h1>
+    <p>{{ 'SAVED_SEARCHES.SUBTITLE' | translate }}</p>
+  </div>
+
+  <p class="status" *ngIf="isLoading">{{ 'SAVED_SEARCHES.LOADING' | translate }}</p>
+  <p class="status error" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
+  <p class="status" *ngIf="!isLoading && !errorMessage && searches.length === 0">
+    {{ 'SAVED_SEARCHES.EMPTY' | translate }}
+  </p>
+
+  <ul class="search-list" *ngIf="searches.length">
+    <li *ngFor="let search of searches">
+      <div class="search-info">
+        <strong>{{ search.name }}</strong>
+        <div class="criteria">
+          <span *ngIf="search.query">“{{ search.query }}”</span>
+          <span *ngIf="search.categoryName">{{ search.categoryName | categoryDisplay }}</span>
+          <span *ngIf="search.minPrice != null">{{ 'SAVED_SEARCHES.FROM' | translate }} {{ search.minPrice }}</span>
+          <span *ngIf="search.maxPrice != null">{{ 'SAVED_SEARCHES.UP_TO' | translate }} {{ search.maxPrice }}</span>
+        </div>
+      </div>
+      <label class="alerts-toggle">
+        <input
+          type="checkbox"
+          [checked]="search.alertsEnabled"
+          [disabled]="processingId === search.id"
+          (change)="toggleAlerts(search)" />
+        {{ 'SAVED_SEARCHES.ALERTS' | translate }}
+      </label>
+      <div class="search-actions">
+        <button type="button" class="primary" (click)="open(search)">{{ 'SAVED_SEARCHES.OPEN' | translate }}</button>
+        <button type="button" class="ghost" [disabled]="processingId === search.id" (click)="remove(search)">
+          {{ 'SAVED_SEARCHES.DELETE' | translate }}
+        </button>
+      </div>
+    </li>
+  </ul>
+</section>

@@ -40,7 +40,8 @@
     "FAVORITES": "Favoris",
     "MESSAGES": "Messages",
     "ACCOUNT_MENU": "Ouvrir le menu du compte",
-    "LISTING_REPORTS": "Signalements"
+    "LISTING_REPORTS": "Signalements",
+    "SAVED_SEARCHES": "Recherches enregistrees"
   },
   "COMMON": {
     "CANCEL": "Annuler",
@@ -487,6 +488,10 @@
     "LISTING_REPORTED": {
       "TITLE": "Annonce signalee",
       "MESSAGE": "L'annonce \"{{product}}\" a ete signalee et doit etre examinee."
+    },
+    "SAVED_SEARCH_MATCH": {
+      "TITLE": "Nouvelles annonces pour votre recherche",
+      "MESSAGE": "{{count}} nouvelles annonces correspondent a votre recherche \"{{name}}\"."
     }
   },
   "ORDERS": {
@@ -581,5 +586,25 @@
     "OPEN_COUNT": "{{count}} signalements ouverts",
     "DISMISS": "Classer",
     "REMOVE_LISTING": "Retirer l'annonce"
+  },
+  "SAVED_SEARCHES": {
+    "TITLE": "Recherches enregistrees",
+    "SUBTITLE": "Soyez averti quand de nouvelles annonces correspondent a ce que vous cherchez.",
+    "LOADING": "Chargement des recherches...",
+    "EMPTY": "Aucune recherche enregistree. Cherchez ou filtrez sur l'accueil, puis choisissez \"Enregistrer cette recherche\".",
+    "ERROR_LOAD": "Impossible de charger les recherches enregistrees.",
+    "ERROR_ACTION": "L'action a echoue. Veuillez reessayer.",
+    "SAVE_THIS": "Enregistrer cette recherche",
+    "NAME": "Nom de la recherche",
+    "SAVE": "Enregistrer",
+    "SAVED": "Recherche enregistree. Nous vous previendrons des nouvelles annonces.",
+    "VIEW_ALL": "Voir les recherches",
+    "ERROR_SAVE": "Impossible d'enregistrer la recherche.",
+    "ERROR_LIMIT": "Vous pouvez enregistrer 20 recherches au maximum. Supprimez-en une pour en ajouter.",
+    "ALERTS": "M'avertir",
+    "OPEN": "Voir les resultats",
+    "DELETE": "Supprimer",
+    "FROM": "A partir de",
+    "UP_TO": "Jusqu'a"
   }
 }

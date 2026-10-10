@@ -28,3 +28,5 @@ app:
     expiration-cron: "-"
   listings:
     expiration-cron: "-"
+  saved-searches:
+    alert-cron: "-"

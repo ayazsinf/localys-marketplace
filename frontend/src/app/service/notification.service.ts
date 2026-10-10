@@ -85,6 +85,15 @@ export class NotificationService {
         product: quotedValues[0]
       });
     }
+    if (notification.type === 'SAVED_SEARCH_MATCH' && quotedValues[0]) {
+      const count = notification.message.match(/^(\d+)/)?.[1];
+      if (count) {
+        return this.translateService.instant('NOTIFICATION_CONTENT.SAVED_SEARCH_MATCH.MESSAGE', {
+          count,
+          name: quotedValues[0]
+        });
+      }
+    }
     if (notification.type === 'PRICE_DROP' && quotedValues.length >= 3) {
       return this.translateService.instant('NOTIFICATION_CONTENT.PRICE_DROP.MESSAGE', {
         product: quotedValues[0],

@@ -26,6 +26,7 @@ import { CurrencyDisplayPipe } from './pipes/currency-display.pipe';
 import { CategoryDisplayPipe } from './pipes/category-display.pipe';
 import { AdminListingsComponent } from './pages/admin-listings/admin-listings.component';
 import { AdminReportsComponent } from './pages/admin-reports/admin-reports.component';
+import { SavedSearchesComponent } from './pages/saved-searches/saved-searches.component';
 import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.component';
 
 @NgModule({
@@ -50,6 +51,7 @@ import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.compon
     OrderDetailComponent,
     AdminListingsComponent,
     AdminReportsComponent,
+    SavedSearchesComponent,
     AuthDialogComponent,
     CurrencyDisplayPipe,
     CategoryDisplayPipe
@@ -84,6 +86,7 @@ import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.compon
     OrderDetailComponent,
     AdminListingsComponent,
     AdminReportsComponent,
+    SavedSearchesComponent,
     CurrencyDisplayPipe,
     CategoryDisplayPipe,
     TranslateModule
