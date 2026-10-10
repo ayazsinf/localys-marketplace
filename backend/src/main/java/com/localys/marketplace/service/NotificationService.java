@@ -249,6 +249,7 @@ public class NotificationService {
         notification.setLink(link);
         notification.setRead(false);
         notificationRepository.save(notification);
+        emailService.sendNotificationEmail(user, notification.getTitle(), notification.getMessage(), link);
     }
 
     public List<NotificationDto> listForUser(Long userId) {

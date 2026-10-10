@@ -8,7 +8,6 @@ import { environment } from '../../environments/environment';
 export interface ConversationDto {
   id: number;
   otherUserId: number | null;
-  otherUsername: string | null;
   otherDisplayName: string | null;
   lastMessage: string | null;
   lastMessageAt: string | null;
@@ -37,6 +36,8 @@ export class MessagingService {
   private stompClient: Client | null = null;
   private connectPromise: Promise<void> | null = null;
   private connected = false;
+  private subscription: StompSubscription | null = null;
+  private watcher: ConversationWatcher | null = null;
   /** Total unread messages, shown as the navbar badge. */
   readonly unreadCount$ = new BehaviorSubject<number>(0);
 
@@ -81,66 +82,103 @@ export class MessagingService {
     );
   }
 
-  async connect(): Promise<void> {
+  /**
+   * Streams new messages of one conversation (the one on screen) to {@code handler}. The
+   * subscription is restored after every reconnect, and {@code onResync} lets the caller reload
+   * messages that arrived while the socket was down. Returns a function that stops watching.
+   */
+  watchConversation(
+    conversationId: number,
+    handler: (message: MessageDto) => void,
+    onResync?: () => void
+  ): () => void {
+    const watcher: ConversationWatcher = { conversationId, handler, onResync, subscribedOnce: false };
+    this.watcher = watcher;
+    this.subscribeWatcher();
+    this.connect().catch(() => {
+      // No live updates; the REST calls keep working and the client keeps retrying.
+    });
+    return () => {
+      if (this.watcher === watcher) {
+        this.watcher = null;
+        this.unsubscribeCurrent();
+      }
+    };
+  }
+
+  disconnect(): void {
+    this.watcher = null;
+    this.unsubscribeCurrent();
+    this.stompClient?.deactivate();
+    this.stompClient = null;
+    this.connected = false;
+    this.connectPromise = null;
+  }
+
+  private connect(): Promise<void> {
     if (this.connected) {
-      return;
+      return Promise.resolve();
     }
     if (this.connectPromise) {
       return this.connectPromise;
     }
-
-    this.connectPromise = new Promise(async (resolve, reject) => {
-      try {
-        this.stompClient = new Client({
-          webSocketFactory: () => new SockJS(`${resolveWsBase()}/ws`),
-          reconnectDelay: 5000,
-          onConnect: () => {
-            this.connected = true;
-            resolve();
-          },
-          onWebSocketClose: () => {
-            this.connected = false;
-          },
-          onStompError: () => {
-            this.connected = false;
-            reject(new Error('WebSocket connection failed.'));
-          }
-        });
-
-        this.stompClient.activate();
-      } catch (error) {
-        reject(error);
-      }
+    this.connectPromise = new Promise((resolve, reject) => {
+      this.stompClient = new Client({
+        webSocketFactory: () => new SockJS(`${resolveWsBase()}/ws`),
+        reconnectDelay: 5000,
+        onConnect: () => {
+          this.connected = true;
+          resolve();
+          // stompjs reconnects on its own but does not restore subscriptions.
+          this.subscribeWatcher();
+        },
+        onWebSocketClose: () => {
+          this.connected = false;
+          this.subscription = null;
+        },
+        onStompError: () => {
+          this.connected = false;
+          // Do not cache the failure: the next call may connect.
+          this.connectPromise = null;
+          reject(new Error('WebSocket connection failed.'));
+        }
+      });
+      this.stompClient.activate();
     });
-
     return this.connectPromise;
   }
 
-  subscribeToConversation(conversationId: number, handler: (message: MessageDto) => void): StompSubscription {
-    if (!this.stompClient || !this.connected) {
-      throw new Error('WebSocket is not connected.');
-    }
-    return this.stompClient.subscribe(`/topic/conversations/${conversationId}`, message => {
-      const payload = JSON.parse(message.body) as MessageDto;
-      handler(payload);
-    });
-  }
-
-  sendSocketMessage(payload: SendMessageRequest): void {
-    if (!this.stompClient || !this.connected) {
+  private subscribeWatcher(): void {
+    const watcher = this.watcher;
+    if (!watcher || !this.stompClient || !this.connected) {
       return;
     }
-    this.stompClient.publish({
-      destination: '/app/messages.send',
-      body: JSON.stringify(payload)
+    this.unsubscribeCurrent();
+    this.subscription = this.stompClient.subscribe(`/topic/conversations/${watcher.conversationId}`, message => {
+      watcher.handler(JSON.parse(message.body) as MessageDto);
     });
+    if (watcher.subscribedOnce) {
+      watcher.onResync?.();
+    }
+    watcher.subscribedOnce = true;
   }
 
-  disconnect(): void {
-    this.stompClient?.deactivate();
-    this.connected = false;
-    this.connectPromise = null;
+  private unsubscribeCurrent(): void {
+    try {
+      this.subscription?.unsubscribe();
+    } catch {
+      // The connection is already gone, and the subscription with it.
+    }
+    this.subscription = null;
   }
+}
+
+interface ConversationWatcher {
+  conversationId: number;
+  handler: (message: MessageDto) => void;
+  onResync?: () => void;
+  /** After the first subscription, a new one means a reconnect happened. */
+  subscribedOnce: boolean;
 }
 
 function resolveWsBase(): string {

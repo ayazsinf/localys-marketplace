@@ -2,34 +2,31 @@ package com.localys.marketplace.service;
 
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.UserEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
 
-    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
-    private final JavaMailSender mailSender;
+    private final MailDispatcher mailDispatcher;
     private final LocalizationService localizationService;
     private final boolean enabled;
     private final String from;
+    private final String publicUrl;
 
     public EmailService(
-            JavaMailSender mailSender,
+            MailDispatcher mailDispatcher,
             LocalizationService localizationService,
             @Value("${app.mail.enabled:false}") boolean enabled,
-            @Value("${app.mail.from:no-reply@localys.example}") String from
+            @Value("${app.mail.from:no-reply@localys.example}") String from,
+            @Value("${app.public-url:http://localhost:4200}") String publicUrl
     ) {
-        this.mailSender = mailSender;
+        this.mailDispatcher = mailDispatcher;
         this.localizationService = localizationService;
         this.enabled = enabled;
         this.from = from;
+        this.publicUrl = publicUrl.endsWith("/") ? publicUrl.substring(0, publicUrl.length() - 1) : publicUrl;
     }
 
     public void sendWelcomeEmail(UserEntity user) {
@@ -91,6 +88,39 @@ public class EmailService {
         sendEmail(recipient.getEmail(), subject, body);
     }
 
+    /**
+     * Mirrors an in-app notification by email, with a link back to the page it points to,
+     * so users hear about sales, shipments, offers and reviews while away from the site.
+     */
+    public void sendNotificationEmail(UserEntity user, String title, String message, String link) {
+        if (user == null) {
+            return;
+        }
+        String body = localizationService.message("email.notification.body", message, absoluteUrl(link));
+        sendEmail(user.getEmail(), title, body);
+    }
+
+    /** Sent for the first unread message of a conversation, not for every message. */
+    public void sendNewMessageEmail(UserEntity recipient, UserEntity sender, String productName,
+                                    String preview, Long conversationId) {
+        if (recipient == null) {
+            return;
+        }
+        String subject = productName == null
+                ? localizationService.message("email.message.subject", safeName(sender))
+                : localizationService.message("email.message.subject-listing", safeName(sender), productName);
+        String body = localizationService.message(
+                "email.message.body", safeName(sender), preview, absoluteUrl("/messages?conversationId=" + conversationId));
+        sendEmail(recipient.getEmail(), subject, body);
+    }
+
+    private String absoluteUrl(String link) {
+        if (link == null || link.isBlank()) {
+            return publicUrl;
+        }
+        return publicUrl + (link.startsWith("/") ? link : "/" + link);
+    }
+
     private void sendEmail(String to, String subject, String body) {
         if (!enabled) {
             return;
@@ -98,29 +128,14 @@ public class EmailService {
         if (to == null || to.isBlank()) {
             return;
         }
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(from);
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(body);
-        try {
-            mailSender.send(message);
-        } catch (MailException ex) {
-            logger.warn("Email send failed to {}: {}", to, ex.getMessage());
-        }
+        mailDispatcher.send(from, to, subject, body);
     }
 
+    /** Display name only: the username can be an email address and must not reach other users. */
     private String safeName(UserEntity user) {
-        if (user == null) {
-            return "Someone";
+        if (user == null || user.getDisplayName() == null || user.getDisplayName().isBlank()) {
+            return localizationService.message("email.someone");
         }
-        String name = user.getDisplayName();
-        if (name == null || name.isBlank()) {
-            name = user.getUsername();
-        }
-        if (name == null || name.isBlank()) {
-            name = "Someone";
-        }
-        return name;
+        return user.getDisplayName();
     }
 }

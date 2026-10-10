@@ -30,6 +30,7 @@ public class MessageService {
     private static final int DEFAULT_PAGE_SIZE = 50;
     private static final int MAX_PAGE_SIZE = 200;
     private static final int MAX_BODY_LENGTH = 4000;
+    private static final int MAX_EMAIL_PREVIEW = 300;
 
     private final ConversationRepository conversationRepository;
     private final ConversationParticipantRepository participantRepository;
@@ -37,6 +38,7 @@ public class MessageService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final EmailService emailService;
 
     public MessageService(
             ConversationRepository conversationRepository,
@@ -44,7 +46,8 @@ public class MessageService {
             MessageRepository messageRepository,
             UserRepository userRepository,
             ProductRepository productRepository,
-            SimpMessagingTemplate messagingTemplate
+            SimpMessagingTemplate messagingTemplate,
+            EmailService emailService
     ) {
         this.conversationRepository = conversationRepository;
         this.participantRepository = participantRepository;
@@ -52,6 +55,7 @@ public class MessageService {
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.messagingTemplate = messagingTemplate;
+        this.emailService = emailService;
     }
 
     @Transactional(readOnly = true)
@@ -132,6 +136,15 @@ public class MessageService {
         UserEntity sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Email the recipient only for the first unread message, not for every line of a chat.
+        UserEntity recipient = participantRepository.findByConversationId(conversation.getId()).stream()
+                .map(ConversationParticipant::getUser)
+                .filter(user -> !user.getId().equals(senderId))
+                .findFirst()
+                .orElse(null);
+        boolean recipientWasCaughtUp = recipient != null
+                && messageRepository.countUnreadInConversation(conversation.getId(), recipient.getId()) == 0;
+
         Message message = new Message();
         message.setConversation(conversation);
         message.setSender(sender);
@@ -143,6 +156,14 @@ public class MessageService {
 
         MessageDto dto = toMessageDto(saved);
         messagingTemplate.convertAndSend("/topic/conversations/" + conversation.getId(), dto);
+        if (recipientWasCaughtUp) {
+            String preview = saved.getBody().length() > MAX_EMAIL_PREVIEW
+                    ? saved.getBody().substring(0, MAX_EMAIL_PREVIEW) + "…"
+                    : saved.getBody();
+            emailService.sendNewMessageEmail(recipient, sender,
+                    conversation.getProduct() != null ? conversation.getProduct().getName() : null,
+                    preview, conversation.getId());
+        }
         return dto;
     }
 
@@ -213,7 +234,6 @@ public class MessageService {
         return new ConversationDto(
                 conversation.getId(),
                 other != null ? other.getId() : null,
-                other != null ? other.getUsername() : null,
                 other != null ? other.getDisplayName() : null,
                 lastMessage,
                 conversation.getLastMessageAt(),

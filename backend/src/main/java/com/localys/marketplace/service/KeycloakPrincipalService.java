@@ -20,10 +20,12 @@ public class KeycloakPrincipalService {
 
     private final JwtDecoder jwtDecoder;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
-    public KeycloakPrincipalService(JwtDecoder jwtDecoder, UserRepository userRepository) {
+    public KeycloakPrincipalService(JwtDecoder jwtDecoder, UserRepository userRepository, EmailService emailService) {
         this.jwtDecoder = jwtDecoder;
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -51,16 +53,29 @@ public class KeycloakPrincipalService {
         if (user.getKeycloakId() == null || user.getKeycloakId().isBlank() || user.getKeycloakId().startsWith("local_")) {
             user.setKeycloakId(subject);
         }
+        boolean isNew = user.getId() == null;
         user.setUsername(username);
-        user.setEmail(jwt.getClaimAsString("email"));
-        user.setDisplayName(firstNonBlank(jwt.getClaimAsString("name"), username));
-        user.setPhone(jwt.getClaimAsString("phone_number"));
+        // Profile fields come from the token only until the user edits them (PUT /api/users/me);
+        // overwriting them on every request silently reverted those edits.
+        if (isBlank(user.getEmail())) {
+            user.setEmail(jwt.getClaimAsString("email"));
+        }
+        if (isBlank(user.getDisplayName())) {
+            user.setDisplayName(firstNonBlank(jwt.getClaimAsString("name"), jwt.getClaimAsString("given_name")));
+        }
+        if (isBlank(user.getPhone())) {
+            user.setPhone(jwt.getClaimAsString("phone_number"));
+        }
         if (user.getPassword() == null || user.getPassword().isBlank()) {
             user.setPassword("{keycloak}");
         }
         user.setEnabled(true);
         user.setRole(resolveDisplayRole(authorities));
-        return userRepository.save(user);
+        UserEntity saved = userRepository.save(user);
+        if (isNew) {
+            emailService.sendWelcomeEmail(saved);
+        }
+        return saved;
     }
 
     private List<String> extractRoles(Jwt jwt) {
@@ -100,5 +115,9 @@ public class KeycloakPrincipalService {
             }
         }
         return "";
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 }

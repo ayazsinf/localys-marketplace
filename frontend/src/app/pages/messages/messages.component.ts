@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { StompSubscription } from '@stomp/stompjs';
 import { MessagingService, ConversationDto, MessageDto } from '../../service/messaging.service';
 import { UserService, UserProfile } from '../../service/user.service';
 import { ActivatedRoute } from '@angular/router';
@@ -39,7 +38,8 @@ export class MessagesComponent implements OnInit, OnDestroy {
   searchQuery = '';
   draftMessage = '';
   currentUser: UserProfile | null = null;
-  private activeSubscription: StompSubscription | null = null;
+  /** Stops the live updates of the open conversation. */
+  private stopWatching: (() => void) | null = null;
   private requestedConversationId: number | null = null;
 
   constructor(
@@ -62,7 +62,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.activeSubscription?.unsubscribe();
+    this.stopWatching?.();
     this.messagingService.disconnect();
   }
 
@@ -137,14 +137,22 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   private bindConversationChannel(conversationId: number): void {
-    this.activeSubscription?.unsubscribe();
-    this.messagingService.connect().then(() => {
-      this.activeSubscription = this.messagingService.subscribeToConversation(
-        conversationId,
-        message => this.handleIncomingMessage(message)
-      );
-    }).catch(() => {
-      // silent fail: fallback to REST only
+    this.stopWatching?.();
+    this.stopWatching = this.messagingService.watchConversation(
+      conversationId,
+      message => this.handleIncomingMessage(message),
+      // After a reconnect, fetch what was sent while the socket was down.
+      () => this.resyncMessages(conversationId)
+    );
+  }
+
+  private resyncMessages(conversationId: number): void {
+    const conversation = this.conversations.find(item => item.id === conversationId);
+    if (!conversation) {
+      return;
+    }
+    this.messagingService.getMessages(conversationId).subscribe(messages => {
+      conversation.messages = messages.map(message => this.toMessage(message));
     });
   }
 
@@ -182,7 +190,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   private toConversation(dto: ConversationDto): Conversation {
-    const displayName = dto.otherDisplayName || dto.otherUsername || this.translateService.instant('COMMON.UNKNOWN');
+    const displayName = dto.otherDisplayName || this.translateService.instant('PROFILE_PUBLIC.MEMBER');
     return {
       id: dto.id,
       otherUserId: dto.otherUserId,
