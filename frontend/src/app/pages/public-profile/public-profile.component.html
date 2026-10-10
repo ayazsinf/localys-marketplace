@@ -1,0 +1,100 @@
+<section class="profile-page">
+  <p class="status" *ngIf="isLoading">{{ 'PROFILE_PUBLIC.LOADING' | translate }}</p>
+  <p class="status" *ngIf="notFound">{{ 'PROFILE_PUBLIC.NOT_FOUND' | translate }}</p>
+
+  <ng-container *ngIf="profile">
+    <header class="profile-card">
+      <div class="avatar" aria-hidden="true">{{ initial }}</div>
+      <div class="identity">
+        <h1>{{ profile.displayName || ('PROFILE_PUBLIC.MEMBER' | translate) }}</h1>
+        <div class="rating" *ngIf="profile.rating.count; else noRating">
+          <span class="stars" [attr.aria-label]="profile.rating.average + '/5'">{{ stars(profile.rating.average) }}</span>
+          <strong>{{ profile.rating.average }}</strong>
+          <span class="subtle">({{ 'REVIEWS.COUNT' | translate: { count: profile.rating.count } }})</span>
+        </div>
+        <ng-template #noRating>
+          <div class="rating subtle">{{ 'REVIEWS.NONE_YET' | translate }}</div>
+        </ng-template>
+        <ul class="facts">
+          <li>{{ 'PROFILE_PUBLIC.MEMBER_SINCE' | translate: { date: formatDate(profile.memberSince, false) } }}</li>
+          <li *ngIf="profile.location">{{ profile.location }}</li>
+          <li>{{ 'PROFILE_PUBLIC.LISTING_COUNT' | translate: { count: profile.activeListingCount } }}</li>
+          <li *ngIf="profile.responseTime">{{ ('PROFILE_PUBLIC.RESPONSE_' + profile.responseTime) | translate }}</li>
+          <li *ngIf="profile.responseRate !== null">
+            {{ 'PROFILE_PUBLIC.RESPONSE_RATE' | translate: { rate: profile.responseRate } }}
+          </li>
+        </ul>
+      </div>
+      <dl class="role-ratings">
+        <div>
+          <dt>{{ 'PROFILE_PUBLIC.AS_SELLER' | translate }}</dt>
+          <dd *ngIf="profile.ratingAsSeller.count; else dash">
+            <span class="stars" aria-hidden="true">★</span> {{ profile.ratingAsSeller.average }}
+            <span class="subtle">({{ profile.ratingAsSeller.count }})</span>
+          </dd>
+        </div>
+        <div>
+          <dt>{{ 'PROFILE_PUBLIC.AS_BUYER' | translate }}</dt>
+          <dd *ngIf="profile.ratingAsBuyer.count; else dash">
+            <span class="stars" aria-hidden="true">★</span> {{ profile.ratingAsBuyer.average }}
+            <span class="subtle">({{ profile.ratingAsBuyer.count }})</span>
+          </dd>
+        </div>
+        <ng-template #dash><dd class="subtle">–</dd></ng-template>
+      </dl>
+    </header>
+
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" [class.active]="activeTab === 'listings'"
+              [attr.aria-selected]="activeTab === 'listings'" (click)="selectTab('listings')">
+        {{ 'PROFILE_PUBLIC.TAB_LISTINGS' | translate: { count: profile.activeListingCount } }}
+      </button>
+      <button type="button" role="tab" [class.active]="activeTab === 'reviews'"
+              [attr.aria-selected]="activeTab === 'reviews'" (click)="selectTab('reviews')">
+        {{ 'PROFILE_PUBLIC.TAB_REVIEWS' | translate: { count: profile.rating.count } }}
+      </button>
+    </div>
+
+    <ng-container *ngIf="activeTab === 'listings'">
+      <p class="status" *ngIf="!isLoadingListings && listings.length === 0">{{ 'PROFILE_PUBLIC.NO_LISTINGS' | translate }}</p>
+      <div class="listing-grid">
+        <app-product-card *ngFor="let product of listings" [product]="product"></app-product-card>
+      </div>
+      <button type="button" class="more-btn" *ngIf="hasMoreListings" [disabled]="isLoadingListings" (click)="loadMoreListings()">
+        {{ 'HOME.LOAD_MORE' | translate }}
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf="activeTab === 'reviews'">
+      <div class="review-filter" role="group">
+        <button type="button" [class.active]="reviewRole === null" (click)="filterReviews(null)">
+          {{ 'PROFILE_PUBLIC.FILTER_ALL' | translate }}
+        </button>
+        <button type="button" [class.active]="reviewRole === 'SELLER'" (click)="filterReviews('SELLER')">
+          {{ 'PROFILE_PUBLIC.AS_SELLER' | translate }}
+        </button>
+        <button type="button" [class.active]="reviewRole === 'BUYER'" (click)="filterReviews('BUYER')">
+          {{ 'PROFILE_PUBLIC.AS_BUYER' | translate }}
+        </button>
+      </div>
+      <p class="status" *ngIf="!isLoadingReviews && reviews.length === 0">{{ 'REVIEWS.NONE_YET' | translate }}</p>
+      <ul class="review-list">
+        <li *ngFor="let review of reviews">
+          <div class="review-head">
+            <span class="stars" [attr.aria-label]="review.rating + '/5'">{{ stars(review.rating) }}</span>
+            <a [routerLink]="['/users', review.reviewerId]">{{ review.reviewerName || ('REVIEWS.ANONYMOUS' | translate) }}</a>
+            <span class="role-chip">
+              {{ (review.revieweeRole === 'SELLER' ? 'PROFILE_PUBLIC.REVIEW_AS_SELLER' : 'PROFILE_PUBLIC.REVIEW_AS_BUYER') | translate }}
+            </span>
+            <span class="subtle">{{ formatDate(review.createdAt) }}</span>
+          </div>
+          <p *ngIf="review.comment">{{ review.comment }}</p>
+          <p class="subtle review-product">{{ review.productName }}</p>
+        </li>
+      </ul>
+      <button type="button" class="more-btn" *ngIf="hasMoreReviews" [disabled]="isLoadingReviews" (click)="loadMoreReviews()">
+        {{ 'REVIEWS.SHOW_MORE' | translate }}
+      </button>
+    </ng-container>
+  </ng-container>
+</section>

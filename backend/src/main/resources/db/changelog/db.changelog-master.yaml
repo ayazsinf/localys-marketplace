@@ -343,3 +343,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 030-mutual-reviews
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V30__mutual_reviews.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

@@ -3,6 +3,7 @@ package com.localys.marketplace.controller;
 import com.localys.marketplace.dto.PageResponse;
 import com.localys.marketplace.dto.ProductDetailDto;
 import com.localys.marketplace.dto.ProductListDto;
+import com.localys.marketplace.dto.UserReviewsDto;
 import com.localys.marketplace.model.Category;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.ProductImage;
@@ -48,10 +49,11 @@ public class ProductController {
             @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
             @RequestParam(name = "sort", required = false) String sort,
             @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "size", required = false) Integer size
+            @RequestParam(name = "size", required = false) Integer size,
+            @RequestParam(name = "sellerId", required = false) Long sellerId
     ) {
         ProductSearchService.Criteria criteria = new ProductSearchService.Criteria(
-                query, categoryId, minPrice, maxPrice, sort, page, size
+                query, categoryId, minPrice, maxPrice, sort, page, size, sellerId
         );
         return PageResponse.from(productSearchService.search(criteria), this::toDto);
     }
@@ -116,9 +118,9 @@ public class ProductController {
                 }
             }
         }
-        ReviewService.Summary rating = vendorId == null
-                ? new ReviewService.Summary(0, 0)
-                : reviewService.summary(vendorId);
+        UserReviewsDto.RatingDto rating = vendorUserId == null
+                ? new UserReviewsDto.RatingDto(0, 0)
+                : reviewService.summary(vendorUserId);
 
         return new ProductDetailDto(
                 product.getId(),

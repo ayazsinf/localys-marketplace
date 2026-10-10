@@ -1,0 +1,27 @@
+<span class="review-done" *ngIf="rating">
+  {{ 'REVIEWS.YOUR_RATING' | translate }}:
+  <span class="stars" [attr.aria-label]="rating + '/5'">{{ stars(rating) }}</span>
+</span>
+<form class="review-form" *ngIf="!rating" (ngSubmit)="submit()">
+  <span class="review-label">{{ labelKey | translate }}</span>
+  <div class="star-input" role="radiogroup" [attr.aria-label]="labelKey | translate">
+    <button
+      type="button"
+      role="radio"
+      *ngFor="let value of ratingValues"
+      [class.is-on]="value <= draftRating"
+      [attr.aria-checked]="draftRating === value"
+      [attr.aria-label]="value + '/5'"
+      (click)="draftRating = value">★</button>
+  </div>
+  <textarea
+    rows="2"
+    maxlength="1000"
+    [name]="'review-comment-' + orderItemId"
+    [(ngModel)]="draftComment"
+    [placeholder]="'REVIEWS.COMMENT_PLACEHOLDER' | translate"></textarea>
+  <button type="submit" class="primary" [disabled]="!draftRating || isSubmitting">
+    {{ 'REVIEWS.SUBMIT' | translate }}
+  </button>
+  <span class="review-error" *ngIf="hasError">{{ 'REVIEWS.ERROR_SUBMIT' | translate }}</span>
+</form>

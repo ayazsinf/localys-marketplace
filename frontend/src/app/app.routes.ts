@@ -17,6 +17,7 @@ import {OrderDetailComponent} from "./pages/order-detail/order-detail.component"
 import {AdminListingsComponent} from "./pages/admin-listings/admin-listings.component";
 import {AdminReportsComponent} from "./pages/admin-reports/admin-reports.component";
 import {SavedSearchesComponent} from "./pages/saved-searches/saved-searches.component";
+import {PublicProfileComponent} from "./pages/public-profile/public-profile.component";
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -36,5 +37,6 @@ export const routes: Routes = [
   { path: 'orders/:id', component: OrderDetailComponent, canActivate: [authGuard] },
   { path: 'checkout', component: CheckoutComponent },
   { path: 'products/:id', component: ProductDetailComponent },
+  { path: 'users/:id', component: PublicProfileComponent },
   { path: '**', redirectTo: '' }
 ];

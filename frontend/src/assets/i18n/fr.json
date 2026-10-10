@@ -479,7 +479,7 @@
     },
     "REVIEW_RECEIVED": {
       "TITLE": "Nouvel avis",
-      "MESSAGE": "Un acheteur vous a attribue {{rating}}/5 pour \"{{product}}\"."
+      "MESSAGE": "Vous avez recu une note de {{rating}}/5 pour \"{{product}}\"."
     },
     "PRICE_DROP": {
       "TITLE": "Baisse de prix",
@@ -550,7 +550,8 @@
     "YOUR_RATING": "Votre note",
     "COMMENT_PLACEHOLDER": "Comment se sont passes l'article et la livraison ? (facultatif)",
     "SUBMIT": "Envoyer l'avis",
-    "ERROR_SUBMIT": "Impossible d'envoyer votre avis."
+    "ERROR_SUBMIT": "Impossible d'envoyer votre avis.",
+    "RATE_BUYER": "Notez l'acheteur"
   },
   "REPORT": {
     "OPEN": "Signaler cette annonce",
@@ -606,5 +607,25 @@
     "DELETE": "Supprimer",
     "FROM": "A partir de",
     "UP_TO": "Jusqu'a"
+  },
+  "PROFILE_PUBLIC": {
+    "LOADING": "Chargement du profil...",
+    "NOT_FOUND": "Cet utilisateur n'existe pas.",
+    "MEMBER": "Membre",
+    "MEMBER_SINCE": "Membre depuis {{date}}",
+    "LISTING_COUNT": "{{count}} annonces en ligne",
+    "RESPONSE_WITHIN_HOUR": "Repond generalement en moins d'une heure",
+    "RESPONSE_WITHIN_DAY": "Repond generalement dans la journee",
+    "RESPONSE_WITHIN_DAYS": "Repond generalement en quelques jours",
+    "RESPONSE_RATE": "Taux de reponse : {{rate}} %",
+    "AS_SELLER": "En tant que vendeur",
+    "AS_BUYER": "En tant qu'acheteur",
+    "TAB_LISTINGS": "Annonces ({{count}})",
+    "TAB_REVIEWS": "Avis ({{count}})",
+    "NO_LISTINGS": "Aucune annonce en ligne pour le moment.",
+    "FILTER_ALL": "Tous",
+    "REVIEW_AS_SELLER": "Note en tant que vendeur",
+    "REVIEW_AS_BUYER": "Note en tant qu'acheteur",
+    "VIEW_PROFILE": "Voir le profil"
   }
 }

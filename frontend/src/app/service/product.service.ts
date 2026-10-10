@@ -40,6 +40,8 @@ export interface ProductSearchParams {
   sort?: ProductSort;
   page?: number;
   size?: number;
+  /** Only this user's listings (public profile). */
+  sellerId?: number;
 }
 
 export interface PageResponse<T> {

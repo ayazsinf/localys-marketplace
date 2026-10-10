@@ -134,6 +134,10 @@ public class GlobalExceptionHandler {
             ApiError error = new ApiError("INVALID_SAVED_SEARCH", ex.getMessage() + ".");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
+        if (message.equals("user not found")) {
+            ApiError error = new ApiError("USER_NOT_FOUND", "User not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
         if (message.contains("order not found")) {
             ApiError error = new ApiError("ORDER_NOT_FOUND", "Order not found.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);

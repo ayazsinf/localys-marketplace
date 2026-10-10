@@ -2,7 +2,7 @@ package com.localys.marketplace.controller;
 
 import com.localys.marketplace.dto.ReviewCreateRequest;
 import com.localys.marketplace.dto.ReviewDto;
-import com.localys.marketplace.dto.VendorReviewsDto;
+import com.localys.marketplace.dto.UserReviewsDto;
 import com.localys.marketplace.model.CustomUserDetails;
 import com.localys.marketplace.service.ReviewService;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    /** Buyer: rate the seller of a delivered order item. */
+    /** Buyer rates the seller, or seller rates the buyer, of a delivered order item. */
     @PostMapping("/api/reviews")
     @ResponseStatus(HttpStatus.CREATED)
     public ReviewDto create(
@@ -34,13 +34,14 @@ public class ReviewController {
         return reviewService.create(userDetails.getUserId(), request.orderItemId(), request.rating(), request.comment());
     }
 
-    /** Public: a seller's rating summary and latest reviews. */
-    @GetMapping("/api/vendors/{vendorId}/reviews")
-    public VendorReviewsDto forVendor(
-            @PathVariable("vendorId") Long vendorId,
+    /** Public: a user's ratings and latest reviews; {@code role} is SELLER, BUYER or empty for both. */
+    @GetMapping("/api/users/{userId}/reviews")
+    public UserReviewsDto forUser(
+            @PathVariable("userId") Long userId,
+            @RequestParam(name = "role", required = false) String role,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "size", required = false) Integer size
     ) {
-        return reviewService.forVendor(vendorId, page, size);
+        return reviewService.forUser(userId, role, page, size);
     }
 }

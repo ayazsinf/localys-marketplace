@@ -479,7 +479,7 @@
     },
     "REVIEW_RECEIVED": {
       "TITLE": "Yeni degerlendirme",
-      "MESSAGE": "Bir alici \"{{product}}\" icin size {{rating}}/5 puan verdi."
+      "MESSAGE": "\"{{product}}\" icin {{rating}}/5 puan aldiniz."
     },
     "PRICE_DROP": {
       "TITLE": "Fiyat dustu",
@@ -550,7 +550,8 @@
     "YOUR_RATING": "Puaniniz",
     "COMMENT_PLACEHOLDER": "Urun ve teslimat nasildi? (istege bagli)",
     "SUBMIT": "Degerlendirmeyi gonder",
-    "ERROR_SUBMIT": "Degerlendirmeniz gonderilemedi."
+    "ERROR_SUBMIT": "Degerlendirmeniz gonderilemedi.",
+    "RATE_BUYER": "Aliciyi degerlendir"
   },
   "REPORT": {
     "OPEN": "Bu ilani sikayet et",
@@ -606,5 +607,25 @@
     "DELETE": "Sil",
     "FROM": "En az",
     "UP_TO": "En fazla"
+  },
+  "PROFILE_PUBLIC": {
+    "LOADING": "Profil yukleniyor...",
+    "NOT_FOUND": "Bu kullanici bulunamadi.",
+    "MEMBER": "Uye",
+    "MEMBER_SINCE": "{{date}} tarihinden beri uye",
+    "LISTING_COUNT": "{{count}} aktif ilan",
+    "RESPONSE_WITHIN_HOUR": "Genellikle bir saat icinde yanit verir",
+    "RESPONSE_WITHIN_DAY": "Genellikle bir gun icinde yanit verir",
+    "RESPONSE_WITHIN_DAYS": "Genellikle birkac gun icinde yanit verir",
+    "RESPONSE_RATE": "Yanit orani: %{{rate}}",
+    "AS_SELLER": "Satici olarak",
+    "AS_BUYER": "Alici olarak",
+    "TAB_LISTINGS": "Ilanlar ({{count}})",
+    "TAB_REVIEWS": "Degerlendirmeler ({{count}})",
+    "NO_LISTINGS": "Su an aktif ilan yok.",
+    "FILTER_ALL": "Tumu",
+    "REVIEW_AS_SELLER": "Satici olarak puanlandi",
+    "REVIEW_AS_BUYER": "Alici olarak puanlandi",
+    "VIEW_PROFILE": "Profili gor"
   }
 }

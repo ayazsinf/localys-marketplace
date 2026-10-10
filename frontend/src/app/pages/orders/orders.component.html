@@ -59,6 +59,14 @@
             {{ (item.deliveredAt ? 'ORDERS.ITEM_DELIVERED' : 'ORDERS.ITEM_SHIPPED') | translate }}
             · {{ 'ORDERS.TRACKING' | translate }}: {{ item.trackingNumber }}
           </span>
+          <app-rating-form
+            class="item-review"
+            *ngIf="activeTab === 'sales' && item.deliveredAt"
+            labelKey="REVIEWS.RATE_BUYER"
+            [orderItemId]="item.orderItemId"
+            [rating]="item.myRating"
+            (click)="$event.stopPropagation()"
+            (rated)="item.myRating = $event"></app-rating-form>
         </li>
       </ul>
 
@@ -81,7 +89,12 @@
 
       <div class="ship-to" *ngIf="activeTab === 'sales' && order.shippingAddress as address">
         <div class="ship-to-title">{{ 'ORDERS.SHIP_TO' | translate }}</div>
-        <div>{{ address.fullName || order.buyerDisplayName }}</div>
+        <div>
+          {{ address.fullName || order.buyerDisplayName }}
+          <a *ngIf="order.buyerUserId" class="buyer-profile" [routerLink]="['/users', order.buyerUserId]">
+            {{ 'PROFILE_PUBLIC.VIEW_PROFILE' | translate }}
+          </a>
+        </div>
         <div>{{ address.line1 }}</div>
         <div *ngIf="address.line2">{{ address.line2 }}</div>
         <div>{{ address.postalCode }} {{ address.city }}, {{ address.country }}</div>

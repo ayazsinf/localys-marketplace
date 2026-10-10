@@ -20,25 +20,6 @@
         <p>{{ product.description }}</p>
       </div>
 
-      <div class="description-card reviews-card" *ngIf="reviews.length">
-        <h3>{{ 'REVIEWS.TITLE' | translate }}</h3>
-        <ul class="review-list">
-          <li *ngFor="let review of reviews">
-            <div class="review-head">
-              <span class="stars" [attr.aria-label]="review.rating + '/5'">{{ stars(review.rating) }}</span>
-              <span class="subtle">
-                {{ review.reviewerName || ('REVIEWS.ANONYMOUS' | translate) }} · {{ formatReviewDate(review.createdAt) }}
-              </span>
-            </div>
-            <p *ngIf="review.comment">{{ review.comment }}</p>
-            <p class="subtle review-product">{{ review.productName }}</p>
-          </li>
-        </ul>
-        <button type="button" class="ghost-btn" *ngIf="hasMoreReviews" [disabled]="isLoadingReviews" (click)="loadMoreReviews()">
-          {{ 'REVIEWS.SHOW_MORE' | translate }}
-        </button>
-      </div>
-
       <div class="map-card">
         <h3>{{ 'PRODUCT.LOCATION_TITLE' | translate }}</h3>
         <div id="listing-map" class="map-canvas"></div>
@@ -50,18 +31,24 @@
     </div>
 
     <div class="detail-info">
-      <div class="seller-line">
-        <span>{{ 'PRODUCT.SELLER' | translate }}:</span>
-        <strong>{{ product.vendorShopName || product.vendorDisplayName || ('PRODUCT.SELLER_UNKNOWN' | translate) }}</strong>
-        <span class="seller-rating" *ngIf="product.vendorReviewCount; else noReviews">
-          <span class="stars" aria-hidden="true">★</span>
-          {{ product.vendorRating }}
-          <span class="subtle">({{ 'REVIEWS.COUNT' | translate: { count: product.vendorReviewCount } }})</span>
+      <a class="seller-card" *ngIf="product.vendorUserId; else unknownSeller" [routerLink]="['/users', product.vendorUserId]">
+        <span class="seller-avatar" aria-hidden="true">{{ sellerInitial }}</span>
+        <span class="seller-meta">
+          <strong>{{ sellerName }}</strong>
+          <span class="seller-rating" *ngIf="product.vendorReviewCount; else noReviews">
+            <span class="stars" aria-hidden="true">★</span>
+            {{ product.vendorRating }}
+            <span class="subtle">({{ 'REVIEWS.COUNT' | translate: { count: product.vendorReviewCount } }})</span>
+          </span>
+          <ng-template #noReviews>
+            <span class="seller-rating subtle">{{ 'REVIEWS.NONE_YET' | translate }}</span>
+          </ng-template>
         </span>
-        <ng-template #noReviews>
-          <span class="seller-rating subtle">{{ 'REVIEWS.NONE_YET' | translate }}</span>
-        </ng-template>
-      </div>
+        <span class="seller-link">{{ 'PROFILE_PUBLIC.VIEW_PROFILE' | translate }} ›</span>
+      </a>
+      <ng-template #unknownSeller>
+        <div class="seller-line">{{ 'PRODUCT.SELLER' | translate }}: {{ 'PRODUCT.SELLER_UNKNOWN' | translate }}</div>
+      </ng-template>
       <h1>{{ product.name }}</h1>
       <p class="sku">{{ 'PRODUCT.SKU' | translate }}: {{ product.sku }}</p>
       <p class="price">{{ product.price | currencyDisplay:product.currency }}</p>

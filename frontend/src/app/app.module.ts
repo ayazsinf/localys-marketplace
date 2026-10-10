@@ -26,6 +26,8 @@ import { CurrencyDisplayPipe } from './pipes/currency-display.pipe';
 import { CategoryDisplayPipe } from './pipes/category-display.pipe';
 import { AdminListingsComponent } from './pages/admin-listings/admin-listings.component';
 import { AdminReportsComponent } from './pages/admin-reports/admin-reports.component';
+import { RatingFormComponent } from './components/rating-form/rating-form.component';
+import { PublicProfileComponent } from './pages/public-profile/public-profile.component';
 import { SavedSearchesComponent } from './pages/saved-searches/saved-searches.component';
 import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.component';
 
@@ -53,6 +55,8 @@ import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.compon
     AdminReportsComponent,
     SavedSearchesComponent,
     AuthDialogComponent,
+    RatingFormComponent,
+    PublicProfileComponent,
     CurrencyDisplayPipe,
     CategoryDisplayPipe
   ],

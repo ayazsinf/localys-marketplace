@@ -141,12 +141,12 @@ public class NotificationService {
         );
     }
 
-    public void createReviewReceivedNotification(UserEntity seller, String productName, int rating) {
+    public void createReviewReceivedNotification(UserEntity reviewee, String productName, int rating) {
         saveOrderNotification(
-                seller,
+                reviewee,
                 NotificationType.REVIEW_RECEIVED,
                 "notification.review.received",
-                "/orders?tab=sales",
+                "/users/" + reviewee.getId(),
                 productName,
                 String.valueOf(rating)
         );

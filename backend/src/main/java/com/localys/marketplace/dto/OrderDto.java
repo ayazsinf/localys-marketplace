@@ -18,12 +18,13 @@ public record OrderDto(
         String shippingMethod,
         OffsetDateTime createdAt,
         String buyerDisplayName,
+        Long buyerUserId,
         ShippingAddressDto shippingAddress,
         List<OrderItemDto> items
 ) {
     /**
-     * @param myRating the buyer's rating of this item's seller, or null when not reviewed
-     *                 (always null in the seller view)
+     * @param myRating the rating the viewer (buyer or seller) gave the other party for this item,
+     *                 or null when not reviewed yet
      */
     public record OrderItemDto(
             Long orderItemId,

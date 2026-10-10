@@ -67,7 +67,9 @@ public class ProductSearchService {
             BigDecimal maxPrice,
             String sort,
             Integer page,
-            Integer size
+            Integer size,
+            /** Only this user's listings (public profile); null for everyone's. */
+            Long sellerUserId
     ) {
     }
 
@@ -128,6 +130,9 @@ public class ProductSearchService {
             }
             if (!categoryIds.isEmpty()) {
                 predicates.add(root.get("category").get("id").in(categoryIds));
+            }
+            if (criteria.sellerUserId() != null) {
+                predicates.add(cb.equal(root.get("vendor").get("user").get("id"), criteria.sellerUserId()));
             }
             if (criteria.minPrice() != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("price"), criteria.minPrice()));

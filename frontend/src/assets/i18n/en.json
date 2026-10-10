@@ -479,7 +479,7 @@
     },
     "REVIEW_RECEIVED": {
       "TITLE": "New review",
-      "MESSAGE": "A buyer rated you {{rating}}/5 for \"{{product}}\"."
+      "MESSAGE": "You received a {{rating}}/5 rating for \"{{product}}\"."
     },
     "PRICE_DROP": {
       "TITLE": "Price drop",
@@ -550,7 +550,8 @@
     "YOUR_RATING": "Your rating",
     "COMMENT_PLACEHOLDER": "How was the item and the delivery? (optional)",
     "SUBMIT": "Send review",
-    "ERROR_SUBMIT": "Could not send your review."
+    "ERROR_SUBMIT": "Could not send your review.",
+    "RATE_BUYER": "Rate the buyer"
   },
   "REPORT": {
     "OPEN": "Report this listing",
@@ -606,5 +607,25 @@
     "DELETE": "Delete",
     "FROM": "From",
     "UP_TO": "Up to"
+  },
+  "PROFILE_PUBLIC": {
+    "LOADING": "Loading profile...",
+    "NOT_FOUND": "This user does not exist.",
+    "MEMBER": "Member",
+    "MEMBER_SINCE": "Member since {{date}}",
+    "LISTING_COUNT": "{{count}} active listings",
+    "RESPONSE_WITHIN_HOUR": "Usually replies within an hour",
+    "RESPONSE_WITHIN_DAY": "Usually replies within a day",
+    "RESPONSE_WITHIN_DAYS": "Usually replies within a few days",
+    "RESPONSE_RATE": "Response rate: {{rate}}%",
+    "AS_SELLER": "As seller",
+    "AS_BUYER": "As buyer",
+    "TAB_LISTINGS": "Listings ({{count}})",
+    "TAB_REVIEWS": "Reviews ({{count}})",
+    "NO_LISTINGS": "No active listings right now.",
+    "FILTER_ALL": "All",
+    "REVIEW_AS_SELLER": "Rated as seller",
+    "REVIEW_AS_BUYER": "Rated as buyer",
+    "VIEW_PROFILE": "See profile"
   }
 }

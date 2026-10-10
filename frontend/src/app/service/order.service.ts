@@ -45,7 +45,7 @@ export interface OrderItem {
   trackingNumber: string | null;
   shippedAt: string | null;
   deliveredAt: string | null;
-  /** Buyer view only: the rating already given to this item's seller. */
+  /** The rating the viewer already gave the other party for this item. */
   myRating: number | null;
 }
 
@@ -69,6 +69,8 @@ export interface Order {
   shippingMethod: string | null;
   createdAt: string;
   buyerDisplayName: string | null;
+  /** Seller view only: links to the buyer's public profile. */
+  buyerUserId: number | null;
   shippingAddress: OrderShippingAddress | null;
   items: OrderItem[];
 }

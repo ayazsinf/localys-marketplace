@@ -277,7 +277,7 @@ public class OrderService {
     @Transactional
     public List<OrderDto> listForBuyer(Long userId) {
         return orderRepository.findByUser_IdOrderByCreatedAtDesc(userId).stream()
-                .map(order -> toDto(order, order.getItems(), false))
+                .map(order -> toDto(order, order.getItems(), null))
                 .toList();
     }
 
@@ -285,7 +285,7 @@ public class OrderService {
     public OrderDto getForBuyer(Long userId, Long orderId) {
         Order order = orderRepository.findByIdAndUser_Id(orderId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
-        return toDto(order, order.getItems(), false);
+        return toDto(order, order.getItems(), null);
     }
 
     /**
@@ -297,7 +297,7 @@ public class OrderService {
         Map<Order, List<OrderItem>> itemsByOrder = orderItemRepository.findSoldItems(sellerUserId, PAID_STATES).stream()
                 .collect(Collectors.groupingBy(OrderItem::getOrder, LinkedHashMap::new, Collectors.toList()));
         return itemsByOrder.entrySet().stream()
-                .map(entry -> toDto(entry.getKey(), entry.getValue(), true))
+                .map(entry -> toDto(entry.getKey(), entry.getValue(), sellerUserId))
                 .toList();
     }
 
@@ -343,7 +343,7 @@ public class OrderService {
                 joinNames(toShip),
                 tracking
         );
-        return toDto(order, sellerItems, true);
+        return toDto(order, sellerItems, sellerUserId);
     }
 
     /**
@@ -372,7 +372,7 @@ public class OrderService {
                 notificationService.createOrderDeliveredNotification(item.getVendor().getUser(), item.getProductNameSnapshot());
             }
         }
-        return toDto(order, order.getItems(), false);
+        return toDto(order, order.getItems(), null);
     }
 
     private boolean isSoldBy(OrderItem item, Long sellerUserId) {
@@ -425,10 +425,14 @@ public class OrderService {
         cartRepository.save(cart);
     }
 
-    private OrderDto toDto(Order order, List<OrderItem> items, boolean sellerView) {
-        Map<Long, Integer> ratings = sellerView
-                ? Map.of()
-                : reviewService.ratingsByOrderItem(items.stream().map(OrderItem::getId).toList());
+    /**
+     * @param sellerUserId the seller viewing their sale, or null for the buyer's view
+     */
+    private OrderDto toDto(Order order, List<OrderItem> items, Long sellerUserId) {
+        boolean sellerView = sellerUserId != null;
+        Long viewerId = sellerView ? sellerUserId : order.getUser().getId();
+        Map<Long, Integer> ratings = reviewService.ratingsGivenBy(
+                viewerId, items.stream().map(OrderItem::getId).toList());
         List<OrderDto.OrderItemDto> itemDtos = items.stream()
                 .map(item -> new OrderDto.OrderItemDto(
                         item.getId(),
@@ -471,6 +475,7 @@ public class OrderService {
                 order.getShippingMethod(),
                 order.getCreatedAt(),
                 sellerView ? displayName(order.getUser()) : null,
+                sellerView ? order.getUser().getId() : null,
                 addressDto,
                 itemDtos
         );

@@ -63,6 +63,7 @@ public class SavedSearchAlertService {
                 search.getMaxPrice(),
                 null,
                 null,
+                null,
                 null
         );
         long matches = productSearchService.countApprovedBetween(
