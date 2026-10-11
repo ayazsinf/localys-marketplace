@@ -66,7 +66,10 @@
             *ngFor="let message of selectedConversation?.messages; trackBy: trackByMessage"
               [class.me]="message.fromMe">
             <div class="bubble">
-              <p>{{ message.text }}</p>
+              <a *ngIf="message.imageUrl" class="message-image" [href]="imageSrc(message.imageUrl)" target="_blank" rel="noopener">
+                <img [src]="imageSrc(message.imageUrl)" [alt]="'MESSAGES.PHOTO' | translate" loading="lazy" />
+              </a>
+              <p *ngIf="message.text">{{ message.text }}</p>
               <span class="timestamp">{{ message.timestamp }}</span>
             </div>
             <span class="seen" *ngIf="message.id === lastSeenMessageId">{{ 'MESSAGES.SEEN' | translate }}</span>
@@ -84,6 +87,12 @@
         </p>
         <p class="send-error" *ngIf="sendError">{{ sendError | translate }}</p>
         <div class="composer" *ngIf="!selectedConversation?.blocked">
+          <label class="photo-btn" [class.is-busy]="isSendingImage" [attr.aria-label]="'MESSAGES.SEND_PHOTO' | translate"
+                 [title]="'MESSAGES.SEND_PHOTO' | translate">
+            📷
+            <input type="file" accept="image/jpeg,image/png,image/gif,image/webp" hidden
+                   [disabled]="isSendingImage" (change)="onImageSelected($event)" />
+          </label>
           <input
             type="text"
             [ngModel]="draftMessage"

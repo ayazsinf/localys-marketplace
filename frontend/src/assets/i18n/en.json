@@ -344,7 +344,11 @@
     "OFFLINE": "Offline",
     "SEND_ERROR": "Your message could not be sent. Please try again.",
     "SEEN": "Seen",
-    "TYPING": "{{name}} is typing..."
+    "TYPING": "{{name}} is typing...",
+    "PHOTO": "Photo",
+    "SEND_PHOTO": "Send a photo",
+    "IMAGE_TOO_LARGE": "Photos must be 10 MB or smaller.",
+    "IMAGE_INVALID": "Only JPEG, PNG, GIF and WebP photos can be sent."
   },
   "CATEGORIES": {
     "PLACEHOLDER": "Categories page is coming soon.",

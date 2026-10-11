@@ -6,9 +6,11 @@ import com.localys.marketplace.dto.SendMessageRequest;
 import com.localys.marketplace.model.CustomUserDetails;
 import com.localys.marketplace.service.MessageService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -57,6 +59,17 @@ public class ConversationController {
             @RequestParam(value = "limit", required = false) Integer limit
     ) {
         return messageService.getMessages(userDetails.getUserId(), conversationId, limit);
+    }
+
+    @PostMapping(path = "/{conversationId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MessageDto> sendImage(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("conversationId") Long conversationId,
+            @RequestParam("image") MultipartFile image,
+            @RequestParam(value = "caption", required = false) String caption
+    ) {
+        MessageDto saved = messageService.sendImage(userDetails.getUserId(), conversationId, image, caption);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PostMapping("/{conversationId}/messages")

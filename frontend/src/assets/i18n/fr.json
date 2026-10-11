@@ -344,7 +344,11 @@
     "OFFLINE": "Hors ligne",
     "SEND_ERROR": "Votre message n'a pas pu etre envoye. Reessayez.",
     "SEEN": "Vu",
-    "TYPING": "{{name}} est en train d'ecrire..."
+    "TYPING": "{{name}} est en train d'ecrire...",
+    "PHOTO": "Photo",
+    "SEND_PHOTO": "Envoyer une photo",
+    "IMAGE_TOO_LARGE": "Les photos doivent faire 10 Mo maximum.",
+    "IMAGE_INVALID": "Seules les photos JPEG, PNG, GIF et WebP peuvent etre envoyees."
   },
   "CATEGORIES": {
     "PLACEHOLDER": "La page des categories arrive bientot.",

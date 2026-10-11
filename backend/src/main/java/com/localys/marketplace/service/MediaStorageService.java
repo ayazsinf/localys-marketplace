@@ -53,6 +53,21 @@ public class MediaStorageService {
     }
 
     public List<String> storeListingImages(Long listingId, List<MultipartFile> files) {
+        return storeImages("listings/" + listingId, files);
+    }
+
+    /**
+     * A photo sent in a conversation. Like listing photos it is served from a random,
+     * unguessable URL.
+     */
+    public String storeMessageImage(Long conversationId, MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("Only image uploads are allowed");
+        }
+        return storeImages("messages/" + conversationId, List.of(file)).get(0);
+    }
+
+    private List<String> storeImages(String folder, List<MultipartFile> files) {
         if (files == null || files.isEmpty()) {
             return List.of();
         }
@@ -61,14 +76,14 @@ public class MediaStorageService {
                 .filter(file -> file != null && !file.isEmpty())
                 .forEach(this::validateImage);
         if (STORAGE_R2.equals(storage)) {
-            return storeListingImagesInR2(listingId, files);
+            return storeImagesInR2(folder, files);
         }
 
-        return storeListingImagesLocally(listingId, files);
+        return storeImagesLocally(folder, files);
     }
 
-    private List<String> storeListingImagesLocally(Long listingId, List<MultipartFile> files) {
-        Path listingDir = uploadRoot.resolve("listings").resolve(String.valueOf(listingId));
+    private List<String> storeImagesLocally(String folder, List<MultipartFile> files) {
+        Path listingDir = uploadRoot.resolve(folder);
         try {
             Files.createDirectories(listingDir);
         } catch (IOException e) {
@@ -88,12 +103,12 @@ public class MediaStorageService {
             } catch (IOException e) {
                 throw new RuntimeException("Failed to store file", e);
             }
-            urls.add("/uploads/listings/" + listingId + "/" + filename);
+            urls.add("/uploads/" + folder + "/" + filename);
         }
         return urls;
     }
 
-    private List<String> storeListingImagesInR2(Long listingId, List<MultipartFile> files) {
+    private List<String> storeImagesInR2(String folder, List<MultipartFile> files) {
         List<String> urls = new ArrayList<>();
         for (MultipartFile file : files) {
             if (file == null || file.isEmpty()) {
@@ -101,7 +116,7 @@ public class MediaStorageService {
             }
             ImageType imageType = validateImage(file);
             String filename = UUID.randomUUID().toString().replace("-", "") + imageType.extension();
-            String key = "listings/" + listingId + "/" + filename;
+            String key = folder + "/" + filename;
             PutObjectRequest request = PutObjectRequest.builder()
                     .bucket(r2Bucket)
                     .key(key)

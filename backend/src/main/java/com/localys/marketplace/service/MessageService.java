@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.OffsetDateTime;
 import java.util.Comparator;
@@ -42,6 +43,7 @@ public class MessageService {
     private final EmailService emailService;
     private final UserBlockService userBlockService;
     private final MessageSafetyService messageSafetyService;
+    private final MediaStorageService mediaStorageService;
 
     public MessageService(
             ConversationRepository conversationRepository,
@@ -52,7 +54,8 @@ public class MessageService {
             SimpMessagingTemplate messagingTemplate,
             EmailService emailService,
             UserBlockService userBlockService,
-            MessageSafetyService messageSafetyService
+            MessageSafetyService messageSafetyService,
+            MediaStorageService mediaStorageService
     ) {
         this.conversationRepository = conversationRepository;
         this.participantRepository = participantRepository;
@@ -63,6 +66,7 @@ public class MessageService {
         this.emailService = emailService;
         this.userBlockService = userBlockService;
         this.messageSafetyService = messageSafetyService;
+        this.mediaStorageService = mediaStorageService;
     }
 
     @Transactional(readOnly = true)
@@ -164,10 +168,34 @@ public class MessageService {
         if (body.trim().length() > MAX_BODY_LENGTH) {
             throw new IllegalArgumentException("Message is too long.");
         }
-
         Conversation conversation = resolveConversation(senderId, conversationId, recipientId);
         ensureParticipant(conversation.getId(), senderId);
+        return deliver(senderId, conversation, body.trim(), null);
+    }
 
+    /** Sends a photo, with an optional caption, in an existing conversation. */
+    @Transactional
+    public MessageDto sendImage(Long senderId, Long conversationId, MultipartFile image, String caption) {
+        String text = caption == null ? "" : caption.trim();
+        if (text.length() > MAX_BODY_LENGTH) {
+            throw new IllegalArgumentException("Message is too long.");
+        }
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new IllegalArgumentException("Conversation not found"));
+        ensureParticipant(conversation.getId(), senderId);
+        ensureOtherNotBlocked(senderId, conversation.getId());
+        String imageUrl = mediaStorageService.storeMessageImage(conversation.getId(), image);
+        return deliver(senderId, conversation, text, imageUrl);
+    }
+
+    private void ensureOtherNotBlocked(Long senderId, Long conversationId) {
+        participantRepository.findByConversationId(conversationId).stream()
+                .map(ConversationParticipant::getUser)
+                .filter(user -> !user.getId().equals(senderId))
+                .forEach(user -> userBlockService.ensureNotBlocked(senderId, user.getId()));
+    }
+
+    private MessageDto deliver(Long senderId, Conversation conversation, String body, String imageUrl) {
         UserEntity sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -186,7 +214,8 @@ public class MessageService {
         Message message = new Message();
         message.setConversation(conversation);
         message.setSender(sender);
-        message.setBody(body.trim());
+        message.setBody(body);
+        message.setImageUrl(imageUrl);
         MessageSafetyService.Warning warning = messageSafetyService.check(message.getBody());
         message.setSafetyWarning(warning == null ? null : warning.name());
 
@@ -197,9 +226,10 @@ public class MessageService {
         MessageDto dto = toMessageDto(saved);
         messagingTemplate.convertAndSend("/topic/conversations/" + conversation.getId(), dto);
         if (recipientWasCaughtUp) {
-            String preview = saved.getBody().length() > MAX_EMAIL_PREVIEW
-                    ? saved.getBody().substring(0, MAX_EMAIL_PREVIEW) + "…"
-                    : saved.getBody();
+            String text = saved.getBody().isEmpty() && saved.getImageUrl() != null ? "📷" : saved.getBody();
+            String preview = text.length() > MAX_EMAIL_PREVIEW
+                    ? text.substring(0, MAX_EMAIL_PREVIEW) + "…"
+                    : text;
             emailService.sendNewMessageEmail(recipient, sender,
                     conversation.getProduct() != null ? conversation.getProduct().getName() : null,
                     preview, conversation.getId());
@@ -262,7 +292,7 @@ public class MessageService {
                 .orElse(null);
 
         String lastMessage = messageRepository.findTopByConversationIdOrderByCreatedAtDesc(conversation.getId())
-                .map(Message::getBody)
+                .map(message -> message.getBody().isEmpty() && message.getImageUrl() != null ? "📷" : message.getBody())
                 .orElse(null);
 
         Product product = conversation.getProduct();
@@ -293,6 +323,7 @@ public class MessageService {
                 message.getConversation().getId(),
                 message.getSender().getId(),
                 message.getBody(),
+                message.getImageUrl(),
                 message.getCreatedAt(),
                 message.getSafetyWarning(),
                 message.getReadAt()

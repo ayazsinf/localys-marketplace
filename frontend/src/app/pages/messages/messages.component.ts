@@ -5,6 +5,10 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { getLocaleForLanguage } from '../../shared/market';
 import { BlockService } from '../../service/block.service';
+import { environment } from '../../../environments/environment';
+
+/** Same limit as the server. */
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 
 /** How long "typing..." stays up without a new signal, and how often we send ours. */
 const TYPING_VISIBLE_MS = 4000;
@@ -14,6 +18,7 @@ type MessageItem = {
   id: number;
   senderId: number;
   text: string;
+  imageUrl: string | null;
   timestamp: string;
   fromMe: boolean;
   safetyWarning: string | null;
@@ -48,6 +53,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   draftMessage = '';
   sendError: string | null = null;
   isBlockBusy = false;
+  isSendingImage = false;
   /** The other user of the open conversation is typing. */
   otherTyping = false;
   private typingTimer: ReturnType<typeof setTimeout> | null = null;
@@ -147,6 +153,52 @@ export class MessagesComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    const conversation = this.selectedConversation;
+    if (!file || !conversation || conversation.blocked || this.isSendingImage) {
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      this.sendError = 'MESSAGES.IMAGE_TOO_LARGE';
+      return;
+    }
+    this.sendError = null;
+    this.isSendingImage = true;
+    // Whatever is typed goes along as the caption.
+    const caption = this.draftMessage;
+    this.messagingService.sendImage(conversation.id, file, caption).subscribe({
+      next: message => {
+        this.isSendingImage = false;
+        this.draftMessage = '';
+        this.handleIncomingMessage(message);
+      },
+      error: err => {
+        this.isSendingImage = false;
+        const code = err?.error?.code;
+        if (code === 'USER_BLOCKED') {
+          conversation.blocked = true;
+        } else {
+          this.sendError = code === 'IMAGE_TOO_LARGE' ? 'MESSAGES.IMAGE_TOO_LARGE'
+            : code === 'INVALID_IMAGE' ? 'MESSAGES.IMAGE_INVALID'
+            : 'MESSAGES.SEND_ERROR';
+        }
+      }
+    });
+  }
+
+  imageSrc(url: string | null): string {
+    if (!url) {
+      return '';
+    }
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    return `${environment.apiUrl}${url.startsWith('/') ? url : '/' + url}`;
   }
 
   toggleBlock(): void {
@@ -279,7 +331,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
       this.clearTyping();
     }
     conversation.messages.push(mapped);
-    conversation.lastMessage = mapped.text;
+    conversation.lastMessage = mapped.text || (mapped.imageUrl ? '📷' : '');
     conversation.lastTime = mapped.timestamp;
 
     if (this.selectedConversationId !== conversation.id) {
@@ -324,6 +376,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
       id: dto.id,
       senderId: dto.senderId,
       text: dto.body,
+      imageUrl: dto.imageUrl ?? null,
       timestamp: this.formatTime(dto.createdAt),
       fromMe,
       safetyWarning: dto.safetyWarning ?? null,

@@ -344,7 +344,11 @@
     "OFFLINE": "Cevrimdisi",
     "SEND_ERROR": "Mesajiniz gonderilemedi. Lutfen tekrar deneyin.",
     "SEEN": "Goruldu",
-    "TYPING": "{{name}} yaziyor..."
+    "TYPING": "{{name}} yaziyor...",
+    "PHOTO": "Fotograf",
+    "SEND_PHOTO": "Fotograf gonder",
+    "IMAGE_TOO_LARGE": "Fotograflar en fazla 10 MB olabilir.",
+    "IMAGE_INVALID": "Sadece JPEG, PNG, GIF ve WebP fotograflar gonderilebilir."
   },
   "CATEGORIES": {
     "PLACEHOLDER": "Kategoriler sayfasi yakinda.",

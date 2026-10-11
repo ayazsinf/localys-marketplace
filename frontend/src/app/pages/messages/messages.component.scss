@@ -332,3 +332,35 @@
   font-style: italic;
   color: #6b7280;
 }
+
+.message-image {
+  display: block;
+  margin-bottom: 6px;
+
+  img {
+    display: block;
+    max-width: 260px;
+    max-height: 260px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+}
+
+.photo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 8px;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+
+  &.is-busy {
+    opacity: 0.5;
+    cursor: progress;
+  }
+}

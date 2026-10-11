@@ -431,3 +431,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 038-message-images
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V38__message_images.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

@@ -27,8 +27,12 @@ public class Message extends AuditableEntity {
     @JoinColumn(name = "sender_id", nullable = false)
     private UserEntity sender;
 
+    /** Empty when the message is only a photo. */
     @Column(nullable = false, length = 4000)
     private String body;
+
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
 
     /** A {@link com.localys.marketplace.service.MessageSafetyService.Warning} name, or null. */
     @Column(name = "safety_warning", length = 30)

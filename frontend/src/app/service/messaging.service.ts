@@ -26,6 +26,8 @@ export interface MessageDto {
   conversationId: number;
   senderId: number;
   body: string;
+  /** A photo sent with (or instead of) the text. */
+  imageUrl: string | null;
   createdAt: string;
   /** PAYMENT_OUTSIDE, EXTERNAL_LINK or CONTACT_DETAILS when the message looks like a scam. */
   safetyWarning: string | null;
@@ -96,6 +98,15 @@ export class MessagingService {
       `${environment.apiUrl}/conversations/${conversationId}/messages`,
       payload
     );
+  }
+
+  sendImage(conversationId: number, image: File, caption?: string) {
+    const form = new FormData();
+    form.append('image', image);
+    if (caption?.trim()) {
+      form.append('caption', caption.trim());
+    }
+    return this.http.post<MessageDto>(`${environment.apiUrl}/conversations/${conversationId}/images`, form);
   }
 
   /**
