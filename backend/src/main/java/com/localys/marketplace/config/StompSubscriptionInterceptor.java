@@ -15,11 +15,13 @@ import java.security.Principal;
 
 /**
  * Authorizes STOMP subscriptions. Without this, any logged-in user could subscribe to
- * {@code /topic/conversations/{id}} of a conversation they are not part of and read it live.
+ * {@code /topic/conversations/{id}} (or its {@code /events}) of a conversation they are not part of and read it live.
  */
 public class StompSubscriptionInterceptor implements ChannelInterceptor {
 
     private static final String CONVERSATION_TOPIC_PREFIX = "/topic/conversations/";
+    /** Read receipts and typing indicators of a conversation. */
+    private static final String EVENTS_SUFFIX = "/events";
 
     private final ConversationParticipantRepository participantRepository;
 
@@ -41,7 +43,11 @@ public class StompSubscriptionInterceptor implements ChannelInterceptor {
         if (!destination.startsWith(CONVERSATION_TOPIC_PREFIX)) {
             throw new AccessDeniedException("Subscription not allowed");
         }
-        Long conversationId = parseId(destination.substring(CONVERSATION_TOPIC_PREFIX.length()));
+        String rest = destination.substring(CONVERSATION_TOPIC_PREFIX.length());
+        if (rest.endsWith(EVENTS_SUFFIX)) {
+            rest = rest.substring(0, rest.length() - EVENTS_SUFFIX.length());
+        }
+        Long conversationId = parseId(rest);
         Long userId = resolveUserId(accessor.getUser());
         if (conversationId == null || userId == null
                 || !participantRepository.existsByConversationIdAndUserId(conversationId, userId)) {

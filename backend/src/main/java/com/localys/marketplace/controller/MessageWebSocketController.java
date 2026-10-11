@@ -2,6 +2,7 @@ package com.localys.marketplace.controller;
 
 import com.localys.marketplace.dto.MessageDto;
 import com.localys.marketplace.dto.SendMessageRequest;
+import com.localys.marketplace.dto.TypingRequest;
 import com.localys.marketplace.model.CustomUserDetails;
 import com.localys.marketplace.service.MessageService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -28,6 +29,11 @@ public class MessageWebSocketController {
                 request.recipientId(),
                 request.body()
         );
+    }
+
+    @MessageMapping("/conversations.typing")
+    public void typing(@Payload TypingRequest request, Principal principal) {
+        messageService.announceTyping(resolveUser(principal).getUserId(), request.conversationId());
     }
 
     private CustomUserDetails resolveUser(Principal principal) {

@@ -1,10 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MessagingService, ConversationDto, MessageDto } from '../../service/messaging.service';
+import { MessagingService, ConversationDto, ConversationEvent, MessageDto } from '../../service/messaging.service';
 import { UserService, UserProfile } from '../../service/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { getLocaleForLanguage } from '../../shared/market';
 import { BlockService } from '../../service/block.service';
+
+/** How long "typing..." stays up without a new signal, and how often we send ours. */
+const TYPING_VISIBLE_MS = 4000;
+const TYPING_SEND_INTERVAL_MS = 2500;
 
 type MessageItem = {
   id: number;
@@ -13,6 +17,7 @@ type MessageItem = {
   timestamp: string;
   fromMe: boolean;
   safetyWarning: string | null;
+  readAt: string | null;
 };
 
 type Conversation = {
@@ -43,6 +48,10 @@ export class MessagesComponent implements OnInit, OnDestroy {
   draftMessage = '';
   sendError: string | null = null;
   isBlockBusy = false;
+  /** The other user of the open conversation is typing. */
+  otherTyping = false;
+  private typingTimer: ReturnType<typeof setTimeout> | null = null;
+  private lastTypingSentAt = 0;
   currentUser: UserProfile | null = null;
   /** Stops the live updates of the open conversation. */
   private stopWatching: (() => void) | null = null;
@@ -69,6 +78,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.clearTyping();
     this.stopWatching?.();
     this.messagingService.disconnect();
   }
@@ -89,7 +99,29 @@ export class MessagesComponent implements OnInit, OnDestroy {
     return this.conversations.find(item => item.id === this.selectedConversationId);
   }
 
+  /** The last of my messages the other user has read, to show "Seen" under it. */
+  get lastSeenMessageId(): number | null {
+    const messages = this.selectedConversation?.messages ?? [];
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].fromMe) {
+        return messages[i].readAt ? messages[i].id : null;
+      }
+    }
+    return null;
+  }
+
+  onDraftChange(value: string): void {
+    this.draftMessage = value;
+    const conversation = this.selectedConversation;
+    const now = Date.now();
+    if (conversation && !conversation.blocked && value.trim() && now - this.lastTypingSentAt > TYPING_SEND_INTERVAL_MS) {
+      this.lastTypingSentAt = now;
+      this.messagingService.sendTyping(conversation.id);
+    }
+  }
+
   selectConversation(conversation: Conversation): void {
+    this.clearTyping();
     this.selectedConversationId = conversation.id;
     conversation.unreadCount = 0;
     this.loadMessages(conversation);
@@ -189,8 +221,37 @@ export class MessagesComponent implements OnInit, OnDestroy {
       conversationId,
       message => this.handleIncomingMessage(message),
       // After a reconnect, fetch what was sent while the socket was down.
-      () => this.resyncMessages(conversationId)
+      () => this.resyncMessages(conversationId),
+      event => this.handleEvent(event)
     );
+  }
+
+  private handleEvent(event: ConversationEvent): void {
+    if (!this.currentUser || event.userId === this.currentUser.id || event.conversationId !== this.selectedConversationId) {
+      return;
+    }
+    if (event.type === 'TYPING') {
+      this.otherTyping = true;
+      if (this.typingTimer) {
+        clearTimeout(this.typingTimer);
+      }
+      this.typingTimer = setTimeout(() => this.clearTyping(), TYPING_VISIBLE_MS);
+      return;
+    }
+    const conversation = this.conversations.find(item => item.id === event.conversationId);
+    for (const message of conversation?.messages ?? []) {
+      if (message.fromMe && !message.readAt) {
+        message.readAt = event.at;
+      }
+    }
+  }
+
+  private clearTyping(): void {
+    this.otherTyping = false;
+    if (this.typingTimer) {
+      clearTimeout(this.typingTimer);
+      this.typingTimer = null;
+    }
   }
 
   private resyncMessages(conversationId: number): void {
@@ -214,6 +275,9 @@ export class MessagesComponent implements OnInit, OnDestroy {
     }
 
     const mapped = this.toMessage(message);
+    if (!mapped.fromMe && conversation.id === this.selectedConversationId) {
+      this.clearTyping();
+    }
     conversation.messages.push(mapped);
     conversation.lastMessage = mapped.text;
     conversation.lastTime = mapped.timestamp;
@@ -262,7 +326,8 @@ export class MessagesComponent implements OnInit, OnDestroy {
       text: dto.body,
       timestamp: this.formatTime(dto.createdAt),
       fromMe,
-      safetyWarning: dto.safetyWarning ?? null
+      safetyWarning: dto.safetyWarning ?? null,
+      readAt: dto.readAt ?? null
     };
   }
 

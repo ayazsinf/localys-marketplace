@@ -342,7 +342,9 @@
     "LISTING_LABEL": "Listing",
     "ONLINE": "Online",
     "OFFLINE": "Offline",
-    "SEND_ERROR": "Your message could not be sent. Please try again."
+    "SEND_ERROR": "Your message could not be sent. Please try again.",
+    "SEEN": "Seen",
+    "TYPING": "{{name}} is typing..."
   },
   "CATEGORIES": {
     "PLACEHOLDER": "Categories page is coming soon.",

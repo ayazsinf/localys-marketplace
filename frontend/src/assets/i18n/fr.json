@@ -342,7 +342,9 @@
     "LISTING_LABEL": "Annonce",
     "ONLINE": "En ligne",
     "OFFLINE": "Hors ligne",
-    "SEND_ERROR": "Votre message n'a pas pu etre envoye. Reessayez."
+    "SEND_ERROR": "Votre message n'a pas pu etre envoye. Reessayez.",
+    "SEEN": "Vu",
+    "TYPING": "{{name}} est en train d'ecrire..."
   },
   "CATEGORIES": {
     "PLACEHOLDER": "La page des categories arrive bientot.",

@@ -69,12 +69,16 @@
               <p>{{ message.text }}</p>
               <span class="timestamp">{{ message.timestamp }}</span>
             </div>
+            <span class="seen" *ngIf="message.id === lastSeenMessageId">{{ 'MESSAGES.SEEN' | translate }}</span>
             <p class="safety-warning" *ngIf="message.safetyWarning && !message.fromMe" role="note">
               ⚠️ {{ ('SAFETY.' + message.safetyWarning) | translate }}
             </p>
           </div>
         </div>
 
+        <p class="typing" *ngIf="otherTyping" aria-live="polite">
+          {{ 'MESSAGES.TYPING' | translate: { name: selectedConversation?.name } }}
+        </p>
         <p class="blocked-banner" *ngIf="selectedConversation?.blocked">
           {{ (selectedConversation?.blockedByMe ? 'BLOCK.BANNER_BY_ME' : 'BLOCK.BANNER') | translate }}
         </p>
@@ -82,7 +86,8 @@
         <div class="composer" *ngIf="!selectedConversation?.blocked">
           <input
             type="text"
-            [(ngModel)]="draftMessage"
+            [ngModel]="draftMessage"
+            (ngModelChange)="onDraftChange($event)"
             (keydown.enter)="sendMessage()"
             [placeholder]="'MESSAGES.NEW_MESSAGE_PLACEHOLDER' | translate" />
           <button class="primary-btn" type="button" (click)="sendMessage()">

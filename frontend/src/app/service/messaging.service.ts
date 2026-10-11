@@ -29,6 +29,16 @@ export interface MessageDto {
   createdAt: string;
   /** PAYMENT_OUTSIDE, EXTERNAL_LINK or CONTACT_DETAILS when the message looks like a scam. */
   safetyWarning: string | null;
+  /** When the recipient read it; null while unread. */
+  readAt: string | null;
+}
+
+/** Live activity in a conversation: the other user read the thread or is typing. */
+export interface ConversationEvent {
+  type: 'READ' | 'TYPING';
+  conversationId: number;
+  userId: number;
+  at: string;
 }
 
 export interface SendMessageRequest {
@@ -42,7 +52,7 @@ export class MessagingService {
   private stompClient: Client | null = null;
   private connectPromise: Promise<void> | null = null;
   private connected = false;
-  private subscription: StompSubscription | null = null;
+  private subscriptions: StompSubscription[] = [];
   private watcher: ConversationWatcher | null = null;
   /** Total unread messages, shown as the navbar badge. */
   readonly unreadCount$ = new BehaviorSubject<number>(0);
@@ -91,14 +101,16 @@ export class MessagingService {
   /**
    * Streams new messages of one conversation (the one on screen) to {@code handler}. The
    * subscription is restored after every reconnect, and {@code onResync} lets the caller reload
-   * messages that arrived while the socket was down. Returns a function that stops watching.
+   * messages that arrived while the socket was down. {@code onEvent} receives read receipts and
+   * typing indicators. Returns a function that stops watching.
    */
   watchConversation(
     conversationId: number,
     handler: (message: MessageDto) => void,
-    onResync?: () => void
+    onResync?: () => void,
+    onEvent?: (event: ConversationEvent) => void
   ): () => void {
-    const watcher: ConversationWatcher = { conversationId, handler, onResync, subscribedOnce: false };
+    const watcher: ConversationWatcher = { conversationId, handler, onResync, onEvent, subscribedOnce: false };
     this.watcher = watcher;
     this.subscribeWatcher();
     this.connect().catch(() => {
@@ -110,6 +122,18 @@ export class MessagingService {
         this.unsubscribeCurrent();
       }
     };
+  }
+
+  /** Tells the other participant that the user is typing; dropped when offline. */
+  sendTyping(conversationId: number): void {
+    if (!this.stompClient || !this.connected) {
+      return;
+    }
+    try {
+      this.stompClient.publish({ destination: '/app/conversations.typing', body: JSON.stringify({ conversationId }) });
+    } catch {
+      // Typing indicators are best effort.
+    }
   }
 
   disconnect(): void {
@@ -140,7 +164,7 @@ export class MessagingService {
         },
         onWebSocketClose: () => {
           this.connected = false;
-          this.subscription = null;
+          this.subscriptions = [];
         },
         onStompError: () => {
           this.connected = false;
@@ -160,9 +184,14 @@ export class MessagingService {
       return;
     }
     this.unsubscribeCurrent();
-    this.subscription = this.stompClient.subscribe(`/topic/conversations/${watcher.conversationId}`, message => {
-      watcher.handler(JSON.parse(message.body) as MessageDto);
-    });
+    this.subscriptions = [
+      this.stompClient.subscribe(`/topic/conversations/${watcher.conversationId}`, message => {
+        watcher.handler(JSON.parse(message.body) as MessageDto);
+      }),
+      this.stompClient.subscribe(`/topic/conversations/${watcher.conversationId}/events`, message => {
+        watcher.onEvent?.(JSON.parse(message.body) as ConversationEvent);
+      })
+    ];
     if (watcher.subscribedOnce) {
       watcher.onResync?.();
     }
@@ -170,12 +199,14 @@ export class MessagingService {
   }
 
   private unsubscribeCurrent(): void {
-    try {
-      this.subscription?.unsubscribe();
-    } catch {
-      // The connection is already gone, and the subscription with it.
+    for (const subscription of this.subscriptions) {
+      try {
+        subscription.unsubscribe();
+      } catch {
+        // The connection is already gone, and the subscription with it.
+      }
     }
-    this.subscription = null;
+    this.subscriptions = [];
   }
 }
 
@@ -183,6 +214,7 @@ interface ConversationWatcher {
   conversationId: number;
   handler: (message: MessageDto) => void;
   onResync?: () => void;
+  onEvent?: (event: ConversationEvent) => void;
   /** After the first subscription, a new one means a reconnect happened. */
   subscribedOnce: boolean;
 }

@@ -1,6 +1,7 @@
 package com.localys.marketplace.service;
 
 import com.localys.marketplace.dto.ConversationDto;
+import com.localys.marketplace.dto.ConversationEventDto;
 import com.localys.marketplace.dto.MessageDto;
 import com.localys.marketplace.model.Conversation;
 import com.localys.marketplace.model.ConversationParticipant;
@@ -110,7 +111,7 @@ public class MessageService {
         List<Message> messages = messageRepository
                 .findByConversationIdOrderByCreatedAtDesc(conversationId, PageRequest.of(0, pageSize))
                 .getContent();
-        messageRepository.markConversationRead(conversationId, userId, OffsetDateTime.now());
+        markReadAndAnnounce(conversationId, userId);
         return messages.stream()
                 .sorted(Comparator.comparing(Message::getCreatedAt))
                 .map(this::toMessageDto)
@@ -120,7 +121,35 @@ public class MessageService {
     @Transactional
     public void markRead(Long userId, Long conversationId) {
         ensureParticipant(conversationId, userId);
-        messageRepository.markConversationRead(conversationId, userId, OffsetDateTime.now());
+        markReadAndAnnounce(conversationId, userId);
+    }
+
+    /** Tells the other participant that {@code userId} is typing; nothing is stored. */
+    public void announceTyping(Long userId, Long conversationId) {
+        if (conversationId == null) {
+            return;
+        }
+        ensureParticipant(conversationId, userId);
+        boolean blocked = participantRepository.findByConversationId(conversationId).stream()
+                .map(ConversationParticipant::getUser)
+                .anyMatch(user -> !user.getId().equals(userId) && userBlockService.isBlockedBetween(userId, user.getId()));
+        if (!blocked) {
+            messagingTemplate.convertAndSend(eventsTopic(conversationId),
+                    new ConversationEventDto("TYPING", conversationId, userId, OffsetDateTime.now()));
+        }
+    }
+
+    /** Marks received messages read and, if any were unread, lets the sender know live. */
+    private void markReadAndAnnounce(Long conversationId, Long userId) {
+        OffsetDateTime now = OffsetDateTime.now();
+        if (messageRepository.markConversationRead(conversationId, userId, now) > 0) {
+            messagingTemplate.convertAndSend(eventsTopic(conversationId),
+                    new ConversationEventDto("READ", conversationId, userId, now));
+        }
+    }
+
+    private static String eventsTopic(Long conversationId) {
+        return "/topic/conversations/" + conversationId + "/events";
     }
 
     public long countUnread(Long userId) {
@@ -265,7 +294,8 @@ public class MessageService {
                 message.getSender().getId(),
                 message.getBody(),
                 message.getCreatedAt(),
-                message.getSafetyWarning()
+                message.getSafetyWarning(),
+                message.getReadAt()
         );
     }
 }

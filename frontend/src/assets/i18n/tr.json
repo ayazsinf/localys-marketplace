@@ -342,7 +342,9 @@
     "LISTING_LABEL": "Ilan",
     "ONLINE": "Cevrimici",
     "OFFLINE": "Cevrimdisi",
-    "SEND_ERROR": "Mesajiniz gonderilemedi. Lutfen tekrar deneyin."
+    "SEND_ERROR": "Mesajiniz gonderilemedi. Lutfen tekrar deneyin.",
+    "SEEN": "Goruldu",
+    "TYPING": "{{name}} yaziyor..."
   },
   "CATEGORIES": {
     "PLACEHOLDER": "Kategoriler sayfasi yakinda.",
