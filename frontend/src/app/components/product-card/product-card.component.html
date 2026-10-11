@@ -25,6 +25,7 @@
   <div class="product-info">
     <h3 class="product-name">{{ product.name }}</h3>
     <span class="condition-badge" *ngIf="product.condition">{{ ('CONDITION.' + product.condition) | translate }}</span>
+    <p class="product-location" *ngIf="product.locationText">📍 {{ product.locationText }}</p>
     <p class="product-description">{{ product.description }}</p>
 
     <div class="product-footer">

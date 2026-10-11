@@ -83,7 +83,7 @@ class ListingStatsIntegrationTest extends IntegrationTest {
 
     private List<Long> newestFirst(String keyword) {
         return searchService.search(new ProductSearchService.Criteria(
-                        keyword, null, null, null, "NEWEST", 0, 10, null, List.of(), null))
+                        keyword, null, null, null, "NEWEST", 0, 10, null, List.of(), null, null))
                 .getContent().stream().map(Product::getId).toList();
     }
 }

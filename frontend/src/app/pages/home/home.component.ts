@@ -17,6 +17,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { AuthDialogService } from '../../service/auth-dialog.service';
 import { SavedSearchService } from '../../service/saved-search.service';
+import { SearchArea } from '../../service/location.service';
 
 type SortOption = 'newest' | 'priceLowHigh' | 'priceHighLow' | 'nameAZ';
 
@@ -29,6 +30,8 @@ const SORT_PARAM: Record<SortOption, ProductSort> = {
 const PAGE_SIZE = 24;
 /** Upper end of the sidebar slider; at this value there is no max-price filter. */
 const PRICE_SLIDER_MAX = 10000;
+/** The last search area is remembered on this device. */
+const AREA_STORAGE_KEY = 'localys.searchArea';
 const EMPTY_PAGE: PageResponse<Product> = { items: [], page: 0, size: PAGE_SIZE, totalElements: 0, totalPages: 0 };
 
 @Component({
@@ -60,6 +63,7 @@ export class HomeComponent implements OnInit {
   readonly selectedCategoryId = signal<number | null>(null);
   readonly selectedConditions = signal<ItemCondition[]>([]);
   readonly selectedDelivery = signal<DeliveryFilter | null>(null);
+  readonly selectedArea = signal<SearchArea | null>(loadStoredArea());
 
   /** Pushed to the sidebar only when filters come from the URL (e.g. opening a saved search). */
   readonly appliedPriceRange = signal<{ min: number; max: number } | null>(null);
@@ -82,6 +86,9 @@ export class HomeComponent implements OnInit {
       maxPrice: max < PRICE_SLIDER_MAX ? max : null,
       condition: this.selectedConditions(),
       delivery: this.selectedDelivery(),
+      lat: this.selectedArea()?.lat ?? null,
+      lng: this.selectedArea()?.lng ?? null,
+      radiusKm: this.selectedArea()?.radiusKm ?? null,
       sort: SORT_PARAM[this.sortOption()],
       size: PAGE_SIZE,
     };
@@ -92,7 +99,8 @@ export class HomeComponent implements OnInit {
 
   readonly hasActiveFilters = computed(() => {
     const filters = this.filters();
-    return !!filters.q || filters.categoryId != null || filters.minPrice != null || filters.maxPrice != null;
+    return !!filters.q || filters.categoryId != null || filters.minPrice != null || filters.maxPrice != null
+      || filters.lat != null;
   });
 
   ngOnInit(): void {
@@ -139,6 +147,11 @@ export class HomeComponent implements OnInit {
 
   onDeliveryChange(delivery: DeliveryFilter | null) {
     this.selectedDelivery.set(delivery);
+  }
+
+  onAreaChange(area: SearchArea | null) {
+    this.selectedArea.set(area);
+    storeArea(area);
   }
 
   onSortChange(option: SortOption) {
@@ -245,4 +258,26 @@ export class HomeComponent implements OnInit {
   }
 
   trackById = (_: number, p: Product) => p.id;
+}
+
+function loadStoredArea(): SearchArea | null {
+  try {
+    const raw = localStorage.getItem(AREA_STORAGE_KEY);
+    const area = raw ? JSON.parse(raw) as SearchArea : null;
+    return area && Number.isFinite(area.lat) && Number.isFinite(area.lng) && Number.isFinite(area.radiusKm) ? area : null;
+  } catch {
+    return null;
+  }
+}
+
+function storeArea(area: SearchArea | null): void {
+  try {
+    if (area) {
+      localStorage.setItem(AREA_STORAGE_KEY, JSON.stringify(area));
+    } else {
+      localStorage.removeItem(AREA_STORAGE_KEY);
+    }
+  } catch {
+    // Storage may be unavailable (private mode); the filter still works for this visit.
+  }
 }

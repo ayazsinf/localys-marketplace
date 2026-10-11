@@ -6,7 +6,10 @@ import com.localys.marketplace.model.enums.ItemCondition;
 import com.localys.marketplace.model.enums.ModerationStatus;
 import com.localys.marketplace.repository.CategoryRepository;
 import com.localys.marketplace.repository.ProductRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -36,6 +39,7 @@ public class ProductSearchService {
     public static final int DEFAULT_PAGE_SIZE = 24;
     private static final int MAX_PAGE_SIZE = 60;
     private static final int MAX_SEARCH_TERMS = 5;
+    private static final double EARTH_RADIUS_KM = 6371.0;
 
     public enum SortOption {
         NEWEST(Sort.by(Sort.Order.desc("listedAt"), Sort.Order.desc("id"))),
@@ -80,7 +84,7 @@ public class ProductSearchService {
 
     /** Filters that apply to every search; paging and the extra filters left unset. */
     public static Criteria basic(String query, Long categoryId, BigDecimal minPrice, BigDecimal maxPrice) {
-        return new Criteria(query, categoryId, minPrice, maxPrice, null, null, null, null, List.of(), null);
+        return new Criteria(query, categoryId, minPrice, maxPrice, null, null, null, null, List.of(), null, null);
     }
 
     public record Criteria(
@@ -95,8 +99,26 @@ public class ProductSearchService {
             Long sellerUserId,
             /** Any of these conditions; empty for all. */
             List<ItemCondition> conditions,
-            Delivery delivery
+            Delivery delivery,
+            /** Only listings within this area; null for everywhere. */
+            Area area
     ) {
+    }
+
+    /** A circle around a point, e.g. the buyer's town. */
+    public record Area(double latitude, double longitude, double radiusKm) {
+        public static final double MAX_RADIUS_KM = 200;
+
+        /** Null unless a valid point is given; the radius is clamped to 1..200 km (default 10). */
+        public static Area of(Double latitude, Double longitude, Double radiusKm) {
+            if (latitude == null || longitude == null
+                    || Math.abs(latitude) > 90 || Math.abs(longitude) > 180
+                    || latitude.isNaN() || longitude.isNaN()) {
+                return null;
+            }
+            double radius = radiusKm == null || radiusKm.isNaN() ? 10 : Math.min(Math.max(radiusKm, 1), MAX_RADIUS_KM);
+            return new Area(latitude, longitude, radius);
+        }
     }
 
     private final ProductRepository productRepository;
@@ -165,6 +187,9 @@ public class ProductSearchService {
             } else if (criteria.delivery() == Delivery.SHIPPING) {
                 predicates.add(cb.isTrue(root.get("shippingAvailable")));
             }
+            if (criteria.area() != null) {
+                predicates.add(withinArea(root, cb, criteria.area()));
+            }
             if (criteria.sellerUserId() != null) {
                 predicates.add(cb.equal(root.get("vendor").get("user").get("id"), criteria.sellerUserId()));
             }
@@ -176,6 +201,37 @@ public class ProductSearchService {
             }
             return cb.and(predicates.toArray(Predicate[]::new));
         };
+    }
+
+    /**
+     * A cheap bounding box (so an index on the coordinates can be used) plus the exact
+     * great-circle distance. Listings without coordinates never match.
+     */
+    private Predicate withinArea(Root<Product> root, CriteriaBuilder cb, Area area) {
+        double latDelta = Math.toDegrees(area.radiusKm() / EARTH_RADIUS_KM);
+        double lngDelta = Math.toDegrees(area.radiusKm() / EARTH_RADIUS_KM / Math.max(Math.cos(Math.toRadians(area.latitude())), 0.01));
+        Expression<Double> lat = root.get("latitude");
+        Expression<Double> lng = root.get("longitude");
+
+        Expression<Double> latRad = cb.function("radians", Double.class, lat);
+        Expression<Double> lngRad = cb.function("radians", Double.class, lng);
+        double originLat = Math.toRadians(area.latitude());
+        double originLng = Math.toRadians(area.longitude());
+        // cos(c) = sin(a)sin(b) + cos(a)cos(b)cos(dLng); comparing cos(c) avoids acos rounding issues.
+        Expression<Double> cosDistance = cb.sum(
+                cb.prod(Math.sin(originLat), cb.function("sin", Double.class, latRad)),
+                cb.prod(
+                        cb.prod(Math.cos(originLat), cb.function("cos", Double.class, latRad)),
+                        cb.function("cos", Double.class, cb.diff(lngRad, originLng))
+                )
+        );
+        return cb.and(
+                cb.isNotNull(lat),
+                cb.isNotNull(lng),
+                cb.between(lat, area.latitude() - latDelta, area.latitude() + latDelta),
+                cb.between(lng, area.longitude() - lngDelta, area.longitude() + lngDelta),
+                cb.greaterThanOrEqualTo(cosDistance, Math.cos(area.radiusKm() / EARTH_RADIUS_KM))
+        );
     }
 
     private List<String> searchTerms(String query) {

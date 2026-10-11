@@ -89,7 +89,16 @@
     "UP_TO": "Jusqu'a",
     "CONDITION": "Etat",
     "DELIVERY": "Livraison",
-    "DELIVERY_ANY": "Indifferent"
+    "DELIVERY_ANY": "Indifferent",
+    "LOCATION": "Localisation",
+    "LOCATION_PLACEHOLDER": "Ville ou code postal",
+    "USE_MY_LOCATION": "Autour de moi",
+    "LOCATING": "Localisation...",
+    "RADIUS": "Rayon",
+    "WITHIN": "A {{radius}} km de {{place}}",
+    "MY_POSITION": "ma position",
+    "CLEAR": "Effacer",
+    "LOCATION_DENIED": "Impossible d'obtenir votre position. Saisissez une ville."
   },
   "PRODUCT": {
     "QUICK_VIEW": "Apercu rapide",

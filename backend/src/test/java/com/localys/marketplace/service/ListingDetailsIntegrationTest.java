@@ -102,7 +102,7 @@ class ListingDetailsIntegrationTest extends IntegrationTest {
 
     private List<Long> ids(List<ItemCondition> conditions, ProductSearchService.Delivery delivery) {
         return searchService.search(new ProductSearchService.Criteria(
-                        keyword, null, null, null, null, 0, 50, null, conditions, delivery))
+                        keyword, null, null, null, null, 0, 50, null, conditions, delivery, null))
                 .getContent().stream().map(Product::getId).toList();
     }
 

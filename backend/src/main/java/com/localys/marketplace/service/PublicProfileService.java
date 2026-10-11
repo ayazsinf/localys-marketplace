@@ -49,7 +49,7 @@ public class PublicProfileService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         Page<Product> listings = productSearchService.search(new ProductSearchService.Criteria(
-                null, null, null, null, "NEWEST", 0, 1, userId, List.of(), null));
+                null, null, null, null, "NEWEST", 0, 1, userId, List.of(), null, null));
         String location = listings.getContent().stream()
                 .map(Product::getLocationText)
                 .filter(text -> text != null && !text.isBlank())

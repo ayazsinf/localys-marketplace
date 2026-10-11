@@ -51,6 +51,10 @@ export interface ProductSearchParams {
   /** Any of these conditions; sent as a comma-separated list. */
   condition?: ItemCondition[];
   delivery?: DeliveryFilter | null;
+  /** Listings within radiusKm of this point. */
+  lat?: number | null;
+  lng?: number | null;
+  radiusKm?: number | null;
 }
 
 export interface PageResponse<T> {

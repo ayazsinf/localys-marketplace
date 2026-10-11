@@ -31,6 +31,37 @@
     }
   </ng-template>
 
+    <div class="filter-section location-filter">
+        <h3>{{ 'FILTERS.LOCATION' | translate }}</h3>
+        <div class="location-input">
+            <input
+                    type="text"
+                    autocomplete="off"
+                    [placeholder]="'FILTERS.LOCATION_PLACEHOLDER' | translate"
+                    [ngModel]="locationQuery"
+                    (ngModelChange)="onLocationInput($event)">
+            <ul class="location-results" *ngIf="locationResults.length">
+                <li *ngFor="let result of locationResults">
+                    <button type="button" (click)="selectLocation(result)">{{ result.label }}</button>
+                </li>
+            </ul>
+        </div>
+        <button type="button" class="link-btn" (click)="useMyLocation()" [disabled]="isLocating">
+            📍 {{ (isLocating ? 'FILTERS.LOCATING' : 'FILTERS.USE_MY_LOCATION') | translate }}
+        </button>
+        <label class="radius-select">
+            <span>{{ 'FILTERS.RADIUS' | translate }}</span>
+            <select [ngModel]="radiusKm" (ngModelChange)="onRadiusChange($event)">
+                <option *ngFor="let radius of radii" [ngValue]="radius">{{ radius }} km</option>
+            </select>
+        </label>
+        <p class="location-active" *ngIf="selectedArea">
+            {{ 'FILTERS.WITHIN' | translate: { radius: selectedArea.radiusKm, place: selectedArea.label || ('FILTERS.MY_POSITION' | translate) } }}
+            <button type="button" class="link-btn" (click)="clearArea()">{{ 'FILTERS.CLEAR' | translate }}</button>
+        </p>
+        <p class="location-error" *ngIf="locationError">{{ locationError | translate }}</p>
+    </div>
+
     <div class="filter-section">
         <h3>{{ 'FILTERS.PRICE_RANGE' | translate }}</h3>
         <div class="price-filter">

@@ -89,7 +89,16 @@
     "UP_TO": "Up to",
     "CONDITION": "Condition",
     "DELIVERY": "Delivery",
-    "DELIVERY_ANY": "Any"
+    "DELIVERY_ANY": "Any",
+    "LOCATION": "Location",
+    "LOCATION_PLACEHOLDER": "Town or postcode",
+    "USE_MY_LOCATION": "Use my location",
+    "LOCATING": "Locating...",
+    "RADIUS": "Within",
+    "WITHIN": "Within {{radius}} km of {{place}}",
+    "MY_POSITION": "my position",
+    "CLEAR": "Clear",
+    "LOCATION_DENIED": "We could not get your location. Type a town instead."
   },
   "PRODUCT": {
     "QUICK_VIEW": "Quick View",

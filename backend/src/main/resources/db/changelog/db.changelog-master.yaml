@@ -387,3 +387,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 034-listing-location-index
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V34__listing_location_index.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

@@ -60,7 +60,10 @@ public class ProductController {
             @RequestParam(name = "size", required = false) Integer size,
             @RequestParam(name = "sellerId", required = false) Long sellerId,
             @RequestParam(name = "condition", required = false) List<String> conditions,
-            @RequestParam(name = "delivery", required = false) String delivery
+            @RequestParam(name = "delivery", required = false) String delivery,
+            @RequestParam(name = "lat", required = false) Double latitude,
+            @RequestParam(name = "lng", required = false) Double longitude,
+            @RequestParam(name = "radiusKm", required = false) Double radiusKm
     ) {
         List<ItemCondition> parsedConditions = conditions == null ? List.of() : conditions.stream()
                 .flatMap(raw -> Arrays.stream(raw.split(",")))
@@ -70,7 +73,8 @@ public class ProductController {
                 .toList();
         ProductSearchService.Criteria criteria = new ProductSearchService.Criteria(
                 query, categoryId, minPrice, maxPrice, sort, page, size, sellerId,
-                parsedConditions, ProductSearchService.Delivery.from(delivery)
+                parsedConditions, ProductSearchService.Delivery.from(delivery),
+                ProductSearchService.Area.of(latitude, longitude, radiusKm)
         );
         return PageResponse.from(productSearchService.search(criteria), this::toDto);
     }
@@ -104,7 +108,8 @@ public class ProductController {
                 imageUrls,
                 p.getCondition() != null ? p.getCondition().name() : null,
                 p.isHandDelivery(),
-                p.isShippingAvailable()
+                p.isShippingAvailable(),
+                p.getLocationText()
         );
     }
 

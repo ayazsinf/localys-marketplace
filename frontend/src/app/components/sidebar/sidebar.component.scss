@@ -180,3 +180,82 @@
   font-size: 14px;
   cursor: pointer;
 }
+
+.location-filter {
+  display: grid;
+  gap: 8px;
+
+  .location-input {
+    position: relative;
+
+    input {
+      width: 100%;
+      border: 1px solid #d7dce2;
+      border-radius: 6px;
+      padding: 8px;
+    }
+  }
+
+  .location-results {
+    position: absolute;
+    z-index: 5;
+    left: 0;
+    right: 0;
+    margin: 2px 0 0;
+    padding: 4px 0;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #d7dce2;
+    border-radius: 6px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+
+    button {
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: 0;
+      padding: 6px 10px;
+      cursor: pointer;
+
+      &:hover {
+        background: #eef4fb;
+      }
+    }
+  }
+
+  .link-btn {
+    justify-self: start;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: #4A90E2;
+    cursor: pointer;
+  }
+
+  .radius-select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+    color: #555;
+
+    select {
+      border: 1px solid #d7dce2;
+      border-radius: 6px;
+      padding: 6px;
+    }
+  }
+
+  .location-active {
+    margin: 0;
+    font-size: 13px;
+    color: #333;
+  }
+
+  .location-error {
+    margin: 0;
+    font-size: 13px;
+    color: #c0392b;
+  }
+}

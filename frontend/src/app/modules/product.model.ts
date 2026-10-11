@@ -16,4 +16,5 @@ export interface Product {
   condition?: string | null;
   handDelivery?: boolean;
   shippingAvailable?: boolean;
+  locationText?: string | null;
 }

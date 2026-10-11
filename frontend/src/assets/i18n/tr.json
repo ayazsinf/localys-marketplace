@@ -89,7 +89,16 @@
     "UP_TO": "En fazla",
     "CONDITION": "Durum",
     "DELIVERY": "Teslimat",
-    "DELIVERY_ANY": "Farketmez"
+    "DELIVERY_ANY": "Farketmez",
+    "LOCATION": "Konum",
+    "LOCATION_PLACEHOLDER": "Sehir veya posta kodu",
+    "USE_MY_LOCATION": "Konumumu kullan",
+    "LOCATING": "Konum aliniyor...",
+    "RADIUS": "Mesafe",
+    "WITHIN": "{{place}} cevresinde {{radius}} km",
+    "MY_POSITION": "konumum",
+    "CLEAR": "Temizle",
+    "LOCATION_DENIED": "Konumunuz alinamadi. Bunun yerine bir sehir yazin."
   },
   "PRODUCT": {
     "QUICK_VIEW": "Hizli gorunum",

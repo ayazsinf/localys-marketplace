@@ -19,7 +19,8 @@ public record ProductListDto(
         List<String> imageUrls,
         String condition,
         boolean handDelivery,
-        boolean shippingAvailable
+        boolean shippingAvailable,
+        String locationText
 ) {
 }
 

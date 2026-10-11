@@ -99,7 +99,8 @@ public class FavoriteController {
                 imageUrls,
                 product.getCondition() != null ? product.getCondition().name() : null,
                 product.isHandDelivery(),
-                product.isShippingAvailable()
+                product.isShippingAvailable(),
+                product.getLocationText()
         );
     }
 
