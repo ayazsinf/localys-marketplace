@@ -42,7 +42,8 @@
     "ACCOUNT_MENU": "Hesap menusunu ac",
     "LISTING_REPORTS": "Ilan Sikayetleri",
     "SAVED_SEARCHES": "Kayitli Aramalar",
-    "MY_OFFERS": "Tekliflerim"
+    "MY_OFFERS": "Tekliflerim",
+    "DISPUTES": "Itirazlar"
   },
   "COMMON": {
     "CANCEL": "Iptal",
@@ -528,6 +529,20 @@
     "OFFER_DECLINED": {
       "TITLE": "Teklif reddedildi",
       "MESSAGE": "\"{{product}}\" icin {{amount}} teklif reddedildi."
+    },
+    "DISPUTE_OPENED": {
+      "TITLE": "Sorun bildirildi"
+    },
+    "DISPUTE_CLOSED": {
+      "TITLE": "Itiraz kapandi"
+    },
+    "ORDER_REFUNDED": {
+      "TITLE": "Iade yapildi",
+      "MESSAGE": "\"{{product}}\" icin size {{amount}} iade edildi."
+    },
+    "PAYMENT_RELEASED": {
+      "TITLE": "Odeme serbest birakildi",
+      "MESSAGE": "\"{{product}}\" icin odeme ({{amount}}) size aktarildi."
     }
   },
   "ORDERS": {
@@ -827,5 +842,55 @@
     "EMAIL_VERIFIED": "E-posta dogrulandi",
     "PHONE_PROVIDED": "Telefon numarasi var",
     "SALES": "{{count}} tamamlanan satis"
+  },
+  "PROTECTION": {
+    "PRODUCT_NOTE": "Alici korumasi: urunu aldiginizi onaylayana kadar odemeniz bekletilir.",
+    "BUYER_HELD": "Odeme, teslim aldiginizi onaylayana kadar bekletiliyor",
+    "BUYER_DISPUTED": "Bildiriminiz incelenirken odeme bekletiliyor",
+    "BUYER_RELEASED": "Odeme saticiya aktarildi",
+    "BUYER_REFUNDED": "{{amount}} iade edildi",
+    "SELLER_HELD": "Odeme, alici teslim aldigini onaylayana kadar bekletiliyor",
+    "SELLER_DISPUTED": "Odeme bekletiliyor: alici bir sorun bildirdi",
+    "SELLER_RELEASED": "Odeme size aktarildi",
+    "SELLER_REFUNDED": "Aliciya iade edildi",
+    "DISPUTE_OPEN": "Sorun bildirildi; saticinin yaniti bekleniyor",
+    "DISPUTE_CONTESTED": "Satici itiraz etti; Localys karar verecek",
+    "DISPUTE_WITHDRAWN": "Bildirim geri cekildi",
+    "DISPUTE_REFUNDED": "Iade ile kapandi",
+    "DISPUTE_RELEASED": "Satici lehine kapandi",
+    "REPORT_PROBLEM": "Sorun bildir",
+    "WITHDRAW": "Bildirimimi geri cek",
+    "REASON": "Sorun ne?",
+    "REASON_NOT_RECEIVED": "Urunu almadim",
+    "REASON_NOT_AS_DESCRIBED": "Ilandaki gibi degil",
+    "REASON_DAMAGED": "Hasarli",
+    "REASON_OTHER": "Diger",
+    "DESCRIPTION_PLACEHOLDER": "Sorunu saticiya anlatin",
+    "SUBMIT": "Bildir",
+    "ERROR": "Islem yapilamadi. Lutfen tekrar deneyin.",
+    "WAITING_ADMIN": "Bu bildirime itiraz ettiniz. Localys karar verecek.",
+    "RESPONSE_PLACEHOLDER": "Katilmiyorsaniz nedenini yazin (orn. kargo takibi teslim edildi gosteriyor)",
+    "RESPONSE_REQUIRED": "Itiraz etmek icin bir yanit yazin.",
+    "CONTEST": "Itiraz et",
+    "REFUND_BUYER": "Aliciya iade et",
+    "CONFIRM_REFUND": "Bu urun icin aliciya iade yapilsin mi? Bu islem geri alinamaz."
+  },
+  "ADMIN_DISPUTES": {
+    "TITLE": "Itirazlar",
+    "SUBTITLE": "Aliciya iade yapin veya odemeyi saticiya aktarin.",
+    "LOADING": "Itirazlar yukleniyor...",
+    "EMPTY": "Itiraz yok.",
+    "FILTER_ACTIVE": "Acik",
+    "FILTER_ALL": "Tumu",
+    "BUYER": "Alici",
+    "SELLER": "Satici",
+    "ORDER": "Siparis",
+    "OPENED": "Acilis",
+    "NOTE": "Not",
+    "NOTE_PLACEHOLDER": "Istege bagli not",
+    "REFUND": "Aliciya iade et",
+    "RELEASE": "Saticiya ode",
+    "ERROR_LOAD": "Itirazlar yuklenemedi.",
+    "ERROR_ACTION": "Karar kaydedilemedi."
   }
 }

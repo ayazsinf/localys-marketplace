@@ -71,6 +71,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    /** Refunds and payouts the payment provider refused or could not be asked for. */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiError> handleIllegalState(IllegalStateException ex) {
+        String message = ex.getMessage() == null ? "" : ex.getMessage().toLowerCase();
+        if (message.contains("refund") || message.contains("stripe") || message.contains("payout")) {
+            ApiError error = new ApiError("PAYMENT_PROVIDER_ERROR", "The payment provider could not process this. Please try again later.");
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(error);
+        }
+        throw ex;
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> handleIllegalArgument(IllegalArgumentException ex) {
         String message = ex.getMessage() == null ? "" : ex.getMessage().toLowerCase();
@@ -118,6 +129,19 @@ public class GlobalExceptionHandler {
         }
         if (message.contains("vacation message is too long")) {
             ApiError error = new ApiError("VALIDATION_ERROR", "The away message can be at most 300 characters.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+        if (message.equals("dispute not found")) {
+            ApiError error = new ApiError("DISPUTE_NOT_FOUND", "Dispute not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+        if (message.contains("dispute not allowed") || message.contains("dispute already")) {
+            ApiError error = new ApiError("DISPUTE_STATE_CONFLICT", "This is not possible in the current state of the dispute or item.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
+        if (message.startsWith("invalid dispute") || message.startsWith("dispute description")
+                || message.startsWith("dispute response") || message.startsWith("dispute note")) {
+            ApiError error = new ApiError("INVALID_DISPUTE", ex.getMessage() + ".");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
         if (message.contains("hand delivery only")) {

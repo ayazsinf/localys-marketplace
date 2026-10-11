@@ -37,7 +37,13 @@ public record OrderDto(
             String trackingNumber,
             OffsetDateTime shippedAt,
             OffsetDateTime deliveredAt,
-            Integer myRating
+            Integer myRating,
+            /** HELD, DISPUTED, RELEASED or REFUNDED; null before payment. */
+            String escrowStatus,
+            BigDecimal refundAmount,
+            /** The latest dispute about the item, if any. */
+            Long disputeId,
+            String disputeStatus
     ) {
     }
 

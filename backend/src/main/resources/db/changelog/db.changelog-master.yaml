@@ -475,3 +475,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 042-buyer-protection
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V42__buyer_protection.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

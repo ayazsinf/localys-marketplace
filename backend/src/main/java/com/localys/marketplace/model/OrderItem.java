@@ -1,5 +1,6 @@
 package com.localys.marketplace.model;
 
+import com.localys.marketplace.model.enums.EscrowStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,6 +53,24 @@ public class OrderItem {
 
     @Column(name = "delivered_at")
     private OffsetDateTime deliveredAt;
+
+    /** Buyer protection state; null until the order is paid. */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "escrow_status", length = 20)
+    private EscrowStatus escrowStatus;
+
+    @Column(name = "escrow_released_at")
+    private OffsetDateTime escrowReleasedAt;
+
+    @Column(name = "refunded_at")
+    private OffsetDateTime refundedAt;
+
+    @Column(name = "refund_amount", precision = 12, scale = 2)
+    private BigDecimal refundAmount;
+
+    /** The payment provider's refund id. */
+    @Column(name = "refund_id", length = 100)
+    private String refundId;
 
     /** The accepted offer that set this line's price, if any. */
     @ManyToOne(fetch = FetchType.LAZY)

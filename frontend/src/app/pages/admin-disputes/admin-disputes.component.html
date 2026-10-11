@@ -1,0 +1,71 @@
+<section class="admin-page">
+  <header>
+    <h1>{{ 'ADMIN_DISPUTES.TITLE' | translate }}</h1>
+    <p>{{ 'ADMIN_DISPUTES.SUBTITLE' | translate }}</p>
+  </header>
+
+  <p class="status" *ngIf="isLoading">{{ 'ADMIN_DISPUTES.LOADING' | translate }}</p>
+  <p class="status error" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
+
+  <label class="status-filter">
+    <span>{{ 'ADMIN_LISTINGS.STATUS_FILTER' | translate }}</span>
+    <select [ngModel]="selectedStatus" (ngModelChange)="onStatusChange($event)">
+      <option ngValue="ACTIVE">{{ 'ADMIN_DISPUTES.FILTER_ACTIVE' | translate }}</option>
+      <option ngValue="ALL">{{ 'ADMIN_DISPUTES.FILTER_ALL' | translate }}</option>
+    </select>
+  </label>
+
+  <div class="moderation-grid" *ngIf="!isLoading">
+    <article class="moderation-card" *ngFor="let dispute of disputes">
+      <div class="card-body">
+        <div class="heading">
+          <div>
+            <h2><a [routerLink]="['/products', dispute.productId]">{{ dispute.productName }}</a></h2>
+            <p>{{ ('PROTECTION.REASON_' + dispute.reason) | translate }} · {{ dispute.amount | currencyDisplay: dispute.currency }}</p>
+          </div>
+          <strong>{{ ('PROTECTION.DISPUTE_' + dispute.status) | translate }}</strong>
+        </div>
+        <p class="description"><strong>{{ 'ADMIN_DISPUTES.BUYER' | translate }}:</strong> {{ dispute.description }}</p>
+        <p class="description" *ngIf="dispute.sellerResponse">
+          <strong>{{ 'ADMIN_DISPUTES.SELLER' | translate }}:</strong> {{ dispute.sellerResponse }}
+        </p>
+        <dl>
+          <div>
+            <dt>{{ 'ADMIN_DISPUTES.ORDER' | translate }}</dt>
+            <dd>#{{ dispute.orderId }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'ADMIN_DISPUTES.BUYER' | translate }}</dt>
+            <dd>{{ dispute.buyerName || ('COMMON.UNKNOWN' | translate) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'ADMIN_DISPUTES.SELLER' | translate }}</dt>
+            <dd>{{ dispute.sellerName || ('COMMON.UNKNOWN' | translate) }}</dd>
+          </div>
+          <div>
+            <dt>{{ 'ADMIN_DISPUTES.OPENED' | translate }}</dt>
+            <dd>{{ dispute.createdAt | date:'medium' }}</dd>
+          </div>
+          <div *ngIf="dispute.resolutionNote">
+            <dt>{{ 'ADMIN_DISPUTES.NOTE' | translate }}</dt>
+            <dd>{{ dispute.resolutionNote }}</dd>
+          </div>
+        </dl>
+        <ng-container *ngIf="dispute.status === 'OPEN' || dispute.status === 'CONTESTED'">
+          <textarea class="note" rows="2" maxlength="1000" [(ngModel)]="notes[dispute.id]"
+                    [placeholder]="'ADMIN_DISPUTES.NOTE_PLACEHOLDER' | translate"></textarea>
+          <div class="actions">
+            <button class="delete" type="button" [disabled]="processingId === dispute.id" (click)="resolve(dispute, 'REFUND')">
+              {{ 'ADMIN_DISPUTES.REFUND' | translate }}
+            </button>
+            <button class="approve" type="button" [disabled]="processingId === dispute.id" (click)="resolve(dispute, 'RELEASE')">
+              {{ 'ADMIN_DISPUTES.RELEASE' | translate }}
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    </article>
+
+    <p class="empty" *ngIf="disputes.length === 0">{{ 'ADMIN_DISPUTES.EMPTY' | translate }}</p>
+  </div>
+</section>

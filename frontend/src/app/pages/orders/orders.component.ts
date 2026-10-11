@@ -2,7 +2,8 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { Order, OrderService } from '../../service/order.service';
+import { Order, OrderItem, OrderService } from '../../service/order.service';
+import { ACTIVE_DISPUTE, Dispute, DisputeService } from '../../service/dispute.service';
 import { getLocaleForLanguage } from '../../shared/market';
 
 type OrdersTab = 'purchases' | 'sales';
@@ -21,6 +22,11 @@ export class OrdersComponent implements OnInit, OnDestroy {
   trackingInputs: Record<number, string> = {};
   shipErrors: Record<number, string> = {};
   shippingOrderId: number | null = null;
+  /** Seller view: active disputes by order item. */
+  disputesByItem: Record<number, Dispute> = {};
+  contestInputs: Record<number, string> = {};
+  disputeBusyId: number | null = null;
+  disputeErrors: Record<number, string> = {};
   private subscriptions = new Subscription();
   private loadSub?: Subscription;
 
@@ -29,7 +35,8 @@ export class OrdersComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private translateService: TranslateService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private disputeService: DisputeService
   ) {}
 
   ngOnInit(): void {
@@ -76,7 +83,60 @@ export class OrdersComponent implements OnInit, OnDestroy {
   canShip(order: Order): boolean {
     return this.activeTab === 'sales'
       && order.status === 'PAID'
-      && order.items.some(item => !item.shippedAt);
+      && order.items.some(item => !item.shippedAt && item.escrowStatus !== 'REFUNDED');
+  }
+
+  disputeFor(item: OrderItem): Dispute | null {
+    return this.disputesByItem[item.orderItemId] ?? null;
+  }
+
+  refundDispute(dispute: Dispute): void {
+    if (!confirm(this.translateService.instant('PROTECTION.CONFIRM_REFUND'))) {
+      return;
+    }
+    this.runDisputeAction(dispute, this.disputeService.refund(dispute.id));
+  }
+
+  contestDispute(dispute: Dispute): void {
+    const response = (this.contestInputs[dispute.id] ?? '').trim();
+    if (!response) {
+      this.disputeErrors[dispute.id] = 'PROTECTION.RESPONSE_REQUIRED';
+      return;
+    }
+    this.runDisputeAction(dispute, this.disputeService.contest(dispute.id, response));
+  }
+
+  private runDisputeAction(dispute: Dispute, request: ReturnType<DisputeService['refund']>): void {
+    this.disputeBusyId = dispute.id;
+    delete this.disputeErrors[dispute.id];
+    this.subscriptions.add(request.subscribe({
+      next: () => {
+        this.disputeBusyId = null;
+        this.loadOrders();
+      },
+      error: () => {
+        this.disputeBusyId = null;
+        this.disputeErrors[dispute.id] = 'PROTECTION.ERROR';
+        this.cdr.detectChanges();
+      }
+    }));
+  }
+
+  private loadSellerDisputes(): void {
+    this.subscriptions.add(this.disputeService.list('seller').subscribe({
+      next: disputes => {
+        this.disputesByItem = {};
+        for (const dispute of disputes) {
+          if (ACTIVE_DISPUTE.includes(dispute.status)) {
+            this.disputesByItem[dispute.orderItemId] = dispute;
+          }
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.disputesByItem = {};
+      }
+    }));
   }
 
   ship(order: Order): void {
@@ -106,6 +166,9 @@ export class OrdersComponent implements OnInit, OnDestroy {
     this.loadSub?.unsubscribe();
     this.isLoading = true;
     this.errorMessage = '';
+    if (this.activeTab === 'sales') {
+      this.loadSellerDisputes();
+    }
     const request$ = this.activeTab === 'sales'
       ? this.orderService.listMySales()
       : this.orderService.listMyOrders();

@@ -132,6 +132,34 @@ public class NotificationService {
         );
     }
 
+    public void createDisputeOpenedNotification(UserEntity seller, String productName) {
+        saveOrderNotification(seller, NotificationType.DISPUTE_OPENED, "notification.dispute.opened",
+                "/orders?tab=sales", productName);
+    }
+
+    public void createDisputeContestedNotification(UserEntity admin, String productName) {
+        saveOrderNotification(admin, NotificationType.DISPUTE_OPENED, "notification.dispute.contested",
+                "/admin/disputes", productName);
+    }
+
+    /** Tells one party how a dispute ended; {@code refunded} is the outcome. */
+    public void createDisputeClosedNotification(UserEntity recipient, String productName, boolean refunded, String link) {
+        saveOrderNotification(recipient, NotificationType.DISPUTE_CLOSED,
+                refunded ? "notification.dispute.closed-refund" : "notification.dispute.closed-release",
+                link, productName);
+    }
+
+    public void createOrderRefundedNotification(UserEntity buyer, Long orderId, String productName,
+                                                BigDecimal amount, String currency) {
+        saveOrderNotification(buyer, NotificationType.ORDER_REFUNDED, "notification.order.refunded",
+                "/orders/" + orderId, productName, formatPrice(amount, currency));
+    }
+
+    public void createPaymentReleasedNotification(UserEntity seller, String productName, BigDecimal amount, String currency) {
+        saveOrderNotification(seller, NotificationType.PAYMENT_RELEASED, "notification.payment.released",
+                "/orders?tab=sales", productName, formatPrice(amount, currency));
+    }
+
     public void createOrderDeliveredNotification(UserEntity seller, String productName) {
         saveOrderNotification(
                 seller,

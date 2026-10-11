@@ -6,6 +6,7 @@ import com.localys.marketplace.dto.OrderResponse;
 import com.localys.marketplace.model.Address;
 import com.localys.marketplace.model.Cart;
 import com.localys.marketplace.model.CartItem;
+import com.localys.marketplace.model.Dispute;
 import com.localys.marketplace.model.Order;
 import com.localys.marketplace.model.OrderItem;
 import com.localys.marketplace.model.Product;
@@ -14,6 +15,7 @@ import com.localys.marketplace.model.ProductRemovalEvent;
 import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.model.enums.CartStatus;
 import com.localys.marketplace.model.enums.ListingRemovalReason;
+import com.localys.marketplace.model.enums.EscrowStatus;
 import com.localys.marketplace.model.enums.OrderStatus;
 import com.localys.marketplace.model.enums.OfferStatus;
 import com.localys.marketplace.model.enums.ModerationStatus;
@@ -22,6 +24,7 @@ import com.localys.marketplace.model.enums.ShippingMethod;
 import com.localys.marketplace.repository.AddressRepository;
 import com.localys.marketplace.repository.CartItemRepository;
 import com.localys.marketplace.repository.CartRepository;
+import com.localys.marketplace.repository.DisputeRepository;
 import com.localys.marketplace.repository.OrderItemRepository;
 import com.localys.marketplace.repository.OrderRepository;
 import com.localys.marketplace.repository.PaymentRepository;
@@ -77,6 +80,8 @@ public class OrderService {
     private final PaymentRepository paymentRepository;
     private final NotificationService notificationService;
     private final ReviewService reviewService;
+    private final BuyerProtectionService buyerProtectionService;
+    private final DisputeRepository disputeRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -92,8 +97,12 @@ public class OrderService {
             ProductRepository productRepository,
             PaymentRepository paymentRepository,
             NotificationService notificationService,
-            ReviewService reviewService
+            ReviewService reviewService,
+            BuyerProtectionService buyerProtectionService,
+            DisputeRepository disputeRepository
     ) {
+        this.buyerProtectionService = buyerProtectionService;
+        this.disputeRepository = disputeRepository;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.cartRepository = cartRepository;
@@ -229,6 +238,7 @@ public class OrderService {
             order.setStockDeducted(true);
         }
         order.setStatus(OrderStatus.PAID);
+        buyerProtectionService.holdPayment(order);
         // The negotiated price has been used; the offer cannot be bought again.
         order.getItems().stream()
                 .map(OrderItem::getOffer)
@@ -339,7 +349,7 @@ public class OrderService {
             throw new IllegalArgumentException("Order cannot be shipped in its current state");
         }
         List<OrderItem> toShip = sellerItems.stream()
-                .filter(item -> item.getShippedAt() == null)
+                .filter(item -> item.getShippedAt() == null && item.getEscrowStatus() != EscrowStatus.REFUNDED)
                 .toList();
         if (toShip.isEmpty()) {
             throw new IllegalArgumentException("Order cannot be shipped: items already shipped");
@@ -349,7 +359,9 @@ public class OrderService {
             item.setTrackingNumber(tracking);
             item.setShippedAt(now);
         }
-        if (order.getItems().stream().allMatch(item -> item.getShippedAt() != null)) {
+        // Refunded items will never be shipped.
+        if (order.getItems().stream().allMatch(item -> item.getShippedAt() != null
+                || item.getEscrowStatus() == EscrowStatus.REFUNDED)) {
             order.setStatus(OrderStatus.SHIPPED);
         }
         orderRepository.save(order);
@@ -371,15 +383,21 @@ public class OrderService {
         Order order = orderRepository.findByIdForUpdate(orderId)
                 .filter(found -> found.getUser().getId().equals(buyerId))
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+        // Disputed items are settled by the dispute; refunded ones are not coming.
         List<OrderItem> toConfirm = order.getItems().stream()
                 .filter(item -> item.getShippedAt() != null && item.getDeliveredAt() == null)
+                .filter(item -> item.getEscrowStatus() != EscrowStatus.DISPUTED
+                        && item.getEscrowStatus() != EscrowStatus.REFUNDED)
                 .toList();
         if (toConfirm.isEmpty()) {
             throw new IllegalArgumentException("Order cannot be confirmed: nothing shipped yet");
         }
         OffsetDateTime now = OffsetDateTime.now();
         toConfirm.forEach(item -> item.setDeliveredAt(now));
-        if (order.getItems().stream().allMatch(item -> item.getDeliveredAt() != null)) {
+        // Receiving the item is the buyer's go-ahead to pay the seller.
+        buyerProtectionService.releaseConfirmed(toConfirm);
+        if (order.getItems().stream().allMatch(item -> item.getDeliveredAt() != null
+                || item.getEscrowStatus() == EscrowStatus.REFUNDED)) {
             order.setStatus(OrderStatus.DELIVERED);
         }
         orderRepository.save(order);
@@ -452,8 +470,10 @@ public class OrderService {
     private OrderDto toDto(Order order, List<OrderItem> items, Long sellerUserId) {
         boolean sellerView = sellerUserId != null;
         Long viewerId = sellerView ? sellerUserId : order.getUser().getId();
-        Map<Long, Integer> ratings = reviewService.ratingsGivenBy(
-                viewerId, items.stream().map(OrderItem::getId).toList());
+        List<Long> itemIds = items.stream().map(OrderItem::getId).toList();
+        Map<Long, Integer> ratings = reviewService.ratingsGivenBy(viewerId, itemIds);
+        Map<Long, Dispute> disputes = itemIds.isEmpty() ? Map.of() : disputeRepository.findLatestForItems(itemIds).stream()
+                .collect(Collectors.toMap(dispute -> dispute.getOrderItem().getId(), Function.identity(), (a, b) -> a));
         List<OrderDto.OrderItemDto> itemDtos = items.stream()
                 .map(item -> new OrderDto.OrderItemDto(
                         item.getId(),
@@ -466,7 +486,11 @@ public class OrderService {
                         item.getTrackingNumber(),
                         item.getShippedAt(),
                         item.getDeliveredAt(),
-                        ratings.get(item.getId())
+                        ratings.get(item.getId()),
+                        item.getEscrowStatus() != null ? item.getEscrowStatus().name() : null,
+                        item.getRefundAmount(),
+                        disputes.containsKey(item.getId()) ? disputes.get(item.getId()).getId() : null,
+                        disputes.containsKey(item.getId()) ? disputes.get(item.getId()).getStatus().name() : null
                 ))
                 .toList();
         BigDecimal subtotal = items.stream()

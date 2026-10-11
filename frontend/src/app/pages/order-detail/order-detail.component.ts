@@ -2,7 +2,8 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, timer } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { Order, OrderService } from '../../service/order.service';
+import { Order, OrderItem, OrderService } from '../../service/order.service';
+import { ACTIVE_DISPUTE, DISPUTE_REASONS, DisputeReason, DisputeService } from '../../service/dispute.service';
 import { getLocaleForLanguage } from '../../shared/market';
 
 const AWAITING_PAYMENT = ['PAYMENT_PENDING', 'PAYMENT_CONFIRMING'];
@@ -22,6 +23,13 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   infoMessage = '';
   isPaying = false;
   isConfirmingDelivery = false;
+  readonly disputeReasons = DISPUTE_REASONS;
+  /** The item whose "report a problem" form is open. */
+  disputeItemId: number | null = null;
+  disputeReason: DisputeReason = 'NOT_RECEIVED';
+  disputeDescription = '';
+  isDisputeBusy = false;
+  disputeError = '';
   /** True while we wait for the Stripe webhook after a successful redirect. */
   isConfirming = false;
   private orderId = 0;
@@ -33,7 +41,8 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     private orderService: OrderService,
     private route: ActivatedRoute,
     private translateService: TranslateService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private disputeService: DisputeService
   ) {}
 
   ngOnInit(): void {
@@ -57,7 +66,58 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   }
 
   get canConfirmDelivery(): boolean {
-    return !!this.order && this.order.items.some(item => !!item.shippedAt && !item.deliveredAt);
+    return !!this.order && this.order.items.some(item => !!item.shippedAt && !item.deliveredAt
+      && item.escrowStatus !== 'DISPUTED' && item.escrowStatus !== 'REFUNDED');
+  }
+
+  hasActiveDispute(item: OrderItem): boolean {
+    return !!item.disputeStatus && ACTIVE_DISPUTE.includes(item.disputeStatus);
+  }
+
+  openDisputeForm(item: OrderItem): void {
+    this.disputeItemId = item.orderItemId;
+    this.disputeReason = item.shippedAt ? 'NOT_AS_DESCRIBED' : 'NOT_RECEIVED';
+    this.disputeDescription = '';
+    this.disputeError = '';
+  }
+
+  submitDispute(item: OrderItem): void {
+    const description = this.disputeDescription.trim();
+    if (!this.order || !description || this.isDisputeBusy) {
+      return;
+    }
+    this.isDisputeBusy = true;
+    this.disputeError = '';
+    this.subscriptions.add(this.disputeService.open(this.order.id, item.orderItemId, this.disputeReason, description).subscribe({
+      next: () => {
+        this.isDisputeBusy = false;
+        this.disputeItemId = null;
+        this.loadOrder();
+      },
+      error: () => {
+        this.isDisputeBusy = false;
+        this.disputeError = 'PROTECTION.ERROR';
+        this.cdr.detectChanges();
+      }
+    }));
+  }
+
+  withdrawDispute(item: OrderItem): void {
+    if (!item.disputeId || this.isDisputeBusy) {
+      return;
+    }
+    this.isDisputeBusy = true;
+    this.subscriptions.add(this.disputeService.withdraw(item.disputeId).subscribe({
+      next: () => {
+        this.isDisputeBusy = false;
+        this.loadOrder();
+      },
+      error: () => {
+        this.isDisputeBusy = false;
+        this.disputeError = 'PROTECTION.ERROR';
+        this.cdr.detectChanges();
+      }
+    }));
   }
 
   confirmDelivery(): void {

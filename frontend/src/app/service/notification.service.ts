@@ -77,6 +77,12 @@ export class NotificationService {
         return this.translateService.instant('NOTIFICATION_CONTENT.ORDER_PAID.MESSAGE', { id: orderId });
       }
     }
+    if ((notification.type === 'ORDER_REFUNDED' || notification.type === 'PAYMENT_RELEASED') && quotedValues.length >= 2) {
+      return this.translateService.instant(`NOTIFICATION_CONTENT.${notification.type}.MESSAGE`, {
+        product: quotedValues[0],
+        amount: quotedValues[1]
+      });
+    }
     if ((notification.type === 'ORDER_SOLD'
       || notification.type === 'ORDER_SHIPPED'
       || notification.type === 'ORDER_DELIVERED'

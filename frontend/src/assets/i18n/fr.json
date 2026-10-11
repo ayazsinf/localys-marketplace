@@ -42,7 +42,8 @@
     "ACCOUNT_MENU": "Ouvrir le menu du compte",
     "LISTING_REPORTS": "Signalements",
     "SAVED_SEARCHES": "Recherches enregistrees",
-    "MY_OFFERS": "Mes offres"
+    "MY_OFFERS": "Mes offres",
+    "DISPUTES": "Litiges"
   },
   "COMMON": {
     "CANCEL": "Annuler",
@@ -528,6 +529,20 @@
     "OFFER_DECLINED": {
       "TITLE": "Offre refusee",
       "MESSAGE": "L'offre de {{amount}} pour \"{{product}}\" a ete refusee."
+    },
+    "DISPUTE_OPENED": {
+      "TITLE": "Probleme signale"
+    },
+    "DISPUTE_CLOSED": {
+      "TITLE": "Litige clos"
+    },
+    "ORDER_REFUNDED": {
+      "TITLE": "Remboursement effectue",
+      "MESSAGE": "Pour \"{{product}}\", vous avez ete rembourse de {{amount}}."
+    },
+    "PAYMENT_RELEASED": {
+      "TITLE": "Paiement debloque",
+      "MESSAGE": "Le paiement de \"{{product}}\" ({{amount}}) vous est debloque."
     }
   },
   "ORDERS": {
@@ -827,5 +842,55 @@
     "EMAIL_VERIFIED": "E-mail verifie",
     "PHONE_PROVIDED": "Telephone renseigne",
     "SALES": "{{count}} ventes conclues"
+  },
+  "PROTECTION": {
+    "PRODUCT_NOTE": "Protection acheteur : votre paiement est bloque jusqu'a ce que vous confirmiez la reception.",
+    "BUYER_HELD": "Paiement bloque jusqu'a votre confirmation de reception",
+    "BUYER_DISPUTED": "Paiement bloque pendant le traitement de votre signalement",
+    "BUYER_RELEASED": "Paiement verse au vendeur",
+    "BUYER_REFUNDED": "Rembourse : {{amount}}",
+    "SELLER_HELD": "Paiement bloque jusqu'a la confirmation de l'acheteur",
+    "SELLER_DISPUTED": "Paiement bloque : l'acheteur a signale un probleme",
+    "SELLER_RELEASED": "Paiement debloque pour vous",
+    "SELLER_REFUNDED": "Rembourse a l'acheteur",
+    "DISPUTE_OPEN": "Probleme signale ; en attente du vendeur",
+    "DISPUTE_CONTESTED": "Le vendeur conteste ; Localys va trancher",
+    "DISPUTE_WITHDRAWN": "Signalement retire",
+    "DISPUTE_REFUNDED": "Clos avec remboursement",
+    "DISPUTE_RELEASED": "Clos en faveur du vendeur",
+    "REPORT_PROBLEM": "Signaler un probleme",
+    "WITHDRAW": "Retirer mon signalement",
+    "REASON": "Quel est le probleme ?",
+    "REASON_NOT_RECEIVED": "Je ne l'ai pas recu",
+    "REASON_NOT_AS_DESCRIBED": "Non conforme a l'annonce",
+    "REASON_DAMAGED": "Endommage",
+    "REASON_OTHER": "Autre",
+    "DESCRIPTION_PLACEHOLDER": "Expliquez le probleme au vendeur",
+    "SUBMIT": "Envoyer",
+    "ERROR": "Cela n'a pas fonctionne. Reessayez.",
+    "WAITING_ADMIN": "Vous avez conteste ce signalement. Localys va trancher.",
+    "RESPONSE_PLACEHOLDER": "Si vous n'etes pas d'accord, expliquez pourquoi (ex. le suivi indique la livraison)",
+    "RESPONSE_REQUIRED": "Ecrivez une reponse pour contester.",
+    "CONTEST": "Contester",
+    "REFUND_BUYER": "Rembourser l'acheteur",
+    "CONFIRM_REFUND": "Rembourser l'acheteur pour cet article ? C'est definitif."
+  },
+  "ADMIN_DISPUTES": {
+    "TITLE": "Litiges",
+    "SUBTITLE": "Remboursez l'acheteur ou versez le paiement au vendeur.",
+    "LOADING": "Chargement des litiges...",
+    "EMPTY": "Aucun litige.",
+    "FILTER_ACTIVE": "Ouverts",
+    "FILTER_ALL": "Tous",
+    "BUYER": "Acheteur",
+    "SELLER": "Vendeur",
+    "ORDER": "Commande",
+    "OPENED": "Ouvert le",
+    "NOTE": "Note",
+    "NOTE_PLACEHOLDER": "Note facultative",
+    "REFUND": "Rembourser l'acheteur",
+    "RELEASE": "Payer le vendeur",
+    "ERROR_LOAD": "Impossible de charger les litiges.",
+    "ERROR_ACTION": "La decision n'a pas pu etre enregistree."
   }
 }

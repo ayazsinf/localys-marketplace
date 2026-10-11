@@ -42,7 +42,8 @@
     "ACCOUNT_MENU": "Open account menu",
     "LISTING_REPORTS": "Listing reports",
     "SAVED_SEARCHES": "Saved searches",
-    "MY_OFFERS": "My offers"
+    "MY_OFFERS": "My offers",
+    "DISPUTES": "Disputes"
   },
   "COMMON": {
     "CANCEL": "Cancel",
@@ -528,6 +529,20 @@
     "OFFER_DECLINED": {
       "TITLE": "Offer declined",
       "MESSAGE": "The offer of {{amount}} for \"{{product}}\" was declined."
+    },
+    "DISPUTE_OPENED": {
+      "TITLE": "Problem reported"
+    },
+    "DISPUTE_CLOSED": {
+      "TITLE": "Dispute closed"
+    },
+    "ORDER_REFUNDED": {
+      "TITLE": "Refund issued",
+      "MESSAGE": "For \"{{product}}\", you were refunded {{amount}}."
+    },
+    "PAYMENT_RELEASED": {
+      "TITLE": "Payment released",
+      "MESSAGE": "The payment for \"{{product}}\" ({{amount}}) is released to you."
     }
   },
   "ORDERS": {
@@ -827,5 +842,55 @@
     "EMAIL_VERIFIED": "Email verified",
     "PHONE_PROVIDED": "Phone number given",
     "SALES": "{{count}} completed sales"
+  },
+  "PROTECTION": {
+    "PRODUCT_NOTE": "Buyer protection: your payment is held until you confirm you received the item.",
+    "BUYER_HELD": "Payment held until you confirm receipt",
+    "BUYER_DISPUTED": "Payment on hold while your report is handled",
+    "BUYER_RELEASED": "Payment released to the seller",
+    "BUYER_REFUNDED": "Refunded {{amount}}",
+    "SELLER_HELD": "Payment held until the buyer confirms receipt",
+    "SELLER_DISPUTED": "Payment on hold: the buyer reported a problem",
+    "SELLER_RELEASED": "Payment released to you",
+    "SELLER_REFUNDED": "Refunded to the buyer",
+    "DISPUTE_OPEN": "Problem reported; waiting for the seller",
+    "DISPUTE_CONTESTED": "The seller disagrees; Localys will decide",
+    "DISPUTE_WITHDRAWN": "Report withdrawn",
+    "DISPUTE_REFUNDED": "Closed with a refund",
+    "DISPUTE_RELEASED": "Closed in favour of the seller",
+    "REPORT_PROBLEM": "Report a problem",
+    "WITHDRAW": "Withdraw my report",
+    "REASON": "What went wrong?",
+    "REASON_NOT_RECEIVED": "I did not receive it",
+    "REASON_NOT_AS_DESCRIBED": "Not as described",
+    "REASON_DAMAGED": "Damaged",
+    "REASON_OTHER": "Other",
+    "DESCRIPTION_PLACEHOLDER": "Explain the problem to the seller",
+    "SUBMIT": "Send report",
+    "ERROR": "That did not work. Please try again.",
+    "WAITING_ADMIN": "You contested this report. Localys will decide.",
+    "RESPONSE_PLACEHOLDER": "If you disagree, explain why (e.g. tracking shows delivery)",
+    "RESPONSE_REQUIRED": "Write a reply to contest the report.",
+    "CONTEST": "Contest",
+    "REFUND_BUYER": "Refund the buyer",
+    "CONFIRM_REFUND": "Refund the buyer for this item? This cannot be undone."
+  },
+  "ADMIN_DISPUTES": {
+    "TITLE": "Disputes",
+    "SUBTITLE": "Refund the buyer or release the payment to the seller.",
+    "LOADING": "Loading disputes...",
+    "EMPTY": "No disputes.",
+    "FILTER_ACTIVE": "Open",
+    "FILTER_ALL": "All",
+    "BUYER": "Buyer",
+    "SELLER": "Seller",
+    "ORDER": "Order",
+    "OPENED": "Opened",
+    "NOTE": "Note",
+    "NOTE_PLACEHOLDER": "Optional note for the record",
+    "REFUND": "Refund buyer",
+    "RELEASE": "Pay seller",
+    "ERROR_LOAD": "Disputes could not be loaded.",
+    "ERROR_ACTION": "The decision could not be saved."
   }
 }

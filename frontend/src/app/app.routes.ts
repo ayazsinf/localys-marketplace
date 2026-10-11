@@ -16,6 +16,7 @@ import {OrdersComponent} from "./pages/orders/orders.component";
 import {OrderDetailComponent} from "./pages/order-detail/order-detail.component";
 import {AdminListingsComponent} from "./pages/admin-listings/admin-listings.component";
 import {AdminReportsComponent} from "./pages/admin-reports/admin-reports.component";
+import {AdminDisputesComponent} from "./pages/admin-disputes/admin-disputes.component";
 import {SavedSearchesComponent} from "./pages/saved-searches/saved-searches.component";
 import {PublicProfileComponent} from "./pages/public-profile/public-profile.component";
 import {ListingWizardComponent} from "./pages/listing-wizard/listing-wizard.component";
@@ -36,6 +37,7 @@ export const routes: Routes = [
   { path: 'notifications', component: NotificationsComponent, canActivate: [authGuard] },
   { path: 'admin/listings', component: AdminListingsComponent, canActivate: [authGuard] },
   { path: 'admin/reports', component: AdminReportsComponent, canActivate: [authGuard] },
+  { path: 'admin/disputes', component: AdminDisputesComponent, canActivate: [authGuard] },
   { path: 'cart', component: CartComponent, canActivate: [authGuard] },
   { path: 'orders', component: OrdersComponent, canActivate: [authGuard] },
   { path: 'offers', component: OffersComponent, canActivate: [authGuard] },

@@ -35,6 +35,38 @@
             {{ (item.deliveredAt ? 'ORDERS.ITEM_DELIVERED' : 'ORDERS.ITEM_SHIPPED') | translate }}
             · {{ 'ORDERS.TRACKING' | translate }}: {{ item.trackingNumber }}
           </span>
+          <div class="protection" *ngIf="item.escrowStatus">
+            <span class="protection-status" [attr.data-status]="item.escrowStatus">
+              🛡️ {{ ('PROTECTION.BUYER_' + item.escrowStatus) | translate: { amount: (item.refundAmount ?? 0) | currencyDisplay: order.currency } }}
+            </span>
+            <span class="protection-dispute" *ngIf="item.disputeStatus">
+              {{ ('PROTECTION.DISPUTE_' + item.disputeStatus) | translate }}
+            </span>
+            <button type="button" class="link" *ngIf="item.escrowStatus === 'HELD' && disputeItemId !== item.orderItemId"
+                    (click)="openDisputeForm(item)">
+              {{ 'PROTECTION.REPORT_PROBLEM' | translate }}
+            </button>
+            <button type="button" class="link" *ngIf="item.disputeStatus === 'OPEN'" [disabled]="isDisputeBusy"
+                    (click)="withdrawDispute(item)">
+              {{ 'PROTECTION.WITHDRAW' | translate }}
+            </button>
+            <form class="dispute-form" *ngIf="disputeItemId === item.orderItemId" (ngSubmit)="submitDispute(item)">
+              <label>
+                <span>{{ 'PROTECTION.REASON' | translate }}</span>
+                <select name="disputeReason" [(ngModel)]="disputeReason">
+                  <option *ngFor="let reason of disputeReasons" [ngValue]="reason">{{ ('PROTECTION.REASON_' + reason) | translate }}</option>
+                </select>
+              </label>
+              <textarea name="disputeDescription" rows="3" maxlength="2000" required [(ngModel)]="disputeDescription"
+                        [placeholder]="'PROTECTION.DESCRIPTION_PLACEHOLDER' | translate"></textarea>
+              <div class="dispute-actions">
+                <button type="button" class="ghost" (click)="disputeItemId = null">{{ 'REPORT.CANCEL' | translate }}</button>
+                <button type="submit" class="primary" [disabled]="isDisputeBusy || !disputeDescription.trim()">
+                  {{ 'PROTECTION.SUBMIT' | translate }}
+                </button>
+              </div>
+            </form>
+          </div>
           <app-rating-form
             class="item-review"
             *ngIf="item.deliveredAt"
@@ -63,6 +95,8 @@
         <strong>{{ order.total | currencyDisplay: order.currency }}</strong>
       </footer>
     </article>
+
+    <div class="status error" *ngIf="disputeError">{{ disputeError | translate }}</div>
 
     <div class="pay-actions" *ngIf="canConfirmDelivery">
       <p>{{ 'ORDERS.CONFIRM_DELIVERY_HINT' | translate }}</p>

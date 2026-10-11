@@ -34,6 +34,8 @@ export type OrderStatus =
   | 'CANCELLED'
   | 'REFUNDED';
 
+import { DisputeStatus } from './dispute.service';
+
 export interface OrderItem {
   orderItemId: number;
   productId: number;
@@ -47,6 +49,11 @@ export interface OrderItem {
   deliveredAt: string | null;
   /** The rating the viewer already gave the other party for this item. */
   myRating: number | null;
+  /** Buyer protection: HELD until the buyer confirms, DISPUTED, RELEASED or REFUNDED. */
+  escrowStatus: 'HELD' | 'DISPUTED' | 'RELEASED' | 'REFUNDED' | null;
+  refundAmount: number | null;
+  disputeId: number | null;
+  disputeStatus: DisputeStatus | null;
 }
 
 export interface OrderShippingAddress {

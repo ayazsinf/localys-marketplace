@@ -66,6 +66,7 @@
         <span class="delivery-option" *ngIf="product.handDelivery">🤝 {{ 'DELIVERY.HAND' | translate }}</span>
         <span class="delivery-option" *ngIf="product.shippingAvailable">📦 {{ 'DELIVERY.SHIPPING' | translate }}</span>
       </div>
+      <p class="protection-note" *ngIf="product.shippingAvailable">🛡️ {{ 'PROTECTION.PRODUCT_NOTE' | translate }}</p>
       <p class="hand-only-note" *ngIf="!product.shippingAvailable">{{ 'DELIVERY.HAND_ONLY_NOTE' | translate }}</p>
 
       <div class="away-banner" *ngIf="product.sellerAway" role="status">

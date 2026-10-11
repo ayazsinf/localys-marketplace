@@ -164,6 +164,9 @@
                             <a *ngIf="isAdmin" routerLink="/admin/reports" (click)="closeProfileMenu()">
                                 {{ 'MENU.LISTING_REPORTS' | translate }}
                             </a>
+                            <a *ngIf="isAdmin" routerLink="/admin/disputes" (click)="closeProfileMenu()">
+                                {{ 'MENU.DISPUTES' | translate }}
+                            </a>
                             <a routerLink="/favorites" (click)="closeProfileMenu()">{{ 'MENU.FAVORITES' | translate }}</a>
                             <a routerLink="/saved-searches" (click)="closeProfileMenu()">{{ 'MENU.SAVED_SEARCHES' | translate }}</a>
                             <a routerLink="/messages" (click)="closeProfileMenu()">{{ 'MENU.MESSAGES' | translate }}</a>

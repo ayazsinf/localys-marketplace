@@ -59,6 +59,27 @@
             {{ (item.deliveredAt ? 'ORDERS.ITEM_DELIVERED' : 'ORDERS.ITEM_SHIPPED') | translate }}
             · {{ 'ORDERS.TRACKING' | translate }}: {{ item.trackingNumber }}
           </span>
+          <span class="protection-status" *ngIf="item.escrowStatus" [attr.data-status]="item.escrowStatus">
+            🛡️ {{ ((activeTab === 'sales' ? 'PROTECTION.SELLER_' : 'PROTECTION.BUYER_') + item.escrowStatus) | translate: { amount: (item.refundAmount ?? 0) | currencyDisplay: order.currency } }}
+          </span>
+          <div class="dispute-box" *ngIf="activeTab === 'sales' && disputeFor(item) as dispute" (click)="$event.stopPropagation()">
+            <strong>{{ ('PROTECTION.REASON_' + dispute.reason) | translate }}</strong>
+            <p>{{ dispute.description }}</p>
+            <p class="muted" *ngIf="dispute.status === 'CONTESTED'">{{ 'PROTECTION.WAITING_ADMIN' | translate }}</p>
+            <ng-container *ngIf="dispute.status === 'OPEN'">
+              <textarea rows="2" maxlength="2000" [(ngModel)]="contestInputs[dispute.id]" [name]="'contest-' + dispute.id"
+                        [placeholder]="'PROTECTION.RESPONSE_PLACEHOLDER' | translate"></textarea>
+              <div class="dispute-actions">
+                <button type="button" class="ghost" [disabled]="disputeBusyId === dispute.id" (click)="contestDispute(dispute)">
+                  {{ 'PROTECTION.CONTEST' | translate }}
+                </button>
+                <button type="button" class="primary" [disabled]="disputeBusyId === dispute.id" (click)="refundDispute(dispute)">
+                  {{ 'PROTECTION.REFUND_BUYER' | translate }}
+                </button>
+              </div>
+            </ng-container>
+            <div class="status error" *ngIf="disputeErrors[dispute.id]">{{ disputeErrors[dispute.id] | translate }}</div>
+          </div>
           <app-rating-form
             class="item-review"
             *ngIf="activeTab === 'sales' && item.deliveredAt"
