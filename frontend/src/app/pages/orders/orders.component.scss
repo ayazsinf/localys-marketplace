@@ -407,3 +407,9 @@ button.link {
 .muted {
   color: #6b7280;
 }
+
+.payout-line {
+  grid-column: 1 / -1;
+  font-size: 13px;
+  color: #374151;
+}

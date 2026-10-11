@@ -158,6 +158,7 @@
                             <a routerLink="/listings" (click)="closeProfileMenu()">{{ 'MENU.MY_LISTINGS' | translate }}</a>
                             <a routerLink="/orders" (click)="closeProfileMenu()">{{ 'MENU.MY_ORDERS' | translate }}</a>
                             <a routerLink="/offers" (click)="closeProfileMenu()">{{ 'MENU.MY_OFFERS' | translate }}</a>
+                            <a routerLink="/wallet" (click)="closeProfileMenu()">{{ 'MENU.WALLET' | translate }}</a>
                             <a *ngIf="isAdmin" routerLink="/admin/listings" (click)="closeProfileMenu()">
                                 {{ 'MENU.MODERATE_LISTINGS' | translate }}
                             </a>

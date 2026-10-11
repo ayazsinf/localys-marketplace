@@ -54,6 +54,9 @@ export interface OrderItem {
   refundAmount: number | null;
   disputeId: number | null;
   disputeStatus: DisputeStatus | null;
+  /** Seller view only. */
+  commissionAmount: number | null;
+  payoutAmount: number | null;
 }
 
 export interface OrderShippingAddress {

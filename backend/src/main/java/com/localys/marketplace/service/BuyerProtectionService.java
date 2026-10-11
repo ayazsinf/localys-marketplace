@@ -59,6 +59,7 @@ public class BuyerProtectionService {
     private final NotificationService notificationService;
     private final AdminRecipientService adminRecipientService;
     private final TransactionTemplate transactionTemplate;
+    private final SellerPayoutService sellerPayoutService;
 
     public BuyerProtectionService(
             OrderItemRepository orderItemRepository,
@@ -69,8 +70,10 @@ public class BuyerProtectionService {
             PaymentGateway paymentGateway,
             NotificationService notificationService,
             AdminRecipientService adminRecipientService,
-            TransactionTemplate transactionTemplate
+            TransactionTemplate transactionTemplate,
+            SellerPayoutService sellerPayoutService
     ) {
+        this.sellerPayoutService = sellerPayoutService;
         this.orderItemRepository = orderItemRepository;
         this.orderRepository = orderRepository;
         this.disputeRepository = disputeRepository;
@@ -264,10 +267,11 @@ public class BuyerProtectionService {
     private void release(OrderItem item) {
         item.setEscrowStatus(EscrowStatus.RELEASED);
         item.setEscrowReleasedAt(OffsetDateTime.now());
+        sellerPayoutService.settle(item);
         orderItemRepository.save(item);
         if (item.getVendor() != null && item.getVendor().getUser() != null) {
             notificationService.createPaymentReleasedNotification(
-                    item.getVendor().getUser(), item.getProductNameSnapshot(), item.getLineTotal(), item.getCurrency());
+                    item.getVendor().getUser(), item.getProductNameSnapshot(), item.getPayoutAmount(), item.getCurrency());
         }
     }
 

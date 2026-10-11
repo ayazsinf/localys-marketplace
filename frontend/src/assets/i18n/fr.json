@@ -43,7 +43,8 @@
     "LISTING_REPORTS": "Signalements",
     "SAVED_SEARCHES": "Recherches enregistrees",
     "MY_OFFERS": "Mes offres",
-    "DISPUTES": "Litiges"
+    "DISPUTES": "Litiges",
+    "WALLET": "Mes gains"
   },
   "COMMON": {
     "CANCEL": "Annuler",
@@ -892,5 +893,39 @@
     "RELEASE": "Payer le vendeur",
     "ERROR_LOAD": "Impossible de charger les litiges.",
     "ERROR_ACTION": "La decision n'a pas pu etre enregistree."
+  },
+  "WALLET": {
+    "TITLE": "Mes gains",
+    "SUBTITLE": "Ce que vos ventes vous rapportent et quand l'argent arrive sur votre compte.",
+    "LOADING": "Chargement...",
+    "ERROR_LOAD": "Impossible de charger vos gains.",
+    "ERROR_ONBOARDING": "La configuration des versements est indisponible. Reessayez plus tard.",
+    "PAYOUTS_READY": "Versements configures",
+    "PAYOUTS_READY_HINT": "L'argent part vers votre compte bancaire des que l'acheteur confirme la reception.",
+    "SET_UP": "Configurez les versements pour etre paye",
+    "FINISH_SETUP": "Terminez la configuration des versements",
+    "SETUP_HINT": "Notre partenaire de paiement Stripe a besoin une seule fois de votre identite et de votre RIB. Vos gains vous attendent en securite.",
+    "SETUP_CHECKING": "Stripe verifie encore vos informations ; cette page se mettra a jour.",
+    "SETUP_BUTTON": "Configurer avec Stripe",
+    "PENDING": "Bloque",
+    "PENDING_HINT": "Jusqu'a ce que les acheteurs confirment la reception",
+    "AVAILABLE": "Pret a verser",
+    "AVAILABLE_HINT_READY": "En cours d'envoi vers votre compte",
+    "AVAILABLE_HINT_SETUP": "Configurez les versements pour le recevoir",
+    "PAID_OUT": "Verse",
+    "PAID_OUT_HINT": "Envoye sur votre compte bancaire",
+    "COMMISSION_NOTE": "Localys preleve une commission de {{rate}} % sur chaque article vendu. Les frais de port ne sont pas inclus.",
+    "EMPTY": "Aucune vente pour le moment.",
+    "ITEM": "Article",
+    "PRICE": "Prix",
+    "COMMISSION": "Commission",
+    "YOU_GET": "Vous recevez",
+    "STATE": "Statut",
+    "STATE_PENDING": "Bloque",
+    "STATE_DISPUTED": "En litige",
+    "STATE_AVAILABLE": "Pret",
+    "STATE_PAID_OUT": "Verse",
+    "STATE_REFUNDED": "Rembourse",
+    "ITEM_PAYOUT": "Vous recevez {{payout}} (commission {{commission}})"
   }
 }

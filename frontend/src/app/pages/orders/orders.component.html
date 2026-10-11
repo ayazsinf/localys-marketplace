@@ -62,6 +62,9 @@
           <span class="protection-status" *ngIf="item.escrowStatus" [attr.data-status]="item.escrowStatus">
             🛡️ {{ ((activeTab === 'sales' ? 'PROTECTION.SELLER_' : 'PROTECTION.BUYER_') + item.escrowStatus) | translate: { amount: (item.refundAmount ?? 0) | currencyDisplay: order.currency } }}
           </span>
+          <span class="payout-line" *ngIf="activeTab === 'sales' && item.payoutAmount != null">
+            {{ 'WALLET.ITEM_PAYOUT' | translate: { payout: (item.payoutAmount | currencyDisplay: order.currency), commission: (item.commissionAmount ?? 0) | currencyDisplay: order.currency } }}
+          </span>
           <div class="dispute-box" *ngIf="activeTab === 'sales' && disputeFor(item) as dispute" (click)="$event.stopPropagation()">
             <strong>{{ ('PROTECTION.REASON_' + dispute.reason) | translate }}</strong>
             <p>{{ dispute.description }}</p>

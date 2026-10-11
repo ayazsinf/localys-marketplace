@@ -1,0 +1,107 @@
+.payout-setup {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  background: #fff7e6;
+  border: 1px solid #f5c26b;
+
+  &.ready {
+    background: #e7f6ec;
+    border-color: #9ad3ae;
+  }
+
+  button {
+    justify-self: start;
+    margin-top: 4px;
+  }
+}
+
+.totals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.total-card {
+  display: grid;
+  gap: 4px;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+
+  strong {
+    font-size: 22px;
+  }
+
+  small {
+    color: #6b7280;
+  }
+}
+
+.entries {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+
+  th,
+  td {
+    padding: 8px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  td small {
+    display: block;
+  }
+}
+
+.state {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  font-size: 12px;
+
+  &[data-state='PAID_OUT'] {
+    background: #e7f6ec;
+    color: #1e6b3a;
+  }
+
+  &[data-state='AVAILABLE'] {
+    background: #eef4fb;
+    color: #1f3b5a;
+  }
+
+  &[data-state='DISPUTED'] {
+    background: #fdf2f2;
+    color: #8a2a20;
+  }
+}
+
+.muted {
+  color: #6b7280;
+}
+
+.primary {
+  background: #2563eb;
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 640px) {
+  .entries {
+    display: block;
+    overflow-x: auto;
+  }
+}

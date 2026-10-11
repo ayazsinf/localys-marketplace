@@ -43,7 +43,8 @@
     "LISTING_REPORTS": "Ilan Sikayetleri",
     "SAVED_SEARCHES": "Kayitli Aramalar",
     "MY_OFFERS": "Tekliflerim",
-    "DISPUTES": "Itirazlar"
+    "DISPUTES": "Itirazlar",
+    "WALLET": "Kazanclarim"
   },
   "COMMON": {
     "CANCEL": "Iptal",
@@ -892,5 +893,39 @@
     "RELEASE": "Saticiya ode",
     "ERROR_LOAD": "Itirazlar yuklenemedi.",
     "ERROR_ACTION": "Karar kaydedilemedi."
+  },
+  "WALLET": {
+    "TITLE": "Kazanclarim",
+    "SUBTITLE": "Satislarinizdan ne kazandiginiz ve paranin hesabiniza ne zaman gececegi.",
+    "LOADING": "Yukleniyor...",
+    "ERROR_LOAD": "Kazanclariniz yuklenemedi.",
+    "ERROR_ONBOARDING": "Odeme ayarlari su an kullanilamiyor. Lutfen daha sonra tekrar deneyin.",
+    "PAYOUTS_READY": "Odeme ayarlari tamam",
+    "PAYOUTS_READY_HINT": "Alici teslim aldigini onayladiginda para banka hesabiniza gonderilir.",
+    "SET_UP": "Odeme almak icin hesabinizi ayarlayin",
+    "FINISH_SETUP": "Odeme ayarlarini tamamlayin",
+    "SETUP_HINT": "Odeme ortagimiz Stripe kimlik ve banka bilgilerinizi bir kez ister. Kazanclariniz o zamana kadar guvenle bekler.",
+    "SETUP_CHECKING": "Stripe bilgilerinizi hala kontrol ediyor; tamamlaninca bu sayfa guncellenir.",
+    "SETUP_BUTTON": "Stripe ile ayarla",
+    "PENDING": "Bekletilen",
+    "PENDING_HINT": "Alicilar urunleri aldigini onaylayana kadar",
+    "AVAILABLE": "Odenmeye hazir",
+    "AVAILABLE_HINT_READY": "Banka hesabiniza gonderiliyor",
+    "AVAILABLE_HINT_SETUP": "Almak icin odeme ayarlarini yapin",
+    "PAID_OUT": "Odenen",
+    "PAID_OUT_HINT": "Banka hesabiniza gonderildi",
+    "COMMISSION_NOTE": "Localys satilan her urunden %{{rate}} komisyon alir. Kargo ucretleri dahil degildir.",
+    "EMPTY": "Henuz satis yok.",
+    "ITEM": "Urun",
+    "PRICE": "Fiyat",
+    "COMMISSION": "Komisyon",
+    "YOU_GET": "Size kalan",
+    "STATE": "Durum",
+    "STATE_PENDING": "Bekletiliyor",
+    "STATE_DISPUTED": "Itirazda",
+    "STATE_AVAILABLE": "Hazir",
+    "STATE_PAID_OUT": "Odendi",
+    "STATE_REFUNDED": "Iade edildi",
+    "ITEM_PAYOUT": "Size kalan {{payout}} (komisyon {{commission}})"
   }
 }

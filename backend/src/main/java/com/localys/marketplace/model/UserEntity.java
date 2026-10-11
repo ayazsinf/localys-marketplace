@@ -48,6 +48,14 @@ public class UserEntity extends AuditableEntity {
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified;
 
+    /** Their Stripe Connect account, where their sales are paid out. */
+    @Column(name = "stripe_account_id", length = 100)
+    private String stripeAccountId;
+
+    /** Stripe finished checking the account and it can receive money. */
+    @Column(name = "stripe_payouts_enabled", nullable = false)
+    private boolean stripePayoutsEnabled;
+
     /** Away: their listings are hidden from search and cannot be bought or offered on. */
     @Column(name = "vacation_mode", nullable = false)
     private boolean vacationMode;

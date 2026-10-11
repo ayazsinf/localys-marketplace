@@ -35,6 +35,30 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
             """)
     List<Long> findHeldShippedBefore(@Param("cutoff") OffsetDateTime cutoff);
 
+    /** Released items not yet transferred to sellers who can receive money. */
+    @Query("""
+            select oi.id from OrderItem oi
+            where oi.escrowStatus = com.localys.marketplace.model.enums.EscrowStatus.RELEASED
+              and oi.transferId is null and oi.vendor.user.stripePayoutsEnabled = true
+            """)
+    List<Long> findIdsAwaitingPayout();
+
+    /** Same, for one seller. */
+    @Query("""
+            select oi.id from OrderItem oi
+            where oi.escrowStatus = com.localys.marketplace.model.enums.EscrowStatus.RELEASED
+              and oi.transferId is null and oi.vendor.user.id = :sellerUserId
+            """)
+    List<Long> findIdsAwaitingPayoutForSeller(@Param("sellerUserId") Long sellerUserId);
+
+    /** Everything this seller sold that went through buyer protection, newest first. */
+    @Query("""
+            select oi from OrderItem oi join fetch oi.order o
+            where oi.vendor.user.id = :sellerUserId and oi.escrowStatus is not null
+            order by o.createdAt desc, oi.id desc
+            """)
+    List<OrderItem> findProtectedSales(@Param("sellerUserId") Long sellerUserId);
+
     /** Items this seller sold that reached the buyer. */
     @Query("select count(oi) from OrderItem oi where oi.vendor.user.id = :sellerUserId and oi.deliveredAt is not null")
     long countDeliveredSales(@Param("sellerUserId") Long sellerUserId);

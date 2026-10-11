@@ -43,7 +43,10 @@ public record OrderDto(
             BigDecimal refundAmount,
             /** The latest dispute about the item, if any. */
             Long disputeId,
-            String disputeStatus
+            String disputeStatus,
+            /** Seller view only: the platform commission and what the seller receives. */
+            BigDecimal commissionAmount,
+            BigDecimal payoutAmount
     ) {
     }
 

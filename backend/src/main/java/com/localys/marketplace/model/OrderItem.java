@@ -68,6 +68,21 @@ public class OrderItem {
     @Column(name = "refund_amount", precision = 12, scale = 2)
     private BigDecimal refundAmount;
 
+    /** What the platform keeps, fixed when the money is released. */
+    @Column(name = "commission_amount", precision = 12, scale = 2)
+    private BigDecimal commissionAmount;
+
+    /** What the seller receives: the line total minus the commission. */
+    @Column(name = "payout_amount", precision = 12, scale = 2)
+    private BigDecimal payoutAmount;
+
+    /** The transfer to the seller's account; null until paid out. */
+    @Column(name = "transfer_id", length = 100)
+    private String transferId;
+
+    @Column(name = "paid_out_at")
+    private OffsetDateTime paidOutAt;
+
     /** The payment provider's refund id. */
     @Column(name = "refund_id", length = 100)
     private String refundId;

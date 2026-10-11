@@ -43,7 +43,8 @@
     "LISTING_REPORTS": "Listing reports",
     "SAVED_SEARCHES": "Saved searches",
     "MY_OFFERS": "My offers",
-    "DISPUTES": "Disputes"
+    "DISPUTES": "Disputes",
+    "WALLET": "My earnings"
   },
   "COMMON": {
     "CANCEL": "Cancel",
@@ -892,5 +893,39 @@
     "RELEASE": "Pay seller",
     "ERROR_LOAD": "Disputes could not be loaded.",
     "ERROR_ACTION": "The decision could not be saved."
+  },
+  "WALLET": {
+    "TITLE": "My earnings",
+    "SUBTITLE": "What your sales earn you and when it reaches your bank account.",
+    "LOADING": "Loading...",
+    "ERROR_LOAD": "Your earnings could not be loaded.",
+    "ERROR_ONBOARDING": "Payout setup is not available right now. Please try again later.",
+    "PAYOUTS_READY": "Payouts are set up",
+    "PAYOUTS_READY_HINT": "Money is sent to your bank account as soon as a buyer confirms receipt.",
+    "SET_UP": "Set up payouts to get paid",
+    "FINISH_SETUP": "Finish setting up payouts",
+    "SETUP_HINT": "Our payment partner Stripe needs your identity and bank details once. Your earnings wait safely until then.",
+    "SETUP_CHECKING": "Stripe is still checking your details; this page updates when it is done.",
+    "SETUP_BUTTON": "Set up with Stripe",
+    "PENDING": "On hold",
+    "PENDING_HINT": "Until buyers confirm they received the items",
+    "AVAILABLE": "Ready to pay out",
+    "AVAILABLE_HINT_READY": "Being sent to your bank account",
+    "AVAILABLE_HINT_SETUP": "Set up payouts to receive it",
+    "PAID_OUT": "Paid out",
+    "PAID_OUT_HINT": "Sent to your bank account",
+    "COMMISSION_NOTE": "Localys keeps a {{rate}}% commission on each item sold. Shipping fees are not included.",
+    "EMPTY": "No sales yet.",
+    "ITEM": "Item",
+    "PRICE": "Price",
+    "COMMISSION": "Commission",
+    "YOU_GET": "You get",
+    "STATE": "Status",
+    "STATE_PENDING": "On hold",
+    "STATE_DISPUTED": "Disputed",
+    "STATE_AVAILABLE": "Ready",
+    "STATE_PAID_OUT": "Paid out",
+    "STATE_REFUNDED": "Refunded",
+    "ITEM_PAYOUT": "You receive {{payout}} (commission {{commission}})"
   }
 }

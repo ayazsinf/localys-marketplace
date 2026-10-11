@@ -6,6 +6,7 @@ import com.localys.marketplace.repository.PaymentRepository;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
 import com.stripe.model.EventDataObjectDeserializer;
+import com.stripe.model.Account;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.StripeObject;
 import com.stripe.model.checkout.Session;
@@ -30,16 +31,19 @@ public class StripeWebhookService {
 
     private final PaymentRepository paymentRepository;
     private final OrderService orderService;
+    private final SellerPayoutService sellerPayoutService;
 
     @Value("${app.payment.stripe.webhook-secret:}")
     private String webhookSecret;
 
     public StripeWebhookService(
             PaymentRepository paymentRepository,
-            OrderService orderService
+            OrderService orderService,
+            SellerPayoutService sellerPayoutService
     ) {
         this.paymentRepository = paymentRepository;
         this.orderService = orderService;
+        this.sellerPayoutService = sellerPayoutService;
     }
 
     @Transactional
@@ -61,6 +65,7 @@ public class StripeWebhookService {
             case "checkout.session.expired" -> handleSessionClosedUnpaid(event, PaymentStatus.CANCELLED);
             case "payment_intent.payment_failed" -> handlePaymentFailed(event);
             case "payment_intent.succeeded" -> handlePaymentSucceeded(event);
+            case "account.updated" -> handleAccountUpdated(event);
             default -> logger.debug("Ignoring Stripe event type {}", event.getType());
         }
     }
@@ -149,6 +154,14 @@ public class StripeWebhookService {
         // common case; this covers the event arriving later or being replayed.
         paymentRepository.findByProviderPaymentIntentId(intent.getId())
                 .ifPresent(this::markSucceeded);
+    }
+
+    /** A seller finished (or lost) Stripe onboarding. Needs the webhook to listen to Connect events. */
+    private void handleAccountUpdated(Event event) {
+        Account account = getStripeObject(event, Account.class);
+        if (account != null) {
+            sellerPayoutService.onAccountUpdated(account.getId(), Boolean.TRUE.equals(account.getPayoutsEnabled()));
+        }
     }
 
     private void markSucceeded(Payment payment) {

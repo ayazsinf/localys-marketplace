@@ -82,6 +82,7 @@ public class OrderService {
     private final ReviewService reviewService;
     private final BuyerProtectionService buyerProtectionService;
     private final DisputeRepository disputeRepository;
+    private final SellerPayoutService sellerPayoutService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -99,8 +100,10 @@ public class OrderService {
             NotificationService notificationService,
             ReviewService reviewService,
             BuyerProtectionService buyerProtectionService,
-            DisputeRepository disputeRepository
+            DisputeRepository disputeRepository,
+            SellerPayoutService sellerPayoutService
     ) {
+        this.sellerPayoutService = sellerPayoutService;
         this.buyerProtectionService = buyerProtectionService;
         this.disputeRepository = disputeRepository;
         this.orderRepository = orderRepository;
@@ -490,7 +493,9 @@ public class OrderService {
                         item.getEscrowStatus() != null ? item.getEscrowStatus().name() : null,
                         item.getRefundAmount(),
                         disputes.containsKey(item.getId()) ? disputes.get(item.getId()).getId() : null,
-                        disputes.containsKey(item.getId()) ? disputes.get(item.getId()).getStatus().name() : null
+                        disputes.containsKey(item.getId()) ? disputes.get(item.getId()).getStatus().name() : null,
+                        sellerView ? sellerPayoutService.commissionFor(item) : null,
+                        sellerView ? sellerPayoutService.payoutFor(item) : null
                 ))
                 .toList();
         BigDecimal subtotal = items.stream()

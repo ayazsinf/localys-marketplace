@@ -1,0 +1,71 @@
+<section class="account-page">
+  <div class="account-header">
+    <h1>{{ 'WALLET.TITLE' | translate }}</h1>
+    <p>{{ 'WALLET.SUBTITLE' | translate }}</p>
+  </div>
+
+  <p class="status" *ngIf="isLoading">{{ 'WALLET.LOADING' | translate }}</p>
+  <p class="status error" *ngIf="errorMessage">{{ errorMessage | translate }}</p>
+
+  <ng-container *ngIf="wallet">
+    <div class="payout-setup" [class.ready]="wallet.payoutsEnabled">
+      <ng-container *ngIf="wallet.payoutsEnabled; else setup">
+        <strong>✓ {{ 'WALLET.PAYOUTS_READY' | translate }}</strong>
+        <span>{{ 'WALLET.PAYOUTS_READY_HINT' | translate }}</span>
+      </ng-container>
+      <ng-template #setup>
+        <strong>{{ (wallet.accountConnected ? 'WALLET.FINISH_SETUP' : 'WALLET.SET_UP') | translate }}</strong>
+        <span>{{ 'WALLET.SETUP_HINT' | translate }}</span>
+        <span class="muted" *ngIf="onboardingResult === 'done'">{{ 'WALLET.SETUP_CHECKING' | translate }}</span>
+        <button type="button" class="primary" [disabled]="isRedirecting" (click)="setUpPayouts()">
+          {{ (isRedirecting ? 'CHECKOUT.REDIRECTING' : 'WALLET.SETUP_BUTTON') | translate }}
+        </button>
+      </ng-template>
+    </div>
+
+    <div class="totals-grid">
+      <div class="total-card">
+        <span>{{ 'WALLET.PENDING' | translate }}</span>
+        <strong>{{ wallet.pending | currencyDisplay: wallet.currency }}</strong>
+        <small>{{ 'WALLET.PENDING_HINT' | translate }}</small>
+      </div>
+      <div class="total-card">
+        <span>{{ 'WALLET.AVAILABLE' | translate }}</span>
+        <strong>{{ wallet.available | currencyDisplay: wallet.currency }}</strong>
+        <small>{{ (wallet.payoutsEnabled ? 'WALLET.AVAILABLE_HINT_READY' : 'WALLET.AVAILABLE_HINT_SETUP') | translate }}</small>
+      </div>
+      <div class="total-card">
+        <span>{{ 'WALLET.PAID_OUT' | translate }}</span>
+        <strong>{{ wallet.paidOut | currencyDisplay: wallet.currency }}</strong>
+        <small>{{ 'WALLET.PAID_OUT_HINT' | translate }}</small>
+      </div>
+    </div>
+
+    <p class="muted">{{ 'WALLET.COMMISSION_NOTE' | translate: { rate: commissionPercent } }}</p>
+
+    <p class="status" *ngIf="wallet.entries.length === 0">{{ 'WALLET.EMPTY' | translate }}</p>
+    <table class="entries" *ngIf="wallet.entries.length">
+      <thead>
+        <tr>
+          <th>{{ 'WALLET.ITEM' | translate }}</th>
+          <th>{{ 'WALLET.PRICE' | translate }}</th>
+          <th>{{ 'WALLET.COMMISSION' | translate }}</th>
+          <th>{{ 'WALLET.YOU_GET' | translate }}</th>
+          <th>{{ 'WALLET.STATE' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of wallet.entries">
+          <td>
+            <a [routerLink]="['/orders']" [queryParams]="{ tab: 'sales' }">{{ entry.productName }}</a>
+            <small class="muted">{{ formatDate(entry.soldAt) }}</small>
+          </td>
+          <td>{{ entry.lineTotal | currencyDisplay: entry.currency }}</td>
+          <td>− {{ entry.commission | currencyDisplay: entry.currency }}</td>
+          <td><strong>{{ entry.payout | currencyDisplay: entry.currency }}</strong></td>
+          <td><span class="state" [attr.data-state]="entry.state">{{ ('WALLET.STATE_' + entry.state) | translate }}</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+</section>

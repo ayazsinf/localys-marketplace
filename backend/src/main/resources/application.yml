@@ -47,6 +47,11 @@ app:
       cancel-url: http://localhost:4200/checkout?canceled=true
       webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
   public-url: ${APP_PUBLIC_URL:http://localhost:4200}
+  marketplace:
+    # Share of each item price the platform keeps when paying the seller (0.05 = 5%).
+    commission-rate: ${APP_COMMISSION_RATE:0.05}
+    # Country used when opening a Stripe Connect account for a seller.
+    seller-country: ${APP_SELLER_COUNTRY:FR}
   mail:
     enabled: ${APP_MAIL_ENABLED:${MAIL_ENABLED:false}}
     from: ${MAIL_FROM:no-reply@localys.example}

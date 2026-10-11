@@ -486,3 +486,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 043-seller-payouts
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V43__seller_payouts.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

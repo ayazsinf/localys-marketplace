@@ -27,6 +27,7 @@ import { CategoryDisplayPipe } from './pipes/category-display.pipe';
 import { AdminListingsComponent } from './pages/admin-listings/admin-listings.component';
 import { AdminReportsComponent } from './pages/admin-reports/admin-reports.component';
 import { AdminDisputesComponent } from './pages/admin-disputes/admin-disputes.component';
+import { WalletComponent } from './pages/wallet/wallet.component';
 import { RatingFormComponent } from './components/rating-form/rating-form.component';
 import { PublicProfileComponent } from './pages/public-profile/public-profile.component';
 import { ListingWizardComponent } from './pages/listing-wizard/listing-wizard.component';
@@ -57,6 +58,7 @@ import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.compon
     AdminListingsComponent,
     AdminReportsComponent,
     AdminDisputesComponent,
+    WalletComponent,
     SavedSearchesComponent,
     AuthDialogComponent,
     RatingFormComponent,
