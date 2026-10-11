@@ -45,6 +45,7 @@ public class OfferService {
     private final CartService cartService;
     private final NotificationService notificationService;
     private final TransactionTemplate transactionTemplate;
+    private final UserBlockService userBlockService;
 
     public OfferService(
             OfferRepository offerRepository,
@@ -52,7 +53,8 @@ public class OfferService {
             UserRepository userRepository,
             CartService cartService,
             NotificationService notificationService,
-            TransactionTemplate transactionTemplate
+            TransactionTemplate transactionTemplate,
+            UserBlockService userBlockService
     ) {
         this.offerRepository = offerRepository;
         this.productRepository = productRepository;
@@ -60,6 +62,7 @@ public class OfferService {
         this.cartService = cartService;
         this.notificationService = notificationService;
         this.transactionTemplate = transactionTemplate;
+        this.userBlockService = userBlockService;
     }
 
     @Transactional
@@ -69,6 +72,7 @@ public class OfferService {
         if (seller.getId().equals(buyerId)) {
             throw new IllegalArgumentException("Cannot make an offer on own product");
         }
+        userBlockService.ensureNotBlocked(buyerId, seller.getId());
         BigDecimal amount = normalize(rawAmount);
         if (amount.compareTo(product.getPrice()) >= 0) {
             throw new IllegalArgumentException("Offer must be below the listing price");

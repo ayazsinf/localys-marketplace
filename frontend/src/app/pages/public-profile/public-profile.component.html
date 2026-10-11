@@ -42,6 +42,9 @@
         </div>
         <ng-template #dash><dd class="subtle">–</dd></ng-template>
       </dl>
+      <button type="button" class="block-btn" *ngIf="blockedByMe !== null" [disabled]="isBlockBusy" (click)="toggleBlock()">
+        {{ (blockedByMe ? 'BLOCK.UNBLOCK' : 'BLOCK.BLOCK') | translate }}
+      </button>
     </header>
 
     <div class="tabs" role="tablist">

@@ -39,6 +39,7 @@ public class MessageService {
     private final ProductRepository productRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final EmailService emailService;
+    private final UserBlockService userBlockService;
 
     public MessageService(
             ConversationRepository conversationRepository,
@@ -47,7 +48,8 @@ public class MessageService {
             UserRepository userRepository,
             ProductRepository productRepository,
             SimpMessagingTemplate messagingTemplate,
-            EmailService emailService
+            EmailService emailService,
+            UserBlockService userBlockService
     ) {
         this.conversationRepository = conversationRepository;
         this.participantRepository = participantRepository;
@@ -56,6 +58,7 @@ public class MessageService {
         this.productRepository = productRepository;
         this.messagingTemplate = messagingTemplate;
         this.emailService = emailService;
+        this.userBlockService = userBlockService;
     }
 
     @Transactional(readOnly = true)
@@ -142,6 +145,9 @@ public class MessageService {
                 .filter(user -> !user.getId().equals(senderId))
                 .findFirst()
                 .orElse(null);
+        if (recipient != null) {
+            userBlockService.ensureNotBlocked(senderId, recipient.getId());
+        }
         boolean recipientWasCaughtUp = recipient != null
                 && messageRepository.countUnreadInConversation(conversation.getId(), recipient.getId()) == 0;
 
@@ -184,6 +190,7 @@ public class MessageService {
         if (userId.equals(otherUserId)) {
             throw new IllegalArgumentException("Cannot start a conversation with yourself.");
         }
+        userBlockService.ensureNotBlocked(userId, otherUserId);
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         UserEntity other = userRepository.findById(otherUserId)
@@ -240,7 +247,9 @@ public class MessageService {
                 product != null ? product.getId() : null,
                 product != null ? product.getName() : null,
                 productImageUrl,
-                messageRepository.countUnreadInConversation(conversation.getId(), viewerId)
+                messageRepository.countUnreadInConversation(conversation.getId(), viewerId),
+                other != null && userBlockService.hasBlocked(viewerId, other.getId()),
+                other != null && userBlockService.isBlockedBetween(viewerId, other.getId())
         );
     }
 

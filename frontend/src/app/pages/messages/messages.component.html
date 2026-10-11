@@ -54,6 +54,10 @@
               {{ 'MESSAGES.LISTING_LABEL' | translate }}: {{ selectedConversation?.productName }}
             </a>
           </div>
+          <button type="button" class="block-btn" *ngIf="selectedConversation?.otherUserId"
+                  [disabled]="isBlockBusy" (click)="toggleBlock()">
+            {{ (selectedConversation?.blockedByMe ? 'BLOCK.UNBLOCK' : 'BLOCK.BLOCK') | translate }}
+          </button>
         </header>
 
         <div class="messages-scroll">
@@ -68,10 +72,15 @@
           </div>
         </div>
 
-        <div class="composer">
+        <p class="blocked-banner" *ngIf="selectedConversation?.blocked">
+          {{ (selectedConversation?.blockedByMe ? 'BLOCK.BANNER_BY_ME' : 'BLOCK.BANNER') | translate }}
+        </p>
+        <p class="send-error" *ngIf="sendError">{{ sendError | translate }}</p>
+        <div class="composer" *ngIf="!selectedConversation?.blocked">
           <input
             type="text"
             [(ngModel)]="draftMessage"
+            (keydown.enter)="sendMessage()"
             [placeholder]="'MESSAGES.NEW_MESSAGE_PLACEHOLDER' | translate" />
           <button class="primary-btn" type="button" (click)="sendMessage()">
             {{ 'MESSAGES.SEND' | translate }}

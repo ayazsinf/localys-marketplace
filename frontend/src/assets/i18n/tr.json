@@ -341,7 +341,8 @@
     "SEND": "Gonder",
     "LISTING_LABEL": "Ilan",
     "ONLINE": "Cevrimici",
-    "OFFLINE": "Cevrimdisi"
+    "OFFLINE": "Cevrimdisi",
+    "SEND_ERROR": "Mesajiniz gonderilemedi. Lutfen tekrar deneyin."
   },
   "CATEGORIES": {
     "PLACEHOLDER": "Kategoriler sayfasi yakinda.",
@@ -775,5 +776,15 @@
     "RENEW_HINT": "Ilani sonuclarin en ustune tasi",
     "RENEW_AFTER": "{{date}} tarihinde tekrar yenileyebilirsiniz",
     "ERROR_RENEW": "Ilan yenilenemedi."
+  },
+  "BLOCK": {
+    "BLOCK": "Kullaniciyi engelle",
+    "UNBLOCK": "Engeli kaldir",
+    "CONFIRM": "{{name}} engellensin mi? Artik birbirinize mesaj ve teklif gonderemeyeceksiniz.",
+    "BANNER": "Bu konusmaya artik cevap veremezsiniz.",
+    "BANNER_BY_ME": "Bu kullaniciyi engellediniz. Tekrar mesaj gondermek icin engeli kaldirin.",
+    "CANNOT_CONTACT": "Bu kullaniciyla iletisime gecemezsiniz.",
+    "SECTION_TITLE": "Engellenen kullanicilar",
+    "NONE": "Kimseyi engellemediniz."
   }
 }

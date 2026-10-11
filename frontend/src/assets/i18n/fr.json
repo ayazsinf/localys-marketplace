@@ -341,7 +341,8 @@
     "SEND": "Envoyer",
     "LISTING_LABEL": "Annonce",
     "ONLINE": "En ligne",
-    "OFFLINE": "Hors ligne"
+    "OFFLINE": "Hors ligne",
+    "SEND_ERROR": "Votre message n'a pas pu etre envoye. Reessayez."
   },
   "CATEGORIES": {
     "PLACEHOLDER": "La page des categories arrive bientot.",
@@ -775,5 +776,15 @@
     "RENEW_HINT": "Remettre l'annonce en tete des resultats",
     "RENEW_AFTER": "Vous pourrez la remonter le {{date}}",
     "ERROR_RENEW": "Impossible de remonter l'annonce."
+  },
+  "BLOCK": {
+    "BLOCK": "Bloquer",
+    "UNBLOCK": "Debloquer",
+    "CONFIRM": "Bloquer {{name}} ? Vous ne pourrez plus vous ecrire ni echanger d'offres.",
+    "BANNER": "Vous ne pouvez plus repondre a cette conversation.",
+    "BANNER_BY_ME": "Vous avez bloque cet utilisateur. Debloquez-le pour lui ecrire a nouveau.",
+    "CANNOT_CONTACT": "Vous ne pouvez pas contacter cet utilisateur.",
+    "SECTION_TITLE": "Utilisateurs bloques",
+    "NONE": "Vous n'avez bloque personne."
   }
 }

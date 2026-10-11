@@ -4,6 +4,7 @@ import { UserService, UserProfile } from '../../service/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { getLocaleForLanguage } from '../../shared/market';
+import { BlockService } from '../../service/block.service';
 
 type MessageItem = {
   id: number;
@@ -23,6 +24,8 @@ type Conversation = {
   productId: number | null;
   productName: string | null;
   productImageUrl: string | null;
+  blockedByMe: boolean;
+  blocked: boolean;
   messages: MessageItem[];
 };
 
@@ -37,6 +40,8 @@ export class MessagesComponent implements OnInit, OnDestroy {
   selectedConversationId: number | null = null;
   searchQuery = '';
   draftMessage = '';
+  sendError: string | null = null;
+  isBlockBusy = false;
   currentUser: UserProfile | null = null;
   /** Stops the live updates of the open conversation. */
   private stopWatching: (() => void) | null = null;
@@ -46,7 +51,8 @@ export class MessagesComponent implements OnInit, OnDestroy {
     private messagingService: MessagingService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private blockService: BlockService
   ) {}
 
   ngOnInit(): void {
@@ -91,13 +97,53 @@ export class MessagesComponent implements OnInit, OnDestroy {
   sendMessage(): void {
     const conversation = this.selectedConversation;
     const text = this.draftMessage.trim();
-    if (!conversation || !text || !conversation.otherUserId) {
+    if (!conversation || !text || !conversation.otherUserId || conversation.blocked) {
       return;
     }
+    this.sendError = null;
     this.messagingService.sendMessage(conversation.id, conversation.otherUserId, text).subscribe({
       next: message => {
         this.handleIncomingMessage(message);
         this.draftMessage = '';
+      },
+      error: err => {
+        if (err?.error?.code === 'USER_BLOCKED') {
+          conversation.blocked = true;
+        } else {
+          this.sendError = 'MESSAGES.SEND_ERROR';
+        }
+      }
+    });
+  }
+
+  toggleBlock(): void {
+    const conversation = this.selectedConversation;
+    if (!conversation?.otherUserId || this.isBlockBusy) {
+      return;
+    }
+    const blocking = !conversation.blockedByMe;
+    if (blocking && !confirm(this.translateService.instant('BLOCK.CONFIRM', { name: conversation.name }))) {
+      return;
+    }
+    this.isBlockBusy = true;
+    const otherUserId = conversation.otherUserId;
+    const request = blocking ? this.blockService.block(otherUserId) : this.blockService.unblock(otherUserId);
+    request.subscribe({
+      next: () => {
+        this.isBlockBusy = false;
+        // The other user may have blocked us too, so ask the server for the real state.
+        this.messagingService.listConversations().subscribe(list => {
+          for (const dto of list) {
+            const known = this.conversations.find(item => item.id === dto.id);
+            if (known) {
+              known.blockedByMe = dto.blockedByMe;
+              known.blocked = dto.blocked;
+            }
+          }
+        });
+      },
+      error: () => {
+        this.isBlockBusy = false;
       }
     });
   }
@@ -201,6 +247,8 @@ export class MessagesComponent implements OnInit, OnDestroy {
       productId: dto.productId,
       productName: dto.productName,
       productImageUrl: dto.productImageUrl,
+      blockedByMe: dto.blockedByMe,
+      blocked: dto.blocked,
       messages: []
     };
   }

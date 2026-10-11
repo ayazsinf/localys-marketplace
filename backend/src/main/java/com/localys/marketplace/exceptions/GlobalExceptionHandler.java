@@ -86,6 +86,14 @@ public class GlobalExceptionHandler {
             ApiError error = new ApiError("RENEW_NOT_ALLOWED", "A listing can be renewed once a week while it is online.");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         }
+        if (message.equals("user is blocked")) {
+            ApiError error = new ApiError("USER_BLOCKED", "You cannot contact this user.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+        }
+        if (message.equals("cannot block yourself")) {
+            ApiError error = new ApiError("INVALID_REQUEST", "You cannot block yourself.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
         if (message.equals("offer not found")) {
             ApiError error = new ApiError("OFFER_NOT_FOUND", "Offer not found.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);

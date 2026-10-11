@@ -7,6 +7,9 @@ import { ProductService } from '../../service/product.service';
 import { PublicProfile, PublicProfileService } from '../../service/public-profile.service';
 import { Review, ReviewRole, ReviewService } from '../../service/review.service';
 import { getLocaleForLanguage } from '../../shared/market';
+import { AuthService } from '../../service/auth.service';
+import { BlockService } from '../../service/block.service';
+import { CurrentUserService } from '../../service/current-user.service';
 
 const LISTINGS_PAGE_SIZE = 12;
 const REVIEWS_PAGE_SIZE = 10;
@@ -40,6 +43,10 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
   isLoadingReviews = false;
   private reviewsPage = 0;
 
+  /** Null until known, and always null when signed out or on one's own profile. */
+  blockedByMe: boolean | null = null;
+  isBlockBusy = false;
+
   private userId = 0;
   private subscriptions = new Subscription();
 
@@ -49,7 +56,10 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     private productService: ProductService,
     private reviewService: ReviewService,
     private translateService: TranslateService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService,
+    private blockService: BlockService,
+    private currentUserService: CurrentUserService
   ) {}
 
   ngOnInit(): void {
@@ -84,6 +94,51 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     this.reviews = [];
     this.reviewsPage = 0;
     this.loadReviews();
+  }
+
+  toggleBlock(): void {
+    if (this.blockedByMe === null || this.isBlockBusy) {
+      return;
+    }
+    const blocking = !this.blockedByMe;
+    const name = this.profile?.displayName || this.translateService.instant('PROFILE_PUBLIC.MEMBER');
+    if (blocking && !confirm(this.translateService.instant('BLOCK.CONFIRM', { name }))) {
+      return;
+    }
+    this.isBlockBusy = true;
+    const request = blocking ? this.blockService.block(this.userId) : this.blockService.unblock(this.userId);
+    this.subscriptions.add(request.subscribe({
+      next: () => {
+        this.blockedByMe = blocking;
+        this.isBlockBusy = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isBlockBusy = false;
+        this.cdr.detectChanges();
+      }
+    }));
+  }
+
+  private loadBlockState(): void {
+    if (!this.authService.isAuthenticated) {
+      return;
+    }
+    this.subscriptions.add(this.currentUserService.load().subscribe({
+      next: me => {
+        if (me.id === this.userId) {
+          return;
+        }
+        this.subscriptions.add(this.blockService.isBlocked(this.userId).subscribe({
+          next: blocked => {
+            this.blockedByMe = blocked;
+            this.cdr.detectChanges();
+          },
+          error: () => {}
+        }));
+      },
+      error: () => {}
+    }));
   }
 
   loadMoreListings(): void {
@@ -122,6 +177,7 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
     this.reviews = [];
     this.reviewsPage = 0;
     this.reviewRole = null;
+    this.blockedByMe = null;
   }
 
   private load(): void {
@@ -135,6 +191,7 @@ export class PublicProfileComponent implements OnInit, OnDestroy {
         this.profile = profile;
         this.isLoading = false;
         this.loadListings();
+        this.loadBlockState();
         this.cdr.detectChanges();
       },
       error: () => {

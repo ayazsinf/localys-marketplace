@@ -341,7 +341,8 @@
     "SEND": "Send",
     "LISTING_LABEL": "Listing",
     "ONLINE": "Online",
-    "OFFLINE": "Offline"
+    "OFFLINE": "Offline",
+    "SEND_ERROR": "Your message could not be sent. Please try again."
   },
   "CATEGORIES": {
     "PLACEHOLDER": "Categories page is coming soon.",
@@ -775,5 +776,15 @@
     "RENEW_HINT": "Move this listing back to the top of the results",
     "RENEW_AFTER": "You can renew again on {{date}}",
     "ERROR_RENEW": "Could not renew the listing."
+  },
+  "BLOCK": {
+    "BLOCK": "Block user",
+    "UNBLOCK": "Unblock",
+    "CONFIRM": "Block {{name}}? You will no longer be able to message each other or exchange offers.",
+    "BANNER": "You can no longer reply to this conversation.",
+    "BANNER_BY_ME": "You blocked this user. Unblock them to send messages again.",
+    "CANNOT_CONTACT": "You cannot contact this user.",
+    "SECTION_TITLE": "Blocked users",
+    "NONE": "You have not blocked anyone."
   }
 }

@@ -33,6 +33,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
   isOfferBusy = false;
   offerAmount = 0;
   offerError = '';
+  contactError = '';
   private map: L.Map | null = null;
   private mapObserver: ResizeObserver | null = null;
   private viewReady = false;
@@ -124,7 +125,10 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
       },
       error: err => {
         this.isOfferBusy = false;
-        this.offerError = err?.error?.code === 'INVALID_OFFER_AMOUNT' ? 'OFFERS.ERROR_AMOUNT' : 'OFFERS.ERROR_SEND';
+        const code = err?.error?.code;
+        this.offerError = code === 'INVALID_OFFER_AMOUNT' ? 'OFFERS.ERROR_AMOUNT'
+          : code === 'USER_BLOCKED' ? 'BLOCK.CANNOT_CONTACT'
+          : 'OFFERS.ERROR_SEND';
         this.cdr.detectChanges();
       }
     });
@@ -210,9 +214,13 @@ export class ProductDetailComponent implements OnInit, OnDestroy, AfterViewInit 
       this.authDialogService.openLogin().subscribe();
       return;
     }
+    this.contactError = '';
     this.messagingService.createConversationWith(this.product.vendorUserId, this.product.id).subscribe({
       next: conversation => {
         this.router.navigate(['/messages'], { queryParams: { conversationId: conversation.id } });
+      },
+      error: err => {
+        this.contactError = err?.error?.code === 'USER_BLOCKED' ? 'BLOCK.CANNOT_CONTACT' : 'MESSAGES.SEND_ERROR';
       }
     });
   }

@@ -409,3 +409,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 036-create-user-blocks
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V36__create_user_blocks.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

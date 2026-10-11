@@ -15,6 +15,10 @@ export interface ConversationDto {
   productName: string | null;
   productImageUrl: string | null;
   unreadCount: number;
+  /** The viewer blocked the other user. */
+  blockedByMe: boolean;
+  /** Either user blocked the other; no new messages can be sent. */
+  blocked: boolean;
 }
 
 export interface MessageDto {

@@ -271,6 +271,17 @@
     </div>
 
     <div class="account-card">
+      <h2>{{ 'BLOCK.SECTION_TITLE' | translate }}</h2>
+      <p class="muted" *ngIf="blockedUsers.length === 0">{{ 'BLOCK.NONE' | translate }}</p>
+      <ul class="blocked-list" *ngIf="blockedUsers.length">
+        <li *ngFor="let user of blockedUsers">
+          <a [routerLink]="['/users', user.userId]">{{ user.displayName || ('PROFILE_PUBLIC.MEMBER' | translate) }}</a>
+          <button type="button" class="btn-ghost" (click)="unblock(user)">{{ 'BLOCK.UNBLOCK' | translate }}</button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="account-card">
       <h2>{{ 'PROFILE.SECTION_ACTIVITY' | translate }}</h2>
       <div class="info-grid">
         <div class="info-item">

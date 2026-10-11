@@ -11,6 +11,10 @@ public record ConversationDto(
         Long productId,
         String productName,
         String productImageUrl,
-        long unreadCount
+        long unreadCount,
+        /** The viewer blocked the other user. */
+        boolean blockedByMe,
+        /** Either user blocked the other, so no new messages can be sent. */
+        boolean blocked
 ) {
 }

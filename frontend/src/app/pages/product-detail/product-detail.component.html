@@ -86,6 +86,8 @@
         </button>
       </div>
 
+      <p class="report-error" *ngIf="contactError">{{ contactError | translate }}</p>
+
       <div class="offer-block" *ngIf="!isOwner() && product.active">
         <ng-container *ngIf="myOffer; else makeOffer">
           <p class="offer-status">

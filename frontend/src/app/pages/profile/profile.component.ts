@@ -3,6 +3,7 @@ import { AuthService } from '../../service/auth.service';
 import { UserProfile, UserService } from '../../service/user.service';
 import { TranslateService } from '@ngx-translate/core';
 import { getLocaleForLanguage } from '../../shared/market';
+import { BlockedUser, BlockService } from '../../service/block.service';
 
 @Component({
   selector: 'app-profile',
@@ -21,6 +22,7 @@ export class ProfileComponent implements OnInit {
   notificationsEnabled = true;
   memberSince = '';
   twoFactorEnabled = false;
+  blockedUsers: BlockedUser[] = [];
 
   profile: UserProfile | null = null;
   isEditingAll = false;
@@ -59,10 +61,12 @@ export class ProfileComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private userService: UserService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private blockService: BlockService
   ) {}
 
   ngOnInit(): void {
+    this.loadBlockedUsers();
     this.userService.getMe().subscribe({
       next: (profile) => {
         this.profile = profile;
@@ -289,5 +293,24 @@ export class ProfileComponent implements OnInit {
       defaultShipping: true,
       defaultBilling: false
     };
+  }
+
+  unblock(user: BlockedUser): void {
+    this.blockService.unblock(user.userId).subscribe({
+      next: () => {
+        this.blockedUsers = this.blockedUsers.filter(item => item.userId !== user.userId);
+      }
+    });
+  }
+
+  private loadBlockedUsers(): void {
+    this.blockService.list().subscribe({
+      next: users => {
+        this.blockedUsers = users;
+      },
+      error: () => {
+        this.blockedUsers = [];
+      }
+    });
   }
 }

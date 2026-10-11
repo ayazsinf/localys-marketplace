@@ -194,3 +194,19 @@
   background: #ffffff;
   cursor: pointer;
 }
+
+.block-btn {
+  align-self: flex-start;
+  background: none;
+  border: 1px solid #e0b4b4;
+  color: #b03a2e;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
