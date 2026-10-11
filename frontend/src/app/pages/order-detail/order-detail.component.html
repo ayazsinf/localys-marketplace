@@ -33,7 +33,10 @@
           <span class="item-total">{{ item.lineTotal | currencyDisplay: order.currency }}</span>
           <span class="item-shipping" *ngIf="item.shippedAt">
             {{ (item.deliveredAt ? 'ORDERS.ITEM_DELIVERED' : 'ORDERS.ITEM_SHIPPED') | translate }}
-            · {{ 'ORDERS.TRACKING' | translate }}: {{ item.trackingNumber }}
+            · {{ 'ORDERS.TRACKING' | translate }}:
+            <a *ngIf="item.trackingUrl; else plainTracking" [href]="item.trackingUrl" target="_blank" rel="noopener"
+               (click)="$event.stopPropagation()">{{ item.trackingNumber }} ↗</a>
+            <ng-template #plainTracking>{{ item.trackingNumber }}</ng-template>
           </span>
           <div class="protection" *ngIf="item.escrowStatus">
             <span class="protection-status" [attr.data-status]="item.escrowStatus">

@@ -221,9 +221,14 @@ class OrderFlowIntegrationTest extends IntegrationTest {
         assertThatThrownBy(() -> orderService.shipItems(seller.getId(), orderId, "  "))
                 .hasMessage("Tracking number is required");
 
+        assertThatThrownBy(() -> orderService.shipItems(seller.getId(), orderId, "<b>1234</b>"))
+                .hasMessage("Tracking number is invalid");
+
         OrderDto shipped = orderService.shipItems(seller.getId(), orderId, " TRACK-1 ");
         assertThat(shipped.status()).isEqualTo("SHIPPED");
         assertThat(shipped.items().get(0).trackingNumber()).isEqualTo("TRACK-1");
+        assertThat(shipped.items().get(0).trackingUrl())
+                .isEqualTo("https://www.mondialrelay.fr/suivi-de-colis/?numeroExpedition=TRACK-1");
         assertThat(notificationCount(buyer, NotificationType.ORDER_SHIPPED)).isEqualTo(1);
         assertThatThrownBy(() -> orderService.shipItems(seller.getId(), orderId, "TRACK-2"))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -248,7 +253,7 @@ class OrderFlowIntegrationTest extends IntegrationTest {
                 List.of(first.getId(), second.getId()), buyerAddress.getId(), "colissimo", "card")).id();
         orderService.markPaid(orderId);
 
-        OrderDto firstView = orderService.shipItems(seller.getId(), orderId, "T-A");
+        OrderDto firstView = orderService.shipItems(seller.getId(), orderId, "TRACK-A");
         // Each seller only sees their own items and, on a split order, no shipping fee.
         assertThat(firstView.items()).hasSize(1);
         assertThat(firstView.shippingPrice()).isEqualByComparingTo(BigDecimal.ZERO);
@@ -257,7 +262,7 @@ class OrderFlowIntegrationTest extends IntegrationTest {
         orderService.confirmDelivery(buyer.getId(), orderId);
         assertThat(statusOf(orderId)).isEqualTo(OrderStatus.PAID);
 
-        orderService.shipItems(secondSeller.getId(), orderId, "T-B");
+        orderService.shipItems(secondSeller.getId(), orderId, "TRACK-B");
         assertThat(statusOf(orderId)).isEqualTo(OrderStatus.SHIPPED);
         orderService.confirmDelivery(buyer.getId(), orderId);
         assertThat(statusOf(orderId)).isEqualTo(OrderStatus.DELIVERED);

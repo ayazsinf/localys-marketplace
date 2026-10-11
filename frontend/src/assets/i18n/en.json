@@ -937,5 +937,16 @@
     "PAID": "Thanks! Your listing will be featured as soon as the payment is confirmed.",
     "CANCELED": "The payment was canceled; the listing is not featured.",
     "ERROR": "Featuring is not available right now. Please try again later."
+  },
+  "LABEL": {
+    "PRINT_LINK": "Print the address label",
+    "PRINT": "Print",
+    "TO": "Ship to",
+    "FROM": "From",
+    "CONTENTS": "Contents",
+    "HINT": "Stick this label on the parcel and pay the postage at the carrier's drop-off point. Then enter the parcel number below the order.",
+    "NOT_FOUND": "This sale could not be found.",
+    "NO_SENDER": "Add an address to your profile so it appears as the sender.",
+    "TRACKING_INVALID": "Enter the parcel number given by the carrier (letters and digits)."
   }
 }

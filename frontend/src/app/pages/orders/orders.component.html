@@ -57,7 +57,10 @@
           <span class="item-total">{{ item.lineTotal | currencyDisplay: order.currency }}</span>
           <span class="item-shipping" *ngIf="item.shippedAt">
             {{ (item.deliveredAt ? 'ORDERS.ITEM_DELIVERED' : 'ORDERS.ITEM_SHIPPED') | translate }}
-            · {{ 'ORDERS.TRACKING' | translate }}: {{ item.trackingNumber }}
+            · {{ 'ORDERS.TRACKING' | translate }}:
+            <a *ngIf="item.trackingUrl; else plainTracking" [href]="item.trackingUrl" target="_blank" rel="noopener"
+               (click)="$event.stopPropagation()">{{ item.trackingNumber }} ↗</a>
+            <ng-template #plainTracking>{{ item.trackingNumber }}</ng-template>
           </span>
           <span class="protection-status" *ngIf="item.escrowStatus" [attr.data-status]="item.escrowStatus">
             🛡️ {{ ((activeTab === 'sales' ? 'PROTECTION.SELLER_' : 'PROTECTION.BUYER_') + item.escrowStatus) | translate: { amount: (item.refundAmount ?? 0) | currencyDisplay: order.currency } }}
@@ -94,6 +97,9 @@
         </li>
       </ul>
 
+      <a class="label-link" *ngIf="canShip(order)" [routerLink]="['/orders', order.id, 'label']">
+        🖨 {{ 'LABEL.PRINT_LINK' | translate }}
+      </a>
       <form class="ship-form" *ngIf="canShip(order)" (submit)="$event.preventDefault(); ship(order)">
         <label [for]="'tracking-' + order.id">{{ 'ORDERS.TRACKING' | translate }}</label>
         <div class="ship-row">

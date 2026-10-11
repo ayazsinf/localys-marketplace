@@ -153,8 +153,8 @@ export class OrdersComponent implements OnInit, OnDestroy {
         this.shippingOrderId = null;
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.shipErrors[order.id] = 'ORDERS.ERROR_SHIP';
+      error: err => {
+        this.shipErrors[order.id] = err?.error?.code === 'TRACKING_INVALID' ? 'LABEL.TRACKING_INVALID' : 'ORDERS.ERROR_SHIP';
         this.shippingOrderId = null;
         this.cdr.detectChanges();
       }

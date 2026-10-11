@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -66,6 +67,8 @@ public class OrderService {
 
     private static final Set<OrderStatus> PAID_STATES =
             EnumSet.of(OrderStatus.PAID, OrderStatus.SHIPPED, OrderStatus.DELIVERED, OrderStatus.REFUNDED);
+    /** Carrier parcel numbers: letters, digits, spaces and dashes. */
+    private static final Pattern TRACKING_NUMBER = Pattern.compile("[A-Za-z0-9][A-Za-z0-9 -]{3,99}");
     private static final Set<OrderStatus> AWAITING_PAYMENT_STATES =
             EnumSet.of(OrderStatus.PAYMENT_PENDING, OrderStatus.PAYMENT_CONFIRMING);
 
@@ -340,6 +343,9 @@ public class OrderService {
         if (tracking.isEmpty() || tracking.length() > 100) {
             throw new IllegalArgumentException("Tracking number is required");
         }
+        if (!TRACKING_NUMBER.matcher(tracking).matches()) {
+            throw new IllegalArgumentException("Tracking number is invalid");
+        }
         Order order = orderRepository.findByIdForUpdate(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
         List<OrderItem> sellerItems = order.getItems().stream()
@@ -487,6 +493,7 @@ public class OrderService {
                         item.getUnitPriceSnapshot(),
                         item.getLineTotal(),
                         item.getTrackingNumber(),
+                        trackingUrl(order, item),
                         item.getShippedAt(),
                         item.getDeliveredAt(),
                         ratings.get(item.getId()),
@@ -529,6 +536,15 @@ public class OrderService {
                 addressDto,
                 itemDtos
         );
+    }
+
+    private String trackingUrl(Order order, OrderItem item) {
+        if (item.getTrackingNumber() == null) {
+            return null;
+        }
+        return ShippingMethod.from(order.getShippingMethod())
+                .map(method -> method.trackingUrl(item.getTrackingNumber()))
+                .orElse(null);
     }
 
     private String firstImageUrl(Product product) {

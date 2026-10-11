@@ -45,6 +45,8 @@ export interface OrderItem {
   unitPrice: number;
   lineTotal: number;
   trackingNumber: string | null;
+  /** The carrier's tracking page. */
+  trackingUrl: string | null;
   shippedAt: string | null;
   deliveredAt: string | null;
   /** The rating the viewer already gave the other party for this item. */

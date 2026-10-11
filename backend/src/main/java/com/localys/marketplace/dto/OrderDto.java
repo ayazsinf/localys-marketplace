@@ -35,6 +35,8 @@ public record OrderDto(
             BigDecimal unitPrice,
             BigDecimal lineTotal,
             String trackingNumber,
+            /** The carrier's tracking page, when the carrier is known. */
+            String trackingUrl,
             OffsetDateTime shippedAt,
             OffsetDateTime deliveredAt,
             Integer myRating,

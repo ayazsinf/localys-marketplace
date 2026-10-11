@@ -1,0 +1,39 @@
+<section class="label-page">
+  <div class="no-print toolbar">
+    <a routerLink="/orders" [queryParams]="{ tab: 'sales' }">← {{ 'ORDERS.BACK' | translate }}</a>
+    <button type="button" class="primary" *ngIf="order" (click)="print()">🖨 {{ 'LABEL.PRINT' | translate }}</button>
+  </div>
+  <p class="no-print hint" *ngIf="order">{{ 'LABEL.HINT' | translate }}</p>
+  <p class="no-print" *ngIf="isLoading">{{ 'ORDERS.LOADING' | translate }}</p>
+  <p class="no-print" *ngIf="notFound">{{ 'LABEL.NOT_FOUND' | translate }}</p>
+  <p class="no-print warning" *ngIf="order && !sender">{{ 'LABEL.NO_SENDER' | translate }}</p>
+
+  <article class="label" *ngIf="order">
+    <header>
+      <strong>{{ carrierKey | translate }}</strong>
+      <span>{{ 'ORDERS.ORDER_NUMBER' | translate: { id: order.id } }}</span>
+    </header>
+    <div class="to">
+      <span class="caption">{{ 'LABEL.TO' | translate }}</span>
+      <ng-container *ngIf="order.shippingAddress as address">
+        <strong>{{ address.fullName || order.buyerDisplayName }}</strong>
+        <div>{{ address.line1 }}</div>
+        <div *ngIf="address.line2">{{ address.line2 }}</div>
+        <div class="city">{{ address.postalCode }} {{ address.city }}</div>
+        <div>{{ address.country }}</div>
+        <div *ngIf="address.phone">☎ {{ address.phone }}</div>
+      </ng-container>
+    </div>
+    <div class="from" *ngIf="sender">
+      <span class="caption">{{ 'LABEL.FROM' | translate }}</span>
+      <div>{{ senderName }}</div>
+      <div>{{ sender.line1 }}</div>
+      <div *ngIf="sender.line2">{{ sender.line2 }}</div>
+      <div>{{ sender.postalCode }} {{ sender.city }}, {{ sender.country }}</div>
+    </div>
+    <footer>
+      <span class="caption">{{ 'LABEL.CONTENTS' | translate }}</span>
+      <div *ngFor="let item of itemsToShip">{{ item.quantity }} × {{ item.productName }}</div>
+    </footer>
+  </article>
+</section>

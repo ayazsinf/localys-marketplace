@@ -164,6 +164,10 @@ public class GlobalExceptionHandler {
             ApiError error = new ApiError("PRODUCT_NOT_FOUND", "Product not found.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
+        if (message.contains("tracking number is invalid")) {
+            ApiError error = new ApiError("TRACKING_INVALID", "Enter the parcel number given by the carrier (letters and digits).");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
         if (message.contains("tracking number is required")) {
             ApiError error = new ApiError("TRACKING_REQUIRED", "A tracking number is required.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);

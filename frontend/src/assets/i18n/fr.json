@@ -937,5 +937,16 @@
     "PAID": "Merci ! Votre annonce sera a la une des que le paiement sera confirme.",
     "CANCELED": "Paiement annule ; l'annonce n'est pas mise a la une.",
     "ERROR": "La mise a la une est indisponible. Reessayez plus tard."
+  },
+  "LABEL": {
+    "PRINT_LINK": "Imprimer l'etiquette d'adresse",
+    "PRINT": "Imprimer",
+    "TO": "Destinataire",
+    "FROM": "Expediteur",
+    "CONTENTS": "Contenu",
+    "HINT": "Collez cette etiquette sur le colis et payez l'affranchissement au point de depot du transporteur. Saisissez ensuite le numero de suivi sous la commande.",
+    "NOT_FOUND": "Vente introuvable.",
+    "NO_SENDER": "Ajoutez une adresse a votre profil pour qu'elle apparaisse comme expediteur.",
+    "TRACKING_INVALID": "Saisissez le numero de colis donne par le transporteur (lettres et chiffres)."
   }
 }

@@ -937,5 +937,16 @@
     "PAID": "Tesekkurler! Odeme onaylaninca ilaniniz one cikarilacak.",
     "CANCELED": "Odeme iptal edildi; ilan one cikarilmadi.",
     "ERROR": "One cikarma su an kullanilamiyor. Lutfen daha sonra tekrar deneyin."
+  },
+  "LABEL": {
+    "PRINT_LINK": "Adres etiketini yazdir",
+    "PRINT": "Yazdir",
+    "TO": "Alici",
+    "FROM": "Gonderen",
+    "CONTENTS": "Icerik",
+    "HINT": "Bu etiketi kolinin uzerine yapistirin ve kargo ucretini kargo noktasinda odeyin. Ardindan takip numarasini siparisin altina girin.",
+    "NOT_FOUND": "Bu satis bulunamadi.",
+    "NO_SENDER": "Gonderen olarak gorunmesi icin profilinize bir adres ekleyin.",
+    "TRACKING_INVALID": "Kargo firmasinin verdigi takip numarasini girin (harf ve rakam)."
   }
 }

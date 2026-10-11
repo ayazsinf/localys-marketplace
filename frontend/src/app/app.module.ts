@@ -28,6 +28,7 @@ import { AdminListingsComponent } from './pages/admin-listings/admin-listings.co
 import { AdminReportsComponent } from './pages/admin-reports/admin-reports.component';
 import { AdminDisputesComponent } from './pages/admin-disputes/admin-disputes.component';
 import { WalletComponent } from './pages/wallet/wallet.component';
+import { ShippingLabelComponent } from './pages/shipping-label/shipping-label.component';
 import { RatingFormComponent } from './components/rating-form/rating-form.component';
 import { PublicProfileComponent } from './pages/public-profile/public-profile.component';
 import { ListingWizardComponent } from './pages/listing-wizard/listing-wizard.component';
@@ -59,6 +60,7 @@ import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.compon
     AdminReportsComponent,
     AdminDisputesComponent,
     WalletComponent,
+    ShippingLabelComponent,
     SavedSearchesComponent,
     AuthDialogComponent,
     RatingFormComponent,

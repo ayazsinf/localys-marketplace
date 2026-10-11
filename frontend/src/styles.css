@@ -2,3 +2,11 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Printing a page such as a shipping label shows only the page itself. */
+@media print {
+  app-navbar,
+  .global-loader {
+    display: none !important;
+  }
+}
