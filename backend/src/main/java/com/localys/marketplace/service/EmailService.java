@@ -2,6 +2,8 @@ package com.localys.marketplace.service;
 
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.UserEntity;
+import com.localys.marketplace.model.enums.EmailCategory;
+import com.localys.marketplace.model.enums.NotificationType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +41,7 @@ public class EmailService {
     }
 
     public void sendProductCreatedEmail(UserEntity user, Product product) {
-        if (user == null || product == null) {
+        if (user == null || product == null || !user.wantsEmail(EmailCategory.LISTINGS)) {
             return;
         }
         String subject = localizationService.message("email.product.submitted.subject");
@@ -57,7 +59,7 @@ public class EmailService {
     }
 
     public void sendProductApprovedEmail(UserEntity user, Product product) {
-        if (user == null || product == null) {
+        if (user == null || product == null || !user.wantsEmail(EmailCategory.LISTINGS)) {
             return;
         }
         String subject = localizationService.message("email.product.approved.subject");
@@ -66,7 +68,7 @@ public class EmailService {
     }
 
     public void sendProductRejectedEmail(UserEntity user, Product product) {
-        if (user == null || product == null) {
+        if (user == null || product == null || !user.wantsEmail(EmailCategory.LISTINGS)) {
             return;
         }
         String reason = product.getModerationReason();
@@ -79,7 +81,7 @@ public class EmailService {
     }
 
     public void sendFavoriteAddedEmail(UserEntity recipient, UserEntity actor, Product product) {
-        if (recipient == null || actor == null || product == null) {
+        if (recipient == null || actor == null || product == null || !recipient.wantsEmail(EmailCategory.ACTIVITY)) {
             return;
         }
         String name = safeName(actor);
@@ -92,8 +94,8 @@ public class EmailService {
      * Mirrors an in-app notification by email, with a link back to the page it points to,
      * so users hear about sales, shipments, offers and reviews while away from the site.
      */
-    public void sendNotificationEmail(UserEntity user, String title, String message, String link) {
-        if (user == null) {
+    public void sendNotificationEmail(UserEntity user, NotificationType type, String title, String message, String link) {
+        if (user == null || !user.wantsEmail(EmailCategory.of(type))) {
             return;
         }
         String body = localizationService.message("email.notification.body", message, absoluteUrl(link));
@@ -103,7 +105,7 @@ public class EmailService {
     /** Sent for the first unread message of a conversation, not for every message. */
     public void sendNewMessageEmail(UserEntity recipient, UserEntity sender, String productName,
                                     String preview, Long conversationId) {
-        if (recipient == null) {
+        if (recipient == null || !recipient.wantsEmail(EmailCategory.MESSAGES)) {
             return;
         }
         String subject = productName == null

@@ -453,3 +453,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 040-user-email-opt-outs
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V40__user_email_opt_outs.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

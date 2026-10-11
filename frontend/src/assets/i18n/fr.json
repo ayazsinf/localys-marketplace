@@ -806,5 +806,21 @@
     "SAVED": "Enregistre",
     "SELLER_AWAY": "Le vendeur est absent pour le moment. Vous pouvez quand meme lui ecrire.",
     "USER_AWAY": "Ce membre est absent pour le moment."
+  },
+  "EMAIL_PREFS": {
+    "TITLE": "Notifications par e-mail",
+    "HINT": "Choisissez ce que nous vous envoyons par e-mail. Tout reste visible dans vos notifications.",
+    "MESSAGES": "Messages",
+    "MESSAGES_HINT": "Quand quelqu'un vous ecrit",
+    "OFFERS": "Offres",
+    "OFFERS_HINT": "Offres recues, contre-offres, acceptees ou refusees",
+    "ORDERS": "Commandes",
+    "ORDERS_HINT": "Paiements, ventes, expedition et livraison",
+    "LISTINGS": "Mes annonces",
+    "LISTINGS_HINT": "Validation ou refus de vos annonces",
+    "ACTIVITY": "Favoris et avis",
+    "ACTIVITY_HINT": "Quand des membres ajoutent vos annonces en favori ou vous laissent un avis",
+    "ALERTS": "Alertes",
+    "ALERTS_HINT": "Nouvelles annonces pour vos recherches et baisses de prix"
   }
 }

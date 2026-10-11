@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
-import { UserProfile, UserService } from '../../service/user.service';
+import { EMAIL_CATEGORIES, EmailCategory, EmailPreferences, UserProfile, UserService } from '../../service/user.service';
 import { TranslateService } from '@ngx-translate/core';
 import { getLocaleForLanguage } from '../../shared/market';
 import { BlockedUser, BlockService } from '../../service/block.service';
@@ -23,6 +23,9 @@ export class ProfileComponent implements OnInit {
   memberSince = '';
   twoFactorEnabled = false;
   blockedUsers: BlockedUser[] = [];
+  readonly emailCategories = EMAIL_CATEGORIES;
+  emailPreferences: EmailPreferences | null = null;
+  savingEmailCategory: EmailCategory | null = null;
   vacationMode = false;
   vacationMessage = '';
   isSavingVacation = false;
@@ -71,6 +74,14 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadBlockedUsers();
+    this.userService.getEmailPreferences().subscribe({
+      next: preferences => {
+        this.emailPreferences = preferences;
+      },
+      error: () => {
+        this.emailPreferences = null;
+      }
+    });
     this.userService.getMe().subscribe({
       next: (profile) => {
         this.profile = profile;
@@ -299,6 +310,25 @@ export class ProfileComponent implements OnInit {
       defaultShipping: true,
       defaultBilling: false
     };
+  }
+
+  toggleEmail(category: EmailCategory, wanted: boolean): void {
+    if (!this.emailPreferences) {
+      return;
+    }
+    const previous = this.emailPreferences[category];
+    this.emailPreferences = { ...this.emailPreferences, [category]: wanted };
+    this.savingEmailCategory = category;
+    this.userService.updateEmailPreferences({ [category]: wanted }).subscribe({
+      next: preferences => {
+        this.emailPreferences = preferences;
+        this.savingEmailCategory = null;
+      },
+      error: () => {
+        this.emailPreferences = this.emailPreferences ? { ...this.emailPreferences, [category]: previous } : null;
+        this.savingEmailCategory = null;
+      }
+    });
   }
 
   saveVacation(): void {

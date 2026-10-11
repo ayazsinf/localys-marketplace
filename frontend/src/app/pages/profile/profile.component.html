@@ -212,13 +212,6 @@
           <span class="label">{{ 'PROFILE.LABEL_CURRENCY' | translate }}</span>
           <input type="text" [(ngModel)]="preferencesForm.currency">
         </div>
-        <div class="inline-row">
-          <span class="label">{{ 'PROFILE.LABEL_NOTIFICATIONS' | translate }}</span>
-          <label class="checkbox">
-            <input type="checkbox" [(ngModel)]="preferencesForm.notificationsEnabled">
-            {{ preferencesForm.notificationsEnabled ? ('PROFILE.VALUE_ENABLED' | translate) : ('PROFILE.VALUE_DISABLED' | translate) }}
-          </label>
-        </div>
         <div class="form-actions">
           <button type="button" class="btn-ghost" (click)="cancelEditingPreferences()">
             {{ 'PROFILE.ACTION_CANCEL' | translate }}
@@ -236,12 +229,6 @@
         <div class="info-item">
           <span class="label">{{ 'PROFILE.LABEL_CURRENCY' | translate }}</span>
           <span class="value">{{ currency }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">{{ 'PROFILE.LABEL_NOTIFICATIONS' | translate }}</span>
-          <span class="value">
-            {{ notificationsEnabled ? ('PROFILE.VALUE_ENABLED' | translate) : ('PROFILE.VALUE_DISABLED' | translate) }}
-          </span>
         </div>
       </div>
     </div>
@@ -267,6 +254,23 @@
         <button type="button" class="btn-secondary">
           {{ 'PROFILE.ACTION_ENABLE_2FA' | translate }}
         </button>
+      </div>
+    </div>
+
+    <div class="account-card" *ngIf="emailPreferences">
+      <h2>{{ 'EMAIL_PREFS.TITLE' | translate }}</h2>
+      <p class="muted">{{ 'EMAIL_PREFS.HINT' | translate }}</p>
+      <div class="email-prefs">
+        <label class="checkbox" *ngFor="let category of emailCategories">
+          <input type="checkbox"
+                 [checked]="emailPreferences[category]"
+                 [disabled]="savingEmailCategory === category"
+                 (change)="toggleEmail(category, $any($event.target).checked)">
+          <span>
+            <strong>{{ ('EMAIL_PREFS.' + category) | translate }}</strong>
+            <small class="muted">{{ ('EMAIL_PREFS.' + category + '_HINT') | translate }}</small>
+          </span>
+        </label>
       </div>
     </div>
 

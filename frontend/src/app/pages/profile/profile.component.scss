@@ -353,3 +353,20 @@
   padding: 8px;
   font: inherit;
 }
+
+.email-prefs {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+
+  label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  span {
+    display: grid;
+    gap: 2px;
+  }
+}

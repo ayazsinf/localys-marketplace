@@ -4,6 +4,7 @@ import com.localys.marketplace.model.Address;
 import com.localys.marketplace.model.CustomUserDetails;
 import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.model.enums.AddressType;
+import com.localys.marketplace.model.enums.EmailCategory;
 import com.localys.marketplace.repository.AddressRepository;
 import com.localys.marketplace.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.OffsetDateTime;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -106,6 +110,50 @@ public class UserController {
                 .toList();
         List<String> roles = principal.getAuthorities().stream().map(authority -> authority.getAuthority()).toList();
         return ResponseEntity.ok(UserProfileResponse.from(saved, roles, addresses));
+    }
+
+    /** Email categories, each true when the user wants those emails. */
+    @GetMapping("/me/email-preferences")
+    @Transactional(readOnly = true)
+    public ResponseEntity<Map<EmailCategory, Boolean>> emailPreferences(@AuthenticationPrincipal CustomUserDetails principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).build();
+        }
+        UserEntity user = userRepository.findById(principal.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "User not found"));
+        return ResponseEntity.ok(emailPreferences(user));
+    }
+
+    /** Categories missing from the body keep their current setting. */
+    @PutMapping("/me/email-preferences")
+    @Transactional
+    public ResponseEntity<Map<EmailCategory, Boolean>> updateEmailPreferences(
+            @AuthenticationPrincipal CustomUserDetails principal,
+            @RequestBody Map<String, Boolean> request
+    ) {
+        if (principal == null) {
+            return ResponseEntity.status(401).build();
+        }
+        UserEntity user = userRepository.findById(principal.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "User not found"));
+        Set<EmailCategory> optOuts = EmailCategory.parse(user.getEmailOptOuts());
+        request.forEach((key, wanted) -> EmailCategory.parse(key).forEach(category -> {
+            if (Boolean.FALSE.equals(wanted)) {
+                optOuts.add(category);
+            } else if (Boolean.TRUE.equals(wanted)) {
+                optOuts.remove(category);
+            }
+        }));
+        user.setEmailOptOuts(EmailCategory.format(optOuts));
+        return ResponseEntity.ok(emailPreferences(userRepository.save(user)));
+    }
+
+    private Map<EmailCategory, Boolean> emailPreferences(UserEntity user) {
+        Map<EmailCategory, Boolean> result = new EnumMap<>(EmailCategory.class);
+        for (EmailCategory category : EmailCategory.values()) {
+            result.put(category, user.wantsEmail(category));
+        }
+        return result;
     }
 
     @PostMapping("/me/addresses")

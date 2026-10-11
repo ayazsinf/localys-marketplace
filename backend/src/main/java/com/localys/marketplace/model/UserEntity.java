@@ -45,6 +45,14 @@ public class UserEntity extends AuditableEntity {
     @Column(name = "vacation_mode", nullable = false)
     private boolean vacationMode;
 
+    /** Comma-separated {@link com.localys.marketplace.model.enums.EmailCategory} names the user does not want by email. */
+    @Column(name = "email_opt_outs", length = 200)
+    private String emailOptOuts;
+
+    public boolean wantsEmail(com.localys.marketplace.model.enums.EmailCategory category) {
+        return !com.localys.marketplace.model.enums.EmailCategory.parse(emailOptOuts).contains(category);
+    }
+
     /** Shown on their listings and profile while away, e.g. "Back on 12 August". */
     @Column(name = "vacation_message", length = 300)
     private String vacationMessage;

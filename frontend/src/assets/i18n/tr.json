@@ -806,5 +806,21 @@
     "SAVED": "Kaydedildi",
     "SELLER_AWAY": "Satici su an uzakta. Yine de mesaj gonderebilirsiniz.",
     "USER_AWAY": "Bu uye su an uzakta."
+  },
+  "EMAIL_PREFS": {
+    "TITLE": "E-posta bildirimleri",
+    "HINT": "Hangi konularda e-posta almak istediginizi secin. Bildirimlerinizde her seyi gormeye devam edersiniz.",
+    "MESSAGES": "Mesajlar",
+    "MESSAGES_HINT": "Biri size yazdiginda",
+    "OFFERS": "Teklifler",
+    "OFFERS_HINT": "Gelen, karsi teklif verilen, kabul veya reddedilen teklifler",
+    "ORDERS": "Siparisler",
+    "ORDERS_HINT": "Odemeler, satislar, kargo ve teslimat",
+    "LISTINGS": "Ilanlarim",
+    "LISTINGS_HINT": "Ilanlarinizin onaylanmasi veya reddedilmesi",
+    "ACTIVITY": "Favoriler ve degerlendirmeler",
+    "ACTIVITY_HINT": "Uyeler ilanlarinizi favoriye ekleyince veya sizi degerlendirince",
+    "ALERTS": "Uyarilar",
+    "ALERTS_HINT": "Kayitli aramalar icin yeni ilanlar ve fiyat dususleri"
   }
 }

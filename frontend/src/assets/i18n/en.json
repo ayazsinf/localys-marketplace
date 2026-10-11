@@ -806,5 +806,21 @@
     "SAVED": "Saved",
     "SELLER_AWAY": "The seller is away at the moment. You can still send them a message.",
     "USER_AWAY": "This member is away at the moment."
+  },
+  "EMAIL_PREFS": {
+    "TITLE": "Email notifications",
+    "HINT": "Choose what we email you about. You always see everything in your notifications.",
+    "MESSAGES": "Messages",
+    "MESSAGES_HINT": "When someone writes to you",
+    "OFFERS": "Offers",
+    "OFFERS_HINT": "Offers received, countered, accepted or declined",
+    "ORDERS": "Orders",
+    "ORDERS_HINT": "Payments, sales, shipping and delivery",
+    "LISTINGS": "My listings",
+    "LISTINGS_HINT": "Approval or rejection of your listings",
+    "ACTIVITY": "Favorites and reviews",
+    "ACTIVITY_HINT": "When members save your listings or review you",
+    "ALERTS": "Alerts",
+    "ALERTS_HINT": "New listings for saved searches and price drops"
   }
 }

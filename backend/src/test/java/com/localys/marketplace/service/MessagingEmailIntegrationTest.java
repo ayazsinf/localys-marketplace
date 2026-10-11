@@ -3,6 +3,7 @@ package com.localys.marketplace.service;
 import com.localys.marketplace.dto.ConversationDto;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.UserEntity;
+import com.localys.marketplace.model.enums.EmailCategory;
 import com.localys.marketplace.repository.UserRepository;
 import com.localys.marketplace.support.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,6 +86,26 @@ class MessagingEmailIntegrationTest extends IntegrationTest {
 
         verify(mailDispatcher).send(anyString(), eq(buyer.getEmail()), eq("Payment confirmed"),
                 contains("https://localys.test/orders/42"));
+    }
+
+    @Test
+    void optedOutCategoriesAreNotEmailedButStillNotified() {
+        buyer.setEmailOptOuts(EmailCategory.format(java.util.EnumSet.of(EmailCategory.ORDERS)));
+        userRepository.save(buyer);
+        seller.setEmailOptOuts("MESSAGES");
+        userRepository.save(seller);
+
+        notificationService.createOrderPaidNotification(buyer, 43L);
+        ConversationDto conversation = messageService.getOrCreateConversation(buyer.getId(), seller.getId(), product.getId());
+        messageService.sendMessage(buyer.getId(), conversation.id(), null, "Hi");
+
+        verify(mailDispatcher, never()).send(anyString(), eq(buyer.getEmail()), anyString(), anyString());
+        verify(mailDispatcher, never()).send(anyString(), eq(seller.getEmail()), anyString(), anyString());
+        assertThat(notificationService.listForUser(buyer.getId())).hasSize(1);
+
+        // Other categories still arrive.
+        notificationService.createOrderPaidNotification(seller, 44L);
+        verify(mailDispatcher).send(anyString(), eq(seller.getEmail()), eq("Payment confirmed"), anyString());
     }
 
     @Test

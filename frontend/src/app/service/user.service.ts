@@ -34,6 +34,11 @@ export interface UserProfile {
   vacationMessage: string | null;
 }
 
+export const EMAIL_CATEGORIES = ['MESSAGES', 'OFFERS', 'ORDERS', 'LISTINGS', 'ACTIVITY', 'ALERTS'] as const;
+export type EmailCategory = typeof EMAIL_CATEGORIES[number];
+/** True when the user wants emails of that kind. */
+export type EmailPreferences = Record<EmailCategory, boolean>;
+
 export interface UserProfileUpdate {
   displayName: string;
   email: string;
@@ -64,6 +69,14 @@ export class UserService {
 
   updateMe(payload: UserProfileUpdate): Observable<UserProfile> {
     return this.http.put<UserProfile>(`${environment.apiUrl}/users/me`, payload);
+  }
+
+  getEmailPreferences(): Observable<EmailPreferences> {
+    return this.http.get<EmailPreferences>(`${environment.apiUrl}/users/me/email-preferences`);
+  }
+
+  updateEmailPreferences(changes: Partial<EmailPreferences>): Observable<EmailPreferences> {
+    return this.http.put<EmailPreferences>(`${environment.apiUrl}/users/me/email-preferences`, changes);
   }
 
   updateVacation(enabled: boolean, message: string | null): Observable<UserProfile> {
