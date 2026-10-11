@@ -40,6 +40,7 @@ public class MessageService {
     private final SimpMessagingTemplate messagingTemplate;
     private final EmailService emailService;
     private final UserBlockService userBlockService;
+    private final MessageSafetyService messageSafetyService;
 
     public MessageService(
             ConversationRepository conversationRepository,
@@ -49,7 +50,8 @@ public class MessageService {
             ProductRepository productRepository,
             SimpMessagingTemplate messagingTemplate,
             EmailService emailService,
-            UserBlockService userBlockService
+            UserBlockService userBlockService,
+            MessageSafetyService messageSafetyService
     ) {
         this.conversationRepository = conversationRepository;
         this.participantRepository = participantRepository;
@@ -59,6 +61,7 @@ public class MessageService {
         this.messagingTemplate = messagingTemplate;
         this.emailService = emailService;
         this.userBlockService = userBlockService;
+        this.messageSafetyService = messageSafetyService;
     }
 
     @Transactional(readOnly = true)
@@ -155,6 +158,8 @@ public class MessageService {
         message.setConversation(conversation);
         message.setSender(sender);
         message.setBody(body.trim());
+        MessageSafetyService.Warning warning = messageSafetyService.check(message.getBody());
+        message.setSafetyWarning(warning == null ? null : warning.name());
 
         Message saved = messageRepository.save(message);
         conversation.setLastMessageAt(saved.getCreatedAt());
@@ -259,7 +264,8 @@ public class MessageService {
                 message.getConversation().getId(),
                 message.getSender().getId(),
                 message.getBody(),
-                message.getCreatedAt()
+                message.getCreatedAt(),
+                message.getSafetyWarning()
         );
     }
 }

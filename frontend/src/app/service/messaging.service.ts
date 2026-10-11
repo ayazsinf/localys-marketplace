@@ -27,6 +27,8 @@ export interface MessageDto {
   senderId: number;
   body: string;
   createdAt: string;
+  /** PAYMENT_OUTSIDE, EXTERNAL_LINK or CONTACT_DETAILS when the message looks like a scam. */
+  safetyWarning: string | null;
 }
 
 export interface SendMessageRequest {

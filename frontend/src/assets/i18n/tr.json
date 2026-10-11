@@ -786,5 +786,10 @@
     "CANNOT_CONTACT": "Bu kullaniciyla iletisime gecemezsiniz.",
     "SECTION_TITLE": "Engellenen kullanicilar",
     "NONE": "Kimseyi engellemediniz."
+  },
+  "SAFETY": {
+    "PAYMENT_OUTSIDE": "Dikkat: bu mesajda Localys disinda odeme yapmaktan bahsediliyor. Asla havale, para transferi veya kuponla odeme yapmayin; korunmak icin Localys uzerinden odeyin.",
+    "EXTERNAL_LINK": "Dikkat: bu mesajda baska bir siteye link var. Size gonderilen bir sayfaya asla banka bilgilerinizi girmeyin.",
+    "CONTACT_DETAILS": "Dikkat: bu mesajda iletisim bilgileri var. Korunmak icin konusmayi Localys uzerinde surdurun."
   }
 }

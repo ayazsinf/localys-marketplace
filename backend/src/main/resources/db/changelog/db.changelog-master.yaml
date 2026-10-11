@@ -420,3 +420,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 037-message-safety-warning
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V37__message_safety_warning.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

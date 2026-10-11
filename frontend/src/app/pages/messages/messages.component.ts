@@ -12,6 +12,7 @@ type MessageItem = {
   text: string;
   timestamp: string;
   fromMe: boolean;
+  safetyWarning: string | null;
 };
 
 type Conversation = {
@@ -260,7 +261,8 @@ export class MessagesComponent implements OnInit, OnDestroy {
       senderId: dto.senderId,
       text: dto.body,
       timestamp: this.formatTime(dto.createdAt),
-      fromMe
+      fromMe,
+      safetyWarning: dto.safetyWarning ?? null
     };
   }
 

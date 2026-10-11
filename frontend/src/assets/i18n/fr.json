@@ -786,5 +786,10 @@
     "CANNOT_CONTACT": "Vous ne pouvez pas contacter cet utilisateur.",
     "SECTION_TITLE": "Utilisateurs bloques",
     "NONE": "Vous n'avez bloque personne."
+  },
+  "SAFETY": {
+    "PAYMENT_OUTSIDE": "Attention : ce message parle de payer en dehors de Localys. Ne payez jamais par virement, mandat ou coupon ; payez via Localys pour etre protege.",
+    "EXTERNAL_LINK": "Attention : ce message contient un lien vers un autre site. Ne saisissez jamais vos coordonnees bancaires sur une page qu'on vous envoie.",
+    "CONTACT_DETAILS": "Attention : ce message contient des coordonnees. Restez sur Localys pour que la conversation reste protegee."
   }
 }

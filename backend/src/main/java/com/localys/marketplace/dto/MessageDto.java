@@ -7,6 +7,8 @@ public record MessageDto(
         Long conversationId,
         Long senderId,
         String body,
-        OffsetDateTime createdAt
+        OffsetDateTime createdAt,
+        /** Shown to the recipient as a safety tip; null for ordinary messages. */
+        String safetyWarning
 ) {
 }

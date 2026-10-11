@@ -69,6 +69,9 @@
               <p>{{ message.text }}</p>
               <span class="timestamp">{{ message.timestamp }}</span>
             </div>
+            <p class="safety-warning" *ngIf="message.safetyWarning && !message.fromMe" role="note">
+              ⚠️ {{ ('SAFETY.' + message.safetyWarning) | translate }}
+            </p>
           </div>
         </div>
 

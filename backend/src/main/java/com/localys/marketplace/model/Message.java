@@ -30,6 +30,10 @@ public class Message extends AuditableEntity {
     @Column(nullable = false, length = 4000)
     private String body;
 
+    /** A {@link com.localys.marketplace.service.MessageSafetyService.Warning} name, or null. */
+    @Column(name = "safety_warning", length = 30)
+    private String safetyWarning;
+
     @Column(name = "read_at")
     private OffsetDateTime readAt;
 }

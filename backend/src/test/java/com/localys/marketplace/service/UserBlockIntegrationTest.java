@@ -73,6 +73,17 @@ class UserBlockIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    void suspiciousMessagesCarryAWarning() {
+        ConversationDto conversation = messageService.getOrCreateConversation(buyer.getId(), seller.getId(), product.getId());
+        assertThat(messageService.sendMessage(buyer.getId(), conversation.id(), null, "Still available?").safetyWarning()).isNull();
+        assertThat(messageService.sendMessage(seller.getId(), conversation.id(), null, "Pay me by Western Union").safetyWarning())
+                .isEqualTo("PAYMENT_OUTSIDE");
+        assertThat(messageService.getMessages(buyer.getId(), conversation.id(), null))
+                .extracting(dto -> dto.safetyWarning())
+                .containsExactly(null, "PAYMENT_OUTSIDE");
+    }
+
+    @Test
     void cannotBlockYourself() {
         assertThatThrownBy(() -> userBlockService.block(buyer.getId(), buyer.getId()))
                 .hasMessage("Cannot block yourself");
