@@ -162,6 +162,7 @@ public class ProductSearchService {
             predicates.add(cb.isNull(root.get("removedAt")));
             predicates.add(cb.greaterThan(root.get("expiresAt"), now));
             predicates.add(cb.equal(root.get("moderationStatus"), ModerationStatus.APPROVED));
+            predicates.add(cb.isFalse(root.get("vendor").get("user").get("vacationMode")));
 
             // Every word must appear in the title or the description.
             for (String term : searchTerms(criteria.query())) {

@@ -47,6 +47,11 @@
       </button>
     </header>
 
+    <div class="away-banner" *ngIf="profile.away" role="status">
+      <strong>{{ 'VACATION.USER_AWAY' | translate }}</strong>
+      <span *ngIf="profile.awayMessage">{{ profile.awayMessage }}</span>
+    </div>
+
     <div class="tabs" role="tablist">
       <button type="button" role="tab" [class.active]="activeTab === 'listings'"
               [attr.aria-selected]="activeTab === 'listings'" (click)="selectTab('listings')">

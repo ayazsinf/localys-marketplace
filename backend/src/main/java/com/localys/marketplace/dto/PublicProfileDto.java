@@ -20,6 +20,8 @@ public record PublicProfileDto(
         UserReviewsDto.RatingDto ratingAsSeller,
         UserReviewsDto.RatingDto ratingAsBuyer,
         Integer responseRate,
-        String responseTime
+        String responseTime,
+        boolean away,
+        String awayMessage
 ) {
 }

@@ -15,6 +15,8 @@ export interface PublicProfile {
   /** 0-100, null when there are too few conversations to tell. */
   responseRate: number | null;
   responseTime: 'WITHIN_HOUR' | 'WITHIN_DAY' | 'WITHIN_DAYS' | null;
+  away: boolean;
+  awayMessage: string | null;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -797,5 +797,14 @@
     "PAYMENT_OUTSIDE": "Be careful: this message mentions paying outside Localys. Never pay by bank transfer, cash transfer or vouchers; pay through Localys so you are protected.",
     "EXTERNAL_LINK": "Be careful: this message contains a link to another site. Never enter your bank details on a page someone sends you.",
     "CONTACT_DETAILS": "Be careful: this message contains contact details. Keep the conversation on Localys so it stays protected."
+  },
+  "VACATION": {
+    "TITLE": "Vacation mode",
+    "HINT": "While you are away, your listings are hidden and nobody can buy them or make offers. Messages still reach you.",
+    "TOGGLE": "I am away",
+    "MESSAGE_PLACEHOLDER": "Optional message for buyers, e.g. Back on 12 August",
+    "SAVED": "Saved",
+    "SELLER_AWAY": "The seller is away at the moment. You can still send them a message.",
+    "USER_AWAY": "This member is away at the moment."
   }
 }

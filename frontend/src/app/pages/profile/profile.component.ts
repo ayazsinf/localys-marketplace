@@ -23,6 +23,10 @@ export class ProfileComponent implements OnInit {
   memberSince = '';
   twoFactorEnabled = false;
   blockedUsers: BlockedUser[] = [];
+  vacationMode = false;
+  vacationMessage = '';
+  isSavingVacation = false;
+  vacationSaved = false;
 
   profile: UserProfile | null = null;
   isEditingAll = false;
@@ -89,6 +93,8 @@ export class ProfileComponent implements OnInit {
         this.preferencesForm.currency = this.currency;
         this.preferencesForm.notificationsEnabled = this.notificationsEnabled;
         this.needsProfileCompletion = this.isProfileIncomplete(profile);
+        this.vacationMode = profile.vacationMode;
+        this.vacationMessage = profile.vacationMessage ?? '';
       },
       error: () => {
         // Profile is optional; keep placeholders for unauthenticated state.
@@ -293,6 +299,25 @@ export class ProfileComponent implements OnInit {
       defaultShipping: true,
       defaultBilling: false
     };
+  }
+
+  saveVacation(): void {
+    if (this.isSavingVacation) {
+      return;
+    }
+    this.isSavingVacation = true;
+    this.vacationSaved = false;
+    this.userService.updateVacation(this.vacationMode, this.vacationMessage.trim() || null).subscribe({
+      next: profile => {
+        this.vacationMode = profile.vacationMode;
+        this.vacationMessage = profile.vacationMessage ?? '';
+        this.isSavingVacation = false;
+        this.vacationSaved = true;
+      },
+      error: () => {
+        this.isSavingVacation = false;
+      }
+    });
   }
 
   unblock(user: BlockedUser): void {

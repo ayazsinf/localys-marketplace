@@ -29,6 +29,9 @@ export interface UserProfile {
   createdAt: string | null;
   updatedAt: string | null;
   addresses: UserAddress[];
+  /** Away: listings hidden and not buyable. */
+  vacationMode: boolean;
+  vacationMessage: string | null;
 }
 
 export interface UserProfileUpdate {
@@ -61,6 +64,10 @@ export class UserService {
 
   updateMe(payload: UserProfileUpdate): Observable<UserProfile> {
     return this.http.put<UserProfile>(`${environment.apiUrl}/users/me`, payload);
+  }
+
+  updateVacation(enabled: boolean, message: string | null): Observable<UserProfile> {
+    return this.http.put<UserProfile>(`${environment.apiUrl}/users/me/vacation`, { enabled, message });
   }
 
   addAddress(payload: AddressRequest): Observable<UserAddress> {

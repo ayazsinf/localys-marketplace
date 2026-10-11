@@ -82,6 +82,32 @@ public class UserController {
         return ResponseEntity.ok(UserProfileResponse.from(saved));
     }
 
+    /** Turns vacation mode on (with an optional message for buyers) or off. */
+    @PutMapping("/me/vacation")
+    @Transactional
+    public ResponseEntity<UserProfileResponse> updateVacation(
+            @AuthenticationPrincipal CustomUserDetails principal,
+            @RequestBody VacationRequest request
+    ) {
+        if (principal == null) {
+            return ResponseEntity.status(401).build();
+        }
+        UserEntity user = userRepository.findById(principal.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "User not found"));
+        String message = request.message() == null || request.message().isBlank() ? null : request.message().trim();
+        if (message != null && message.length() > 300) {
+            throw new IllegalArgumentException("Vacation message is too long");
+        }
+        user.setVacationMode(request.enabled());
+        user.setVacationMessage(request.enabled() ? message : null);
+        UserEntity saved = userRepository.save(user);
+        List<AddressResponse> addresses = addressRepository.findByUser_Id(saved.getId()).stream()
+                .map(AddressResponse::from)
+                .toList();
+        List<String> roles = principal.getAuthorities().stream().map(authority -> authority.getAuthority()).toList();
+        return ResponseEntity.ok(UserProfileResponse.from(saved, roles, addresses));
+    }
+
     @PostMapping("/me/addresses")
     @Transactional
     public ResponseEntity<AddressResponse> addAddress(
@@ -202,6 +228,8 @@ public class UserController {
             String phone
     ) {}
 
+    public record VacationRequest(boolean enabled, String message) {}
+
     public record AddressRequest(
             String type,
             String label,
@@ -258,7 +286,9 @@ public class UserController {
             List<String> roles,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt,
-            List<AddressResponse> addresses
+            List<AddressResponse> addresses,
+            boolean vacationMode,
+            String vacationMessage
     ) {
         public static UserProfileResponse from(UserEntity user) {
             String role = user.getRole() != null ? user.getRole().name() : null;
@@ -283,7 +313,9 @@ public class UserController {
                     roles,
                     user.getCreatedAt(),
                     user.getUpdatedAt(),
-                    addresses
+                    addresses,
+                    user.isVacationMode(),
+                    user.getVacationMessage()
             );
         }
     }

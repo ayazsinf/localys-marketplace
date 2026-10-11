@@ -797,5 +797,14 @@
     "PAYMENT_OUTSIDE": "Attention : ce message parle de payer en dehors de Localys. Ne payez jamais par virement, mandat ou coupon ; payez via Localys pour etre protege.",
     "EXTERNAL_LINK": "Attention : ce message contient un lien vers un autre site. Ne saisissez jamais vos coordonnees bancaires sur une page qu'on vous envoie.",
     "CONTACT_DETAILS": "Attention : ce message contient des coordonnees. Restez sur Localys pour que la conversation reste protegee."
+  },
+  "VACATION": {
+    "TITLE": "Mode vacances",
+    "HINT": "Pendant votre absence, vos annonces sont masquees et personne ne peut les acheter ni faire d'offre. Vous recevez toujours les messages.",
+    "TOGGLE": "Je suis absent",
+    "MESSAGE_PLACEHOLDER": "Message facultatif pour les acheteurs, ex. De retour le 12 aout",
+    "SAVED": "Enregistre",
+    "SELLER_AWAY": "Le vendeur est absent pour le moment. Vous pouvez quand meme lui ecrire.",
+    "USER_AWAY": "Ce membre est absent pour le moment."
   }
 }

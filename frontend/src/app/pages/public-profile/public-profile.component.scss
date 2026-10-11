@@ -210,3 +210,14 @@
     cursor: default;
   }
 }
+
+.away-banner {
+  display: grid;
+  gap: 4px;
+  margin: 16px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #eef4fb;
+  color: #1f3b5a;
+  font-size: 14px;
+}

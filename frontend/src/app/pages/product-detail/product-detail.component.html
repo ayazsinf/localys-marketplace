@@ -66,6 +66,11 @@
       </div>
       <p class="hand-only-note" *ngIf="!product.shippingAvailable">{{ 'DELIVERY.HAND_ONLY_NOTE' | translate }}</p>
 
+      <div class="away-banner" *ngIf="product.sellerAway" role="status">
+        <strong>{{ 'VACATION.SELLER_AWAY' | translate }}</strong>
+        <span *ngIf="product.sellerAwayMessage">{{ product.sellerAwayMessage }}</span>
+      </div>
+
       <div class="actions">
         <button class="primary-btn" type="button" (click)="messageSeller()">
           {{ 'PRODUCT.MESSAGE_SELLER' | translate }}
@@ -74,21 +79,21 @@
           class="ghost-btn"
           type="button"
           (click)="addToCart()"
-          [disabled]="isOwner() || !product?.active || !product?.shippingAvailable">
+          [disabled]="isOwner() || !product?.active || !product?.shippingAvailable || product?.sellerAway">
           {{ 'PRODUCT.ADD_TO_CART' | translate }}
         </button>
         <button
           class="ghost-btn"
           type="button"
           (click)="buyNow()"
-          [disabled]="isOwner() || !product?.active || !product?.shippingAvailable">
+          [disabled]="isOwner() || !product?.active || !product?.shippingAvailable || product?.sellerAway">
           {{ 'PRODUCT.BUY_NOW' | translate }}
         </button>
       </div>
 
       <p class="report-error" *ngIf="contactError">{{ contactError | translate }}</p>
 
-      <div class="offer-block" *ngIf="!isOwner() && product.active">
+      <div class="offer-block" *ngIf="!isOwner() && product.active && !product.sellerAway">
         <ng-container *ngIf="myOffer; else makeOffer">
           <p class="offer-status">
             {{ ('OFFERS.MY_STATUS_' + myOffer.status) | translate: { amount: (myOffer.amount | currencyDisplay: myOffer.currency) } }}

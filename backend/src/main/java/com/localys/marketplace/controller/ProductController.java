@@ -183,7 +183,9 @@ public class ProductController {
                 rating.count(),
                 product.getCondition() != null ? product.getCondition().name() : null,
                 product.isHandDelivery(),
-                product.isShippingAvailable()
+                product.isShippingAvailable(),
+                product.isSellerAway(),
+                product.isSellerAway() ? product.getVendor().getUser().getVacationMessage() : null
         );
     }
 

@@ -73,6 +73,9 @@ public class OfferService {
             throw new IllegalArgumentException("Cannot make an offer on own product");
         }
         userBlockService.ensureNotBlocked(buyerId, seller.getId());
+        if (seller.isVacationMode()) {
+            throw new IllegalArgumentException("Seller is away");
+        }
         BigDecimal amount = normalize(rawAmount);
         if (amount.compareTo(product.getPrice()) >= 0) {
             throw new IllegalArgumentException("Offer must be below the listing price");

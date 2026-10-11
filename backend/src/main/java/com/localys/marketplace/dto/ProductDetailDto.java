@@ -30,6 +30,8 @@ public record ProductDetailDto(
         long vendorReviewCount,
         String condition,
         boolean handDelivery,
-        boolean shippingAvailable
+        boolean shippingAvailable,
+        boolean sellerAway,
+        String sellerAwayMessage
 ) {
 }

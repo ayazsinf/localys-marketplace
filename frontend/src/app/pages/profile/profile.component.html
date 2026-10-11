@@ -271,6 +271,23 @@
     </div>
 
     <div class="account-card">
+      <h2>{{ 'VACATION.TITLE' | translate }}</h2>
+      <p class="muted">{{ 'VACATION.HINT' | translate }}</p>
+      <label class="checkbox">
+        <input type="checkbox" [(ngModel)]="vacationMode" (ngModelChange)="vacationSaved = false">
+        {{ 'VACATION.TOGGLE' | translate }}
+      </label>
+      <textarea *ngIf="vacationMode" rows="2" maxlength="300" class="vacation-message"
+                [(ngModel)]="vacationMessage" [placeholder]="'VACATION.MESSAGE_PLACEHOLDER' | translate"></textarea>
+      <div class="card-actions">
+        <span class="muted" *ngIf="vacationSaved">{{ 'VACATION.SAVED' | translate }}</span>
+        <button type="button" class="btn-secondary" [disabled]="isSavingVacation" (click)="saveVacation()">
+          {{ 'PROFILE.ACTION_SAVE' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="account-card">
       <h2>{{ 'BLOCK.SECTION_TITLE' | translate }}</h2>
       <p class="muted" *ngIf="blockedUsers.length === 0">{{ 'BLOCK.NONE' | translate }}</p>
       <ul class="blocked-list" *ngIf="blockedUsers.length">

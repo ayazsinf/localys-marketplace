@@ -41,6 +41,14 @@ public class UserEntity extends AuditableEntity {
     @Column(nullable = false)
     private boolean enabled = true;
 
+    /** Away: their listings are hidden from search and cannot be bought or offered on. */
+    @Column(name = "vacation_mode", nullable = false)
+    private boolean vacationMode;
+
+    /** Shown on their listings and profile while away, e.g. "Back on 12 August". */
+    @Column(name = "vacation_message", length = 300)
+    private String vacationMessage;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private USER_ROLE role;

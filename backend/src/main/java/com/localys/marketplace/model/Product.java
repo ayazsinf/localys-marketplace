@@ -120,4 +120,9 @@ public class Product extends AuditableEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC")
     private List<ProductImage> images = new ArrayList<>();
+
+    /** The seller turned on vacation mode. */
+    public boolean isSellerAway() {
+        return vendor != null && vendor.getUser() != null && vendor.getUser().isVacationMode();
+    }
 }

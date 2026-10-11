@@ -164,6 +164,9 @@ public class OrderService {
                     && userId.equals(product.getVendor().getUser().getId())) {
                 throw new IllegalArgumentException("Cannot buy own product");
             }
+            if (product.isSellerAway()) {
+                throw new IllegalArgumentException("Seller is away");
+            }
             if (!product.isShippingAvailable()) {
                 throw new IllegalArgumentException("Product is hand delivery only");
             }

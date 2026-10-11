@@ -112,6 +112,14 @@ public class GlobalExceptionHandler {
             ApiError error = new ApiError("INVALID_OFFER_AMOUNT", ex.getMessage() + ".");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
+        if (message.equals("seller is away")) {
+            ApiError error = new ApiError("SELLER_AWAY", "The seller is away at the moment.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
+        if (message.contains("vacation message is too long")) {
+            ApiError error = new ApiError("VALIDATION_ERROR", "The away message can be at most 300 characters.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
         if (message.contains("hand delivery only")) {
             ApiError error = new ApiError("HAND_DELIVERY_ONLY", "This item is only handed over in person; contact the seller.");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);

@@ -77,7 +77,9 @@ public class PublicProfileService {
                 reviews.asSeller(),
                 reviews.asBuyer(),
                 responseRate,
-                responseTime
+                responseTime,
+                user.isVacationMode(),
+                user.isVacationMode() ? user.getVacationMessage() : null
         );
     }
 

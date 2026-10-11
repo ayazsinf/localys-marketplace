@@ -31,6 +31,9 @@ export interface ProductDetail {
   condition: string | null;
   handDelivery: boolean;
   shippingAvailable: boolean;
+  /** The seller is on vacation: the listing cannot be bought or offered on. */
+  sellerAway: boolean;
+  sellerAwayMessage: string | null;
 }
 
 

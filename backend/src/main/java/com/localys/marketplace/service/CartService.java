@@ -68,6 +68,9 @@ public class CartService {
                 && userId.equals(product.getVendor().getUser().getId())) {
             throw new IllegalArgumentException("Cannot add own product");
         }
+        if (product.isSellerAway()) {
+            throw new IllegalArgumentException("Seller is away");
+        }
         if (!product.isShippingAvailable()) {
             throw new IllegalArgumentException("Product is hand delivery only");
         }
@@ -144,6 +147,9 @@ public class CartService {
     @Transactional
     public CartDto addOfferItem(Long buyerId, Offer offer) {
         Product product = offer.getProduct();
+        if (product.isSellerAway()) {
+            throw new IllegalArgumentException("Seller is away");
+        }
         if (!product.isShippingAvailable()) {
             throw new IllegalArgumentException("Product is hand delivery only");
         }
@@ -249,7 +255,7 @@ public class CartService {
         }
         // The seller may switch a listing to hand delivery only after it was added to a cart.
         if (!product.isActive() || product.getModerationStatus() != ModerationStatus.APPROVED
-                || !product.isShippingAvailable()) {
+                || !product.isShippingAvailable() || product.isSellerAway()) {
             return CartItemAvailability.UNAVAILABLE;
         }
         if (product.getExpiresAt() == null || !product.getExpiresAt().isAfter(now)) {

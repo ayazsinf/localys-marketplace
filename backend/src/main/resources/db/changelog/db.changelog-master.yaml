@@ -442,3 +442,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 039-user-vacation-mode
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V39__user_vacation_mode.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
