@@ -398,3 +398,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 035-saved-search-more-filters
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V35__saved_search_more_filters.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;

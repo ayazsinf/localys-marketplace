@@ -11,7 +11,7 @@ import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-i
 import { catchError, debounceTime, of, switchMap, tap } from 'rxjs';
 import { Product } from '../../modules/product.model';
 import { DeliveryFilter, PageResponse, ProductSearchParams, ProductService, ProductSort } from '../../service/product.service';
-import { ItemCondition } from '../../service/listing.service';
+import { ITEM_CONDITIONS, ItemCondition } from '../../service/listing.service';
 import { SearchService } from '../../service/search.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
@@ -67,6 +67,8 @@ export class HomeComponent implements OnInit {
 
   /** Pushed to the sidebar only when filters come from the URL (e.g. opening a saved search). */
   readonly appliedPriceRange = signal<{ min: number; max: number } | null>(null);
+  readonly appliedConditions = signal<ItemCondition[] | null>(null);
+  readonly appliedDelivery = signal<{ value: DeliveryFilter | null } | null>(null);
 
   readonly isSaveFormOpen = signal(false);
   readonly isSavingSearch = signal(false);
@@ -100,7 +102,7 @@ export class HomeComponent implements OnInit {
   readonly hasActiveFilters = computed(() => {
     const filters = this.filters();
     return !!filters.q || filters.categoryId != null || filters.minPrice != null || filters.maxPrice != null
-      || filters.lat != null;
+      || filters.lat != null || !!filters.condition?.length || !!filters.delivery;
   });
 
   ngOnInit(): void {
@@ -208,6 +210,12 @@ export class HomeComponent implements OnInit {
       categoryId: filters.categoryId ?? null,
       minPrice: filters.minPrice ?? null,
       maxPrice: filters.maxPrice ?? null,
+      conditions: filters.condition ?? [],
+      delivery: filters.delivery ?? null,
+      latitude: filters.lat ?? null,
+      longitude: filters.lng ?? null,
+      radiusKm: filters.radiusKm ?? null,
+      locationLabel: this.selectedArea()?.label || null,
       alertsEnabled: true
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -225,11 +233,11 @@ export class HomeComponent implements OnInit {
   }
 
   /**
-   * Applies q, categoryId, minPrice and maxPrice from the URL (saved searches and their alert
-   * notifications link here), then drops them so later filter changes do not leave a stale URL.
+   * Applies the filters in the URL (saved searches and their alert notifications link here),
+   * then drops them so later filter changes do not leave a stale URL.
    */
   private applyUrlFilters(params: ParamMap): void {
-    const keys = ['q', 'categoryId', 'minPrice', 'maxPrice'];
+    const keys = ['q', 'categoryId', 'minPrice', 'maxPrice', 'condition', 'delivery', 'lat'];
     if (!keys.some(key => params.has(key))) {
       return;
     }
@@ -244,6 +252,23 @@ export class HomeComponent implements OnInit {
     this.selectedMinPrice.set(min);
     this.selectedMaxPrice.set(max);
     this.appliedPriceRange.set({ min, max });
+
+    const conditions = (params.get('condition') ?? '').split(',')
+      .map(value => value.trim().toUpperCase() as ItemCondition)
+      .filter(value => ITEM_CONDITIONS.includes(value));
+    this.selectedConditions.set(conditions);
+    this.appliedConditions.set(conditions);
+    const delivery = params.get('delivery');
+    const deliveryFilter = delivery === 'HAND' || delivery === 'SHIPPING' ? delivery : null;
+    this.selectedDelivery.set(deliveryFilter);
+    this.appliedDelivery.set({ value: deliveryFilter });
+
+    const lat = this.toNumber(params.get('lat'));
+    const lng = this.toNumber(params.get('lng'));
+    const radiusKm = this.toNumber(params.get('radiusKm'));
+    this.onAreaChange(lat != null && lng != null
+      ? { lat, lng, radiusKm: radiusKm ?? 10, label: params.get('place') ?? '' }
+      : null);
     this.saveSearchResult.set(null);
 
     this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });

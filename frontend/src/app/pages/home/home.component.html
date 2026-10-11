@@ -6,6 +6,8 @@
         <aside class="sidebar-container">
           <app-sidebar [priceRange]="appliedPriceRange()"
                        [area]="selectedArea()"
+                       [appliedConditions]="appliedConditions()"
+                       [appliedDelivery]="appliedDelivery()"
                        (areaSelected)="onAreaChange($event)"
                        (categorySelected)="onCategorySelected($event)"
                        (priceRangeSelected)="onPriceRangeChange($event)"

@@ -58,12 +58,26 @@ export class SidebarComponent implements OnInit {
     }
   }
 
+  /** Sets the condition boxes from outside, e.g. when a saved search is opened. */
+  @Input() set appliedConditions(conditions: ItemCondition[] | null) {
+    if (conditions) {
+      this.selectedConditions = new Set(conditions);
+    }
+  }
+
+  /** Wrapped so that applying "any" again still reaches the setter. */
+  @Input() set appliedDelivery(delivery: { value: DeliveryFilter | null } | null) {
+    if (delivery) {
+      this.selectedDelivery = delivery.value;
+    }
+  }
+
   /** Sets the area from outside, e.g. when a saved search is opened. */
   @Input() set area(area: SearchArea | null) {
     this.selectedArea = area;
+    this.locationQuery = area?.label ?? '';
     if (area) {
       this.radiusKm = area.radiusKm;
-      this.locationQuery = area.label;
     }
   }
 

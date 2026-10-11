@@ -19,6 +19,11 @@
           <span *ngIf="search.categoryName">{{ search.categoryName | categoryDisplay }}</span>
           <span *ngIf="search.minPrice != null">{{ 'SAVED_SEARCHES.FROM' | translate }} {{ search.minPrice }}</span>
           <span *ngIf="search.maxPrice != null">{{ 'SAVED_SEARCHES.UP_TO' | translate }} {{ search.maxPrice }}</span>
+          <span *ngFor="let condition of search.conditions">{{ ('CONDITION.' + condition) | translate }}</span>
+          <span *ngIf="search.delivery">{{ ('DELIVERY.' + search.delivery) | translate }}</span>
+          <span *ngIf="search.radiusKm != null">
+            {{ 'FILTERS.WITHIN' | translate: { radius: search.radiusKm, place: search.locationLabel || ('FILTERS.MY_POSITION' | translate) } }}
+          </span>
         </div>
       </div>
       <label class="alerts-toggle">

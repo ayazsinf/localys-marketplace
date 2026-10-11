@@ -42,6 +42,24 @@ public class SavedSearch extends AuditableEntity {
     @Column(name = "max_price", precision = 12, scale = 2)
     private BigDecimal maxPrice;
 
+    /** Comma-separated {@link com.localys.marketplace.model.enums.ItemCondition} names; null for any. */
+    @Column(length = 100)
+    private String conditions;
+
+    /** HAND or SHIPPING; null for either. */
+    @Column(length = 10)
+    private String delivery;
+
+    private Double latitude;
+
+    private Double longitude;
+
+    @Column(name = "radius_km")
+    private Double radiusKm;
+
+    @Column(name = "location_label", length = 200)
+    private String locationLabel;
+
     @Column(name = "alerts_enabled", nullable = false)
     private boolean alertsEnabled = true;
 

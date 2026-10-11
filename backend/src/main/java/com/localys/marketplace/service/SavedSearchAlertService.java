@@ -56,12 +56,7 @@ public class SavedSearchAlertService {
         if (search == null || !search.isAlertsEnabled() || !search.getLastCheckedAt().isBefore(runAt)) {
             return;
         }
-        ProductSearchService.Criteria criteria = ProductSearchService.basic(
-                search.getQuery(),
-                search.getCategory() != null ? search.getCategory().getId() : null,
-                search.getMinPrice(),
-                search.getMaxPrice()
-        );
+        ProductSearchService.Criteria criteria = SavedSearchService.criteria(search);
         long matches = productSearchService.countApprovedBetween(
                 criteria, search.getLastCheckedAt(), runAt, search.getUser().getId());
         if (matches > 0) {

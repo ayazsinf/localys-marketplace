@@ -82,11 +82,6 @@ public class ProductSearchService {
         }
     }
 
-    /** Filters that apply to every search; paging and the extra filters left unset. */
-    public static Criteria basic(String query, Long categoryId, BigDecimal minPrice, BigDecimal maxPrice) {
-        return new Criteria(query, categoryId, minPrice, maxPrice, null, null, null, null, List.of(), null, null);
-    }
-
     public record Criteria(
             String query,
             Long categoryId,

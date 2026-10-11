@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { ItemCondition } from './listing.service';
+import { DeliveryFilter } from './product.service';
 
 export interface SavedSearch {
   id: number;
@@ -11,6 +13,12 @@ export interface SavedSearch {
   categoryName: string | null;
   minPrice: number | null;
   maxPrice: number | null;
+  conditions: ItemCondition[];
+  delivery: DeliveryFilter | null;
+  latitude: number | null;
+  longitude: number | null;
+  radiusKm: number | null;
+  locationLabel: string | null;
   alertsEnabled: boolean;
   createdAt: string;
 }
@@ -21,6 +29,12 @@ export interface SavedSearchPayload {
   categoryId: number | null;
   minPrice: number | null;
   maxPrice: number | null;
+  conditions: ItemCondition[];
+  delivery: DeliveryFilter | null;
+  latitude: number | null;
+  longitude: number | null;
+  radiusKm: number | null;
+  locationLabel: string | null;
   alertsEnabled: boolean;
 }
 
@@ -60,6 +74,20 @@ export class SavedSearchService {
     }
     if (search.maxPrice != null) {
       params['maxPrice'] = search.maxPrice;
+    }
+    if (search.conditions?.length) {
+      params['condition'] = search.conditions.join(',');
+    }
+    if (search.delivery) {
+      params['delivery'] = search.delivery;
+    }
+    if (search.latitude != null && search.longitude != null && search.radiusKm != null) {
+      params['lat'] = search.latitude;
+      params['lng'] = search.longitude;
+      params['radiusKm'] = search.radiusKm;
+      if (search.locationLabel) {
+        params['place'] = search.locationLabel;
+      }
     }
     return params;
   }

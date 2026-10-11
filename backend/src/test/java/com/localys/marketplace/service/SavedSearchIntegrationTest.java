@@ -6,6 +6,7 @@ import com.localys.marketplace.model.Notification;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.model.Vendor;
+import com.localys.marketplace.model.enums.ItemCondition;
 import com.localys.marketplace.model.enums.NotificationType;
 import com.localys.marketplace.repository.NotificationRepository;
 import com.localys.marketplace.repository.ProductRepository;
@@ -50,10 +51,11 @@ class SavedSearchIntegrationTest extends IntegrationTest {
         assertThatThrownBy(() -> savedSearchService.create(user.getId(), request(" ", keyword, null)))
                 .hasMessageStartingWith("Saved search name is required");
         assertThatThrownBy(() -> savedSearchService.create(user.getId(),
-                new SavedSearchRequest("Nothing", null, null, null, null, null)))
+                new SavedSearchRequest("Nothing", null, null, null, null, List.of("bogus"), "anything", 120.0, 2.0, 10.0, null, null)))
                 .hasMessage("Saved search needs at least one filter");
         assertThatThrownBy(() -> savedSearchService.create(user.getId(),
-                new SavedSearchRequest("Bad", keyword, null, new BigDecimal("50"), new BigDecimal("10"), null)))
+                new SavedSearchRequest("Bad", keyword, null, new BigDecimal("50"), new BigDecimal("10"),
+                        null, null, null, null, null, null, null)))
                 .hasMessage("Saved search price range is invalid");
 
         SavedSearchDto saved = savedSearchService.create(user.getId(), request(" Lamps ", "  " + keyword + " ", "50"));
@@ -104,15 +106,50 @@ class SavedSearchIntegrationTest extends IntegrationTest {
         assertThat(alerts()).hasSize(1);
     }
 
-    private SavedSearchRequest request(String name, String query, String maxPrice) {
-        return new SavedSearchRequest(name, query, null, null, maxPrice == null ? null : new BigDecimal(maxPrice), null);
+    @Test
+    void alertsHonourConditionDeliveryAndArea() {
+        SavedSearchDto saved = savedSearchService.create(user.getId(), new SavedSearchRequest(
+                "Lamps near Paris", keyword, null, null, null,
+                List.of("good", "LIKE_NEW", "nonsense"), "shipping", 48.8566, 2.3522, 20.0, "Paris", null));
+        assertThat(saved.conditions()).containsExactly("LIKE_NEW", "GOOD");
+        assertThat(saved.delivery()).isEqualTo("SHIPPING");
+        assertThat(saved.radiusKm()).isEqualTo(20.0);
+        assertThat(saved.locationLabel()).isEqualTo("Paris");
+
+        located(listing("Good " + keyword, "30.00", otherVendor, OffsetDateTime.now()), 48.80, 2.30, ItemCondition.GOOD, true);
+        // Wrong condition, hand delivery only, too far away: none of these match.
+        located(listing("Worn " + keyword, "30.00", otherVendor, OffsetDateTime.now()), 48.80, 2.30, ItemCondition.FAIR, true);
+        located(listing("Heavy " + keyword, "30.00", otherVendor, OffsetDateTime.now()), 48.80, 2.30, ItemCondition.GOOD, false);
+        located(listing("Lyon " + keyword, "30.00", otherVendor, OffsetDateTime.now()), 45.76, 4.84, ItemCondition.GOOD, true);
+
+        alertService.sendAlerts();
+
+        List<Notification> alerts = alerts();
+        assertThat(alerts).hasSize(1);
+        assertThat(alerts.get(0).getMessage()).startsWith("1 new listing");
+        assertThat(alerts.get(0).getLink()).isEqualTo("/?q=" + keyword
+                + "&condition=LIKE_NEW,GOOD&delivery=SHIPPING&lat=48.8566&lng=2.3522&radiusKm=20&place=Paris");
     }
 
-    private void listing(String name, String price, Vendor vendor, OffsetDateTime approvedAt) {
+    private void located(Product product, double lat, double lng, ItemCondition condition, boolean shipping) {
+        product.setLatitude(lat);
+        product.setLongitude(lng);
+        product.setCondition(condition);
+        product.setHandDelivery(true);
+        product.setShippingAvailable(shipping);
+        productRepository.save(product);
+    }
+
+    private SavedSearchRequest request(String name, String query, String maxPrice) {
+        return new SavedSearchRequest(name, query, null, null, maxPrice == null ? null : new BigDecimal(maxPrice),
+                null, null, null, null, null, null, null);
+    }
+
+    private Product listing(String name, String price, Vendor vendor, OffsetDateTime approvedAt) {
         Product product = data.listing(vendor, price, 1);
         product.setName(name);
         product.setReviewedAt(approvedAt);
-        productRepository.save(product);
+        return productRepository.save(product);
     }
 
     private List<Notification> alerts() {

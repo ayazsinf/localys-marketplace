@@ -208,6 +208,20 @@ public class NotificationService {
         if (search.getMaxPrice() != null) {
             params.add("maxPrice=" + search.getMaxPrice().stripTrailingZeros().toPlainString());
         }
+        if (search.getConditions() != null) {
+            params.add("condition=" + search.getConditions());
+        }
+        if (search.getDelivery() != null) {
+            params.add("delivery=" + search.getDelivery());
+        }
+        if (search.getLatitude() != null && search.getLongitude() != null && search.getRadiusKm() != null) {
+            params.add("lat=" + search.getLatitude());
+            params.add("lng=" + search.getLongitude());
+            params.add("radiusKm=" + BigDecimal.valueOf(search.getRadiusKm()).stripTrailingZeros().toPlainString());
+            if (search.getLocationLabel() != null) {
+                params.add("place=" + URLEncoder.encode(search.getLocationLabel(), StandardCharsets.UTF_8));
+            }
+        }
         String link = params.isEmpty() ? "/" : "/?" + String.join("&", params);
         // notifications.link is 500 chars; a long non-ASCII query can exceed it once encoded.
         return link.length() <= 500 ? link : "/saved-searches";
