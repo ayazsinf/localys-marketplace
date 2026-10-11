@@ -11,6 +11,10 @@ import java.util.List;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
+    /** Items this seller sold that reached the buyer. */
+    @Query("select count(oi) from OrderItem oi where oi.vendor.user.id = :sellerUserId and oi.deliveredAt is not null")
+    long countDeliveredSales(@Param("sellerUserId") Long sellerUserId);
+
     @Query("""
             select oi from OrderItem oi
             join fetch oi.order o

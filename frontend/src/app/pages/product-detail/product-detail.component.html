@@ -34,7 +34,9 @@
       <a class="seller-card" *ngIf="product.vendorUserId; else unknownSeller" [routerLink]="['/users', product.vendorUserId]">
         <span class="seller-avatar" aria-hidden="true">{{ sellerInitial }}</span>
         <span class="seller-meta">
-          <strong>{{ sellerName }}</strong>
+          <strong>{{ sellerName }}
+            <span class="verified-badge" *ngIf="product.sellerEmailVerified" [title]="'BADGES.EMAIL_VERIFIED' | translate">✓</span>
+          </strong>
           <span class="seller-rating" *ngIf="product.vendorReviewCount; else noReviews">
             <span class="stars" aria-hidden="true">★</span>
             {{ product.vendorRating }}

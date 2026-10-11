@@ -5,6 +5,7 @@ import com.localys.marketplace.dto.UserReviewsDto;
 import com.localys.marketplace.model.Product;
 import com.localys.marketplace.model.UserEntity;
 import com.localys.marketplace.repository.MessageRepository;
+import com.localys.marketplace.repository.OrderItemRepository;
 import com.localys.marketplace.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -29,13 +30,16 @@ public class PublicProfileService {
     private final ReviewService reviewService;
     private final ProductSearchService productSearchService;
     private final MessageRepository messageRepository;
+    private final OrderItemRepository orderItemRepository;
 
     public PublicProfileService(
             UserRepository userRepository,
             ReviewService reviewService,
             ProductSearchService productSearchService,
-            MessageRepository messageRepository
+            MessageRepository messageRepository,
+            OrderItemRepository orderItemRepository
     ) {
+        this.orderItemRepository = orderItemRepository;
         this.userRepository = userRepository;
         this.reviewService = reviewService;
         this.productSearchService = productSearchService;
@@ -79,7 +83,10 @@ public class PublicProfileService {
                 responseRate,
                 responseTime,
                 user.isVacationMode(),
-                user.isVacationMode() ? user.getVacationMessage() : null
+                user.isVacationMode() ? user.getVacationMessage() : null,
+                user.isEmailVerified(),
+                user.getPhone() != null && !user.getPhone().isBlank(),
+                orderItemRepository.countDeliveredSales(userId)
         );
     }
 

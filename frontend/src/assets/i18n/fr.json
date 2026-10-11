@@ -822,5 +822,10 @@
     "ACTIVITY_HINT": "Quand des membres ajoutent vos annonces en favori ou vous laissent un avis",
     "ALERTS": "Alertes",
     "ALERTS_HINT": "Nouvelles annonces pour vos recherches et baisses de prix"
+  },
+  "BADGES": {
+    "EMAIL_VERIFIED": "E-mail verifie",
+    "PHONE_PROVIDED": "Telephone renseigne",
+    "SALES": "{{count}} ventes conclues"
   }
 }

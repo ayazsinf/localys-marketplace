@@ -53,6 +53,8 @@ class PublicProfileIntegrationTest extends IntegrationTest {
         assertThat(profile.location()).isEqualTo("Paris");
         assertThat(profile.rating().count()).isZero();
         assertThat(profile.responseRate()).isNull();
+        assertThat(profile.emailVerified()).isFalse();
+        assertThat(profile.completedSales()).isZero();
         assertThatThrownBy(() -> publicProfileService.get(-1L)).hasMessage("User not found");
     }
 

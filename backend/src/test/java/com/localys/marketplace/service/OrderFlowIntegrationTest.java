@@ -39,6 +39,8 @@ class OrderFlowIntegrationTest extends IntegrationTest {
     @Autowired
     private OrderService orderService;
     @Autowired
+    private PublicProfileService publicProfileService;
+    @Autowired
     private OrderExpirationService orderExpirationService;
     @Autowired
     private OrderRepository orderRepository;
@@ -231,6 +233,7 @@ class OrderFlowIntegrationTest extends IntegrationTest {
         OrderDto delivered = orderService.confirmDelivery(buyer.getId(), orderId);
         assertThat(delivered.status()).isEqualTo("DELIVERED");
         assertThat(notificationCount(seller, NotificationType.ORDER_DELIVERED)).isEqualTo(1);
+        assertThat(publicProfileService.get(seller.getId()).completedSales()).isEqualTo(1);
     }
 
     @Test

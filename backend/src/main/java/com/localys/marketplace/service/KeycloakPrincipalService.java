@@ -66,6 +66,9 @@ public class KeycloakPrincipalService {
         if (isBlank(user.getPhone())) {
             user.setPhone(jwt.getClaimAsString("phone_number"));
         }
+        String tokenEmail = jwt.getClaimAsString("email");
+        user.setEmailVerified(Boolean.TRUE.equals(jwt.getClaimAsBoolean("email_verified"))
+                && tokenEmail != null && tokenEmail.equalsIgnoreCase(user.getEmail()));
         if (user.getPassword() == null || user.getPassword().isBlank()) {
             user.setPassword("{keycloak}");
         }

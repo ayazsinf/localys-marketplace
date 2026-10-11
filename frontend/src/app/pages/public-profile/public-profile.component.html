@@ -15,6 +15,11 @@
         <ng-template #noRating>
           <div class="rating subtle">{{ 'REVIEWS.NONE_YET' | translate }}</div>
         </ng-template>
+        <ul class="badges">
+          <li class="badge verified" *ngIf="profile.emailVerified">✓ {{ 'BADGES.EMAIL_VERIFIED' | translate }}</li>
+          <li class="badge" *ngIf="profile.phoneProvided">☎ {{ 'BADGES.PHONE_PROVIDED' | translate }}</li>
+          <li class="badge" *ngIf="profile.completedSales > 0">📦 {{ 'BADGES.SALES' | translate: { count: profile.completedSales } }}</li>
+        </ul>
         <ul class="facts">
           <li>{{ 'PROFILE_PUBLIC.MEMBER_SINCE' | translate: { date: formatDate(profile.memberSince, false) } }}</li>
           <li *ngIf="profile.location">{{ profile.location }}</li>

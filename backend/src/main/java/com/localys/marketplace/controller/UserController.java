@@ -76,7 +76,12 @@ public class UserController {
             user.setDisplayName(request.displayName().trim());
         }
         if (request.email() != null) {
-            user.setEmail(request.email().trim());
+            String email = request.email().trim();
+            if (!email.equalsIgnoreCase(user.getEmail())) {
+                // Keycloak verified the old address, not this one.
+                user.setEmailVerified(false);
+            }
+            user.setEmail(email);
         }
         if (request.phone() != null) {
             user.setPhone(request.phone().trim());

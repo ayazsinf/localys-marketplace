@@ -22,6 +22,12 @@ public record PublicProfileDto(
         Integer responseRate,
         String responseTime,
         boolean away,
-        String awayMessage
+        String awayMessage,
+        /** Keycloak confirmed their email address. */
+        boolean emailVerified,
+        /** They gave a phone number (not verified by SMS). */
+        boolean phoneProvided,
+        /** Items they sold that reached the buyer. */
+        long completedSales
 ) {
 }

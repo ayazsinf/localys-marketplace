@@ -41,6 +41,13 @@ public class UserEntity extends AuditableEntity {
     @Column(nullable = false)
     private boolean enabled = true;
 
+    /**
+     * Keycloak confirmed the email address the user currently has. Refreshed at every login,
+     * and false once the user changes the address here.
+     */
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified;
+
     /** Away: their listings are hidden from search and cannot be bought or offered on. */
     @Column(name = "vacation_mode", nullable = false)
     private boolean vacationMode;

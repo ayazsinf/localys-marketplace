@@ -117,6 +117,7 @@ class MessagingEmailIntegrationTest extends IntegrationTest {
                 .claim("preferred_username", subject + "@mail.test")
                 .claim("email", subject + "@mail.test")
                 .claim("name", "Token Name")
+                .claim("email_verified", true)
                 .issuedAt(Instant.now())
                 .expiresAt(Instant.now().plusSeconds(300))
                 .build();
@@ -124,6 +125,7 @@ class MessagingEmailIntegrationTest extends IntegrationTest {
 
         UserEntity created = principalService.authenticate("token").getUser();
         assertThat(created.getDisplayName()).isEqualTo("Token Name");
+        assertThat(created.isEmailVerified()).isTrue();
         verify(mailDispatcher).send(anyString(), eq(subject + "@mail.test"), anyString(), anyString());
 
         created.setDisplayName("Edited Name");
@@ -133,6 +135,12 @@ class MessagingEmailIntegrationTest extends IntegrationTest {
         UserEntity again = principalService.authenticate("token").getUser();
         assertThat(again.getDisplayName()).isEqualTo("Edited Name");
         assertThat(again.getPhone()).isEqualTo("+33600000000");
+        assertThat(again.isEmailVerified()).isTrue();
+
+        // An address Keycloak never confirmed is not verified.
+        again.setEmail("other-" + subject + "@mail.test");
+        userRepository.save(again);
+        assertThat(principalService.authenticate("token").getUser().isEmailVerified()).isFalse();
         verify(mailDispatcher, times(1)).send(anyString(), eq(subject + "@mail.test"), anyString(), anyString());
         verify(mailDispatcher, never()).send(anyString(), eq(seller.getEmail()), anyString(), anyString());
     }

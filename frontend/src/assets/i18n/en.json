@@ -822,5 +822,10 @@
     "ACTIVITY_HINT": "When members save your listings or review you",
     "ALERTS": "Alerts",
     "ALERTS_HINT": "New listings for saved searches and price drops"
+  },
+  "BADGES": {
+    "EMAIL_VERIFIED": "Email verified",
+    "PHONE_PROVIDED": "Phone number given",
+    "SALES": "{{count}} completed sales"
   }
 }

@@ -34,6 +34,7 @@ export interface ProductDetail {
   /** The seller is on vacation: the listing cannot be bought or offered on. */
   sellerAway: boolean;
   sellerAwayMessage: string | null;
+  sellerEmailVerified: boolean;
 }
 
 

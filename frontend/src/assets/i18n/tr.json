@@ -822,5 +822,10 @@
     "ACTIVITY_HINT": "Uyeler ilanlarinizi favoriye ekleyince veya sizi degerlendirince",
     "ALERTS": "Uyarilar",
     "ALERTS_HINT": "Kayitli aramalar icin yeni ilanlar ve fiyat dususleri"
+  },
+  "BADGES": {
+    "EMAIL_VERIFIED": "E-posta dogrulandi",
+    "PHONE_PROVIDED": "Telefon numarasi var",
+    "SALES": "{{count}} tamamlanan satis"
   }
 }

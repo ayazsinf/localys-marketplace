@@ -185,7 +185,9 @@ public class ProductController {
                 product.isHandDelivery(),
                 product.isShippingAvailable(),
                 product.isSellerAway(),
-                product.isSellerAway() ? product.getVendor().getUser().getVacationMessage() : null
+                product.isSellerAway() ? product.getVendor().getUser().getVacationMessage() : null,
+                product.getVendor() != null && product.getVendor().getUser() != null
+                        && product.getVendor().getUser().isEmailVerified()
         );
     }
 

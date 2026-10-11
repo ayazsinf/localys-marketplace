@@ -32,6 +32,7 @@ public record ProductDetailDto(
         boolean handDelivery,
         boolean shippingAvailable,
         boolean sellerAway,
-        String sellerAwayMessage
+        String sellerAwayMessage,
+        boolean sellerEmailVerified
 ) {
 }

@@ -17,6 +17,11 @@ export interface PublicProfile {
   responseTime: 'WITHIN_HOUR' | 'WITHIN_DAY' | 'WITHIN_DAYS' | null;
   away: boolean;
   awayMessage: string | null;
+  emailVerified: boolean;
+  /** A phone number is on file (not verified by SMS). */
+  phoneProvided: boolean;
+  /** Items sold that reached the buyer. */
+  completedSales: number;
 }
 
 @Injectable({ providedIn: 'root' })

@@ -464,3 +464,14 @@ databaseChangeLog:
             splitStatements: true
             stripComments: false
             endDelimiter: ;
+
+  - changeSet:
+      id: 041-user-email-verified
+      author: codex
+      changes:
+        - sqlFile:
+            path: db/migration/V41__user_email_verified.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: false
+            endDelimiter: ;
