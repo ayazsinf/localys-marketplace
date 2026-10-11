@@ -927,5 +927,15 @@
     "STATE_PAID_OUT": "Odendi",
     "STATE_REFUNDED": "Iade edildi",
     "ITEM_PAYOUT": "Size kalan {{payout}} (komisyon {{commission}})"
+  },
+  "BOOST": {
+    "BUTTON": "{{price}} ile one cikar ({{days}} gun)",
+    "EXTEND": "Sureyi uzat: {{price}} (+{{days}} gun)",
+    "HINT": "{{days}} gun boyunca arama sonuclarinda en ustte gosterilir",
+    "FEATURED": "One cikan",
+    "FEATURED_UNTIL": "{{date}} tarihine kadar one cikarildi",
+    "PAID": "Tesekkurler! Odeme onaylaninca ilaniniz one cikarilacak.",
+    "CANCELED": "Odeme iptal edildi; ilan one cikarilmadi.",
+    "ERROR": "One cikarma su an kullanilamiyor. Lutfen daha sonra tekrar deneyin."
   }
 }

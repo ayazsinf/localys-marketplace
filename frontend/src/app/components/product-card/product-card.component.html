@@ -17,6 +17,7 @@
       <div class="product-overlay">
           <button class="quick-view-btn" (click)="openQuickView(product, $event)">{{ 'PRODUCT.QUICK_VIEW' | translate }}</button>
     </div>
+    <div class="featured-badge" *ngIf="product.boosted">⭐ {{ 'BOOST.FEATURED' | translate }}</div>
     <div class="stock-badge" [class.out-of-stock]="!product.inStock">
       {{ product.inStock ? ('PRODUCT.IN_STOCK' | translate) : ('PRODUCT.OUT_OF_STOCK' | translate) }}
     </div>

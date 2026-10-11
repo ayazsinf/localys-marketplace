@@ -17,4 +17,6 @@ export interface Product {
   handDelivery?: boolean;
   shippingAvailable?: boolean;
   locationText?: string | null;
+  /** A paid feature is running. */
+  boosted?: boolean;
 }

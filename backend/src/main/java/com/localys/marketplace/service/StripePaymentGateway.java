@@ -6,11 +6,13 @@ import com.stripe.model.AccountLink;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.Refund;
 import com.stripe.model.Transfer;
+import com.stripe.model.checkout.Session;
 import com.stripe.net.RequestOptions;
 import com.stripe.param.AccountCreateParams;
 import com.stripe.param.AccountLinkCreateParams;
 import com.stripe.param.RefundCreateParams;
 import com.stripe.param.TransferCreateParams;
+import com.stripe.param.checkout.SessionCreateParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Stripe Connect with "separate charges and transfers": buyers pay the platform, and each
@@ -47,6 +50,35 @@ public class StripePaymentGateway implements PaymentGateway {
         } catch (StripeException ex) {
             logger.warn("Stripe refund failed for {}: {}", paymentIntentId, ex.getMessage());
             throw new IllegalStateException("Refund failed: " + ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public CheckoutSession createCheckout(String itemName, BigDecimal amount, String currency, String successUrl,
+                                          String cancelUrl, Map<String, String> metadata, String idempotencyKey) {
+        requireKey();
+        SessionCreateParams params = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl(successUrl)
+                .setCancelUrl(cancelUrl)
+                .putAllMetadata(metadata)
+                .addLineItem(SessionCreateParams.LineItem.builder()
+                        .setQuantity(1L)
+                        .setPriceData(SessionCreateParams.LineItem.PriceData.builder()
+                                .setCurrency(currency.toLowerCase(Locale.ROOT))
+                                .setUnitAmount(toStripeAmount(amount))
+                                .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                        .setName(itemName)
+                                        .build())
+                                .build())
+                        .build())
+                .build();
+        try {
+            Session session = Session.create(params, options(idempotencyKey));
+            return new CheckoutSession(session.getId(), session.getUrl());
+        } catch (StripeException ex) {
+            logger.warn("Stripe checkout failed for {}: {}", itemName, ex.getMessage());
+            throw new IllegalStateException("Stripe checkout failed: " + ex.getMessage(), ex);
         }
     }
 

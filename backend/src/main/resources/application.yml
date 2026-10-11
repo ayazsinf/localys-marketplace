@@ -52,6 +52,10 @@ app:
     commission-rate: ${APP_COMMISSION_RATE:0.05}
     # Country used when opening a Stripe Connect account for a seller.
     seller-country: ${APP_SELLER_COUNTRY:FR}
+    # Featuring a listing at the top of search results.
+    boost-price: ${APP_BOOST_PRICE:4.99}
+    boost-currency: ${APP_BOOST_CURRENCY:EUR}
+    boost-days: ${APP_BOOST_DAYS:7}
   mail:
     enabled: ${APP_MAIL_ENABLED:${MAIL_ENABLED:false}}
     from: ${MAIL_FROM:no-reply@localys.example}

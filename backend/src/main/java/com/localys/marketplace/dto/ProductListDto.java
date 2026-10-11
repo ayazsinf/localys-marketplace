@@ -20,7 +20,9 @@ public record ProductListDto(
         String condition,
         boolean handDelivery,
         boolean shippingAvailable,
-        String locationText
+        String locationText,
+        /** A paid feature is running. */
+        boolean boosted
 ) {
 }
 

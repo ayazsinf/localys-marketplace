@@ -32,6 +32,7 @@ public class StripeWebhookService {
     private final PaymentRepository paymentRepository;
     private final OrderService orderService;
     private final SellerPayoutService sellerPayoutService;
+    private final ListingBoostService listingBoostService;
 
     @Value("${app.payment.stripe.webhook-secret:}")
     private String webhookSecret;
@@ -39,8 +40,10 @@ public class StripeWebhookService {
     public StripeWebhookService(
             PaymentRepository paymentRepository,
             OrderService orderService,
-            SellerPayoutService sellerPayoutService
+            SellerPayoutService sellerPayoutService,
+            ListingBoostService listingBoostService
     ) {
+        this.listingBoostService = listingBoostService;
         this.paymentRepository = paymentRepository;
         this.orderService = orderService;
         this.sellerPayoutService = sellerPayoutService;
@@ -73,6 +76,9 @@ public class StripeWebhookService {
     private void handleSessionCompleted(Event event) {
         Session session = getStripeObject(event, Session.class);
         if (session == null) {
+            return;
+        }
+        if ("paid".equals(session.getPaymentStatus()) && listingBoostService.onSessionPaid(session.getId())) {
             return;
         }
         Optional<Payment> match = findBySession(session);
@@ -112,6 +118,9 @@ public class StripeWebhookService {
     private void handleSessionClosedUnpaid(Event event, PaymentStatus paymentStatus) {
         Session session = getStripeObject(event, Session.class);
         if (session == null) {
+            return;
+        }
+        if (listingBoostService.onSessionClosedUnpaid(session.getId())) {
             return;
         }
         // Only the session currently attached to the payment may cancel the order; an old

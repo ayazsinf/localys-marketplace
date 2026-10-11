@@ -1,12 +1,20 @@
 package com.localys.marketplace.service;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * Money movements after checkout. Kept behind an interface so the buyer-protection and payout
  * rules can be tested without calling Stripe.
  */
 public interface PaymentGateway {
+
+    record CheckoutSession(String id, String url) {
+    }
+
+    /** A hosted payment page for one item (e.g. featuring a listing); the webhook reports the result. */
+    CheckoutSession createCheckout(String itemName, BigDecimal amount, String currency, String successUrl,
+                                   String cancelUrl, Map<String, String> metadata, String idempotencyKey);
 
     /**
      * Gives {@code amount} of a captured payment back to the buyer.

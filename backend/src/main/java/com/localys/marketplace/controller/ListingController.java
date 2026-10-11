@@ -14,6 +14,7 @@ import com.localys.marketplace.model.enums.ListingRemovalReason;
 import com.localys.marketplace.repository.CategoryRepository;
 import com.localys.marketplace.repository.UserRepository;
 import com.localys.marketplace.repository.VendorRepository;
+import com.localys.marketplace.service.ListingBoostService;
 import com.localys.marketplace.service.ListingStatsService;
 import com.localys.marketplace.service.ProductService;
 import com.localys.marketplace.util.MarketCountryResolver;
@@ -37,14 +38,17 @@ public class ListingController {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final ListingStatsService listingStatsService;
+    private final ListingBoostService listingBoostService;
 
     public ListingController(
             ProductService productService,
             VendorRepository vendorRepository,
             UserRepository userRepository,
             CategoryRepository categoryRepository,
-            ListingStatsService listingStatsService
+            ListingStatsService listingStatsService,
+            ListingBoostService listingBoostService
     ) {
+        this.listingBoostService = listingBoostService;
         this.productService = productService;
         this.vendorRepository = vendorRepository;
         this.userRepository = userRepository;
@@ -68,6 +72,21 @@ public class ListingController {
     }
 
     /** Brings an online listing back to the top of the newest-first results (once a week). */
+    /** What featuring a listing costs. */
+    @GetMapping("/boost-offer")
+    public ListingBoostService.BoostOffer boostOffer() {
+        return listingBoostService.offer();
+    }
+
+    /** Starts the payment for featuring the listing; returns the Stripe Checkout URL. */
+    @PostMapping("/{id}/boost")
+    public Map<String, String> boostListing(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("id") Long id
+    ) {
+        return Map.of("url", listingBoostService.startCheckout(userDetails.getUserId(), id));
+    }
+
     @PostMapping("/{id}/renew")
     public ResponseEntity<ListingDto> renewListing(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -250,7 +269,8 @@ public class ListingController {
                 stats.conversations(),
                 stats.openOffers(),
                 product.getListedAt(),
-                listingStatsService.renewableAt(product)
+                listingStatsService.renewableAt(product),
+                product.getBoostedUntil()
         );
     }
 

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Listing, ListingRemovalReason, ListingService } from '../../service/listing.service';
+import { BoostOffer, Listing, ListingRemovalReason, ListingService } from '../../service/listing.service';
 import { environment } from '../../../environments/environment';
 
 interface RemovalOption {
@@ -20,6 +20,10 @@ export class ListingsComponent implements OnInit {
   isLoading = false;
   isSaving = false;
   errorMessage = '';
+  boostOffer: BoostOffer | null = null;
+  boostingId: number | null = null;
+  /** Back from Stripe after paying (or not) for a boost. */
+  boostNotice: 'success' | 'canceled' | null = null;
   /** Set after the wizard published or updated a listing. */
   publishedNotice: 'created' | 'updated' | null = null;
   pendingRemovalListing: Listing | null = null;
@@ -44,6 +48,19 @@ export class ListingsComponent implements OnInit {
     if (published === 'created' || published === 'updated') {
       this.publishedNotice = published;
     }
+    const boost = this.route.snapshot.queryParamMap.get('boost');
+    if (boost === 'success' || boost === 'canceled') {
+      this.boostNotice = boost;
+    }
+    this.listingService.boostOffer().subscribe({
+      next: offer => {
+        this.boostOffer = offer;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.boostOffer = null;
+      }
+    });
     this.loadListings();
   }
 
@@ -80,6 +97,26 @@ export class ListingsComponent implements OnInit {
   }
 
   /** Moves the listing back to the top of search results. */
+  isBoosted(listing: Listing): boolean {
+    return !!listing.boostedUntil && new Date(listing.boostedUntil).getTime() > Date.now();
+  }
+
+  boost(listing: Listing): void {
+    if (this.boostingId) {
+      return;
+    }
+    this.boostingId = listing.id;
+    this.errorMessage = '';
+    this.listingService.boostListing(listing.id).subscribe({
+      next: url => window.location.assign(url),
+      error: () => {
+        this.boostingId = null;
+        this.errorMessage = 'BOOST.ERROR';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   renew(listing: Listing): void {
     this.isSaving = true;
     this.errorMessage = '';

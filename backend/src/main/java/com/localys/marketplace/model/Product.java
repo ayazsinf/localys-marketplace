@@ -121,6 +121,14 @@ public class Product extends AuditableEntity {
     @OrderBy("sortOrder ASC")
     private List<ProductImage> images = new ArrayList<>();
 
+    /** Paid feature: shown first in newest-first results until then. */
+    @Column(name = "boosted_until")
+    private OffsetDateTime boostedUntil;
+
+    public boolean isBoosted() {
+        return boostedUntil != null && boostedUntil.isAfter(OffsetDateTime.now());
+    }
+
     /** The seller turned on vacation mode. */
     public boolean isSellerAway() {
         return vendor != null && vendor.getUser() != null && vendor.getUser().isVacationMode();

@@ -100,7 +100,8 @@ public class FavoriteController {
                 product.getCondition() != null ? product.getCondition().name() : null,
                 product.isHandDelivery(),
                 product.isShippingAvailable(),
-                product.getLocationText()
+                product.getLocationText(),
+                product.isBoosted()
         );
     }
 

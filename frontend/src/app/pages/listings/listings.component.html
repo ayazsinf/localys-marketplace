@@ -14,6 +14,10 @@
     </button>
   </div>
 
+  <div class="published-notice" *ngIf="boostNotice">
+    {{ (boostNotice === 'success' ? 'BOOST.PAID' : 'BOOST.CANCELED') | translate }}
+  </div>
+
   <div class="published-notice" *ngIf="publishedNotice">
     {{ (publishedNotice === 'created' ? 'WIZARD.PUBLISHED_CREATED' : 'WIZARD.PUBLISHED_UPDATED') | translate }}
   </div>
@@ -68,6 +72,9 @@
         </div>
       </div>
       <div class="listing-badges">
+        <span class="pill featured" *ngIf="isBoosted(listing)">
+          ⭐ {{ 'BOOST.FEATURED_UNTIL' | translate: { date: (listing.boostedUntil | date: 'mediumDate') } }}
+        </span>
         <span class="pill" *ngIf="listing.condition">{{ ('CONDITION.' + listing.condition) | translate }}</span>
         <span class="pill" *ngIf="listing.handDelivery">{{ 'DELIVERY.HAND' | translate }}</span>
         <span class="pill" *ngIf="listing.shippingAvailable">{{ 'DELIVERY.SHIPPING' | translate }}</span>
@@ -89,6 +96,11 @@
                 [disabled]="isSaving || !canRenew(listing)" (click)="renew(listing)"
                 [title]="canRenew(listing) ? ('STATS.RENEW_HINT' | translate) : ('STATS.RENEW_AFTER' | translate: { date: (listing.renewableAt | date: 'mediumDate') })">
           {{ 'STATS.RENEW' | translate }}
+        </button>
+        <button class="ghost-btn boost-btn" type="button" *ngIf="isOnline(listing) && boostOffer"
+                [disabled]="boostingId !== null" (click)="boost(listing)"
+                [title]="'BOOST.HINT' | translate: { days: boostOffer.days }">
+          ⭐ {{ (isBoosted(listing) ? 'BOOST.EXTEND' : 'BOOST.BUTTON') | translate: { price: (boostOffer.price | currencyDisplay: boostOffer.currency), days: boostOffer.days } }}
         </button>
         <button class="danger-btn" type="button" (click)="openRemoveListing(listing)" [disabled]="isSaving || !listing.active">
           {{ 'LISTINGS.DELETE' | translate }}

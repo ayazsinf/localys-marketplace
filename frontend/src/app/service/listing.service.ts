@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
+
+export interface BoostOffer {
+  price: number;
+  currency: string;
+  days: number;
+}
 
 export interface Listing {
   id: number;
@@ -39,6 +45,8 @@ export interface Listing {
   listedAt?: string;
   /** When the listing can next be moved back to the top. */
   renewableAt?: string;
+  /** Featured until then (paid boost). */
+  boostedUntil?: string | null;
 }
 
 export const ITEM_CONDITIONS = ['NEW', 'LIKE_NEW', 'GOOD', 'FAIR', 'FOR_PARTS'] as const;
@@ -95,6 +103,16 @@ export class ListingService {
   /** Moves the listing back to the top of the newest-first results (once a week). */
   renewListing(id: number): Observable<Listing> {
     return this.http.post<Listing>(`${environment.apiUrl}/listings/${id}/renew`, {});
+  }
+
+  /** What featuring a listing costs. */
+  boostOffer(): Observable<BoostOffer> {
+    return this.http.get<BoostOffer>(`${environment.apiUrl}/listings/boost-offer`);
+  }
+
+  /** Starts the payment for featuring the listing; returns the Stripe Checkout URL. */
+  boostListing(id: number): Observable<string> {
+    return this.http.post<{ url: string }>(`${environment.apiUrl}/listings/${id}/boost`, {}).pipe(map(result => result.url));
   }
 
   /** Returns the listing's remaining image URLs. */

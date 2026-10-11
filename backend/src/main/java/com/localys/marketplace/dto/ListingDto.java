@@ -38,6 +38,8 @@ public record ListingDto(
         Long conversationCount,
         Long openOfferCount,
         java.time.OffsetDateTime listedAt,
-        java.time.OffsetDateTime renewableAt
+        java.time.OffsetDateTime renewableAt,
+        /** Featured until then; null if never boosted. */
+        java.time.OffsetDateTime boostedUntil
 ) {
 }

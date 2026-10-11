@@ -109,7 +109,8 @@ public class ProductController {
                 p.getCondition() != null ? p.getCondition().name() : null,
                 p.isHandDelivery(),
                 p.isShippingAvailable(),
-                p.getLocationText()
+                p.getLocationText(),
+                p.isBoosted()
         );
     }
 

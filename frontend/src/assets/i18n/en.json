@@ -927,5 +927,15 @@
     "STATE_PAID_OUT": "Paid out",
     "STATE_REFUNDED": "Refunded",
     "ITEM_PAYOUT": "You receive {{payout}} (commission {{commission}})"
+  },
+  "BOOST": {
+    "BUTTON": "Feature for {{price}} ({{days}} days)",
+    "EXTEND": "Extend feature: {{price}} (+{{days}} days)",
+    "HINT": "Shown first in search results for {{days}} days",
+    "FEATURED": "Featured",
+    "FEATURED_UNTIL": "Featured until {{date}}",
+    "PAID": "Thanks! Your listing will be featured as soon as the payment is confirmed.",
+    "CANCELED": "The payment was canceled; the listing is not featured.",
+    "ERROR": "Featuring is not available right now. Please try again later."
   }
 }

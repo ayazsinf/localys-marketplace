@@ -129,11 +129,18 @@ public class ProductSearchService {
         int size = criteria.size() == null
                 ? DEFAULT_PAGE_SIZE
                 : Math.min(Math.max(1, criteria.size()), MAX_PAGE_SIZE);
-        Sort sort = SortOption.from(criteria.sort()).sort;
+        SortOption sortOption = SortOption.from(criteria.sort());
         Set<Long> categoryIds = criteria.categoryId() == null ? Set.of() : withDescendants(criteria.categoryId());
+        OffsetDateTime now = OffsetDateTime.now();
+        if (sortOption == SortOption.NEWEST) {
+            return productRepository.findAll(
+                    publicListings(criteria, categoryIds, now).and(featuredFirst(now)),
+                    PageRequest.of(page, size)
+            );
+        }
         return productRepository.findAll(
-                publicListings(criteria, categoryIds, OffsetDateTime.now()),
-                PageRequest.of(page, size, sort)
+                publicListings(criteria, categoryIds, now),
+                PageRequest.of(page, size, sortOption.sort)
         );
     }
 
@@ -196,6 +203,20 @@ public class ProductSearchService {
                 predicates.add(cb.lessThanOrEqualTo(root.get("price"), criteria.maxPrice()));
             }
             return cb.and(predicates.toArray(Predicate[]::new));
+        };
+    }
+
+    /** Orders boosted listings first, then newest first. Adds no condition. */
+    private Specification<Product> featuredFirst(OffsetDateTime now) {
+        return (root, query, cb) -> {
+            // The count query must not get an ORDER BY.
+            if (query.getResultType() != Long.class && query.getResultType() != long.class) {
+                Expression<Integer> featured = cb.<Integer>selectCase()
+                        .when(cb.greaterThan(root.get("boostedUntil"), now), 1)
+                        .otherwise(0);
+                query.orderBy(cb.desc(featured), cb.desc(root.get("listedAt")), cb.desc(root.get("id")));
+            }
+            return cb.conjunction();
         };
     }
 

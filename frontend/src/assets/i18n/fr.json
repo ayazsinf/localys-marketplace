@@ -927,5 +927,15 @@
     "STATE_PAID_OUT": "Verse",
     "STATE_REFUNDED": "Rembourse",
     "ITEM_PAYOUT": "Vous recevez {{payout}} (commission {{commission}})"
+  },
+  "BOOST": {
+    "BUTTON": "Mettre a la une pour {{price}} ({{days}} jours)",
+    "EXTEND": "Prolonger : {{price}} (+{{days}} jours)",
+    "HINT": "Affichee en premier dans les resultats pendant {{days}} jours",
+    "FEATURED": "A la une",
+    "FEATURED_UNTIL": "A la une jusqu'au {{date}}",
+    "PAID": "Merci ! Votre annonce sera a la une des que le paiement sera confirme.",
+    "CANCELED": "Paiement annule ; l'annonce n'est pas mise a la une.",
+    "ERROR": "La mise a la une est indisponible. Reessayez plus tard."
   }
 }

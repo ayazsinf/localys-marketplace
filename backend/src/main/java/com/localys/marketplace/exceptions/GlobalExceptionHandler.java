@@ -93,6 +93,10 @@ public class GlobalExceptionHandler {
             ApiError error = new ApiError("OWN_PRODUCT", "You cannot perform this action on your own listing.");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
         }
+        if (message.contains("only online listings can be boosted")) {
+            ApiError error = new ApiError("BOOST_NOT_ALLOWED", "Only online listings can be featured.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
         if (message.contains("renewed recently") || message.contains("only online listings can be renewed")) {
             ApiError error = new ApiError("RENEW_NOT_ALLOWED", "A listing can be renewed once a week while it is online.");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
